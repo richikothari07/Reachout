@@ -3,3 +3,155 @@
 .profileImportBox{margin-top:12px;border:1px solid #e3e3dc;border-radius:10px;background:#f7f7f3;padding:11px;display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center}.profileImportBox b,.profileImportBox small{display:block}.profileImportBox b{font-size:10px;margin-top:3px}.profileImportBox small{font-size:7px;color:#8a8a82;line-height:1.45;margin-top:3px;max-width:500px}.profileUploadBtn{cursor:pointer;display:flex;align-items:center;gap:5px;padding:8px 10px!important;font-size:8px!important;white-space:nowrap}.profileFileList{grid-column:1/-1;display:flex;gap:5px;align-items:center;flex-wrap:wrap}.profileFileList>div{font-size:7px;color:#687062;background:#eef1eb;border-radius:10px;padding:4px 6px;display:flex;align-items:center;gap:3px}.profileFileList .dangerLink{margin:0 0 0 auto}.queueItem.done{opacity:.58}.queueItem.done .queueNumber{background:#e9eee7;color:#52604d}.queueCheck{width:26px;height:26px;border-radius:50%;border:1px solid #d7d7d0;background:#fff;display:grid;place-items:center;flex:none;color:#6c7467}.queueCheck:hover{background:#eef1eb;border-color:#bfc7b9}.queueCheck.done{background:#22221f;color:#fff;border-color:#22221f}
 
 .brandLogo{width:34px;height:34px;object-fit:contain;display:block;flex:none}.brandLogo + div{min-width:0}
+
+/* Mobile UX polish */
+html,body{overflow-x:hidden}
+@media(max-width:760px){
+  .app{width:100%;overflow-x:hidden}
+  .sidebar{position:sticky;top:0;z-index:30;padding:12px 12px 10px;box-shadow:0 1px 0 #0000000d}
+  .brand{padding:0 4px 11px;gap:9px}
+  .brandLogo{width:30px;height:30px}
+  .brand b{font-size:13px}
+  .brand span{display:none}
+  .sidebar nav{display:flex;gap:5px;overflow-x:auto;margin:0 -2px;padding:0 2px 2px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .sidebar nav::-webkit-scrollbar{display:none}
+  .nav{min-width:82px;flex:0 0 auto;justify-content:flex-start;gap:7px;padding:9px 10px;font-size:8px;white-space:nowrap}
+  .nav svg{width:15px;height:15px}
+  .nav span{display:block}
+  .nav em{position:static;margin-left:auto;margin-top:0;font-size:7px;padding:2px 5px}
+  .content{width:100%;padding:18px 12px 70px}
+  .topbar{gap:14px;margin-bottom:18px}
+  .topbar h1{font-size:24px;line-height:1.1;margin-top:5px}
+  .topbar p{font-size:10px;line-height:1.5}
+  .topActions{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:12px}
+  .topActions button{width:100%;min-height:40px}
+  .toast{left:12px;right:12px;top:12px;justify-content:center;text-align:center;font-size:9px}
+  .dataError{align-items:flex-start;flex-wrap:wrap}
+  .dataError button{margin-left:32px}
+  .goalCard{padding:17px 15px;border-radius:12px}
+  .goalCard h2{font-size:17px}
+  .goalProgress{margin-top:13px}
+  .stats{gap:7px}
+  .stat{padding:11px 9px;gap:8px;min-width:0}
+  .statIcon{width:29px;height:29px;border-radius:8px;flex:none}
+  .stat strong{font-size:17px}
+  .stat span{font-size:7px;line-height:1.25}
+  .insightBar{padding:12px;margin-bottom:24px}
+  .signalList{display:flex;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}
+  .signalList::-webkit-scrollbar{display:none}
+  .signalList span{white-space:nowrap}
+  .sectionHead{gap:10px;align-items:flex-start}
+  .sectionHead h2,.pageTitle h2{font-size:17px}
+  .sectionHead p,.pageTitle p{font-size:8px;line-height:1.45}
+  .sectionHead>.textBtn{flex:none;padding-top:5px}
+  .cards{gap:8px}
+  .personCard{min-height:0;padding:13px;border-radius:11px}
+  .cardTop{gap:8px}
+  .whyTag{margin:12px 0 8px}
+  .twoCol{margin-top:25px}
+  .actionRow{padding:13px 12px;min-height:58px}
+  .actionRow b{font-size:9px}
+  .actionRow span{font-size:7px;line-height:1.35}
+  .heroCard{grid-template-columns:1fr;gap:22px;padding:20px;min-height:0}
+  .heroCopy h2{font-size:28px}
+  .heroCopy p{font-size:10px}
+  .heroActions{margin-top:16px}
+  .heroActions .primary{width:100%}
+  .heroVisual{padding:15px}
+  .visualPerson strong{font-size:20px}
+  .howItWorks{padding:13px}
+  .howItWorks>div{padding:8px}
+  .search{height:44px}
+  .search input{font-size:9px;min-width:0}
+  .search button{padding:8px}
+  .filterBar{overflow-x:auto;display:flex;flex-wrap:nowrap;scrollbar-width:none;padding-bottom:2px}
+  .filterBar::-webkit-scrollbar{display:none}
+  .filterBar button{white-space:nowrap;flex:none}
+  /* Turn the people table into readable cards instead of a tiny horizontal table. */
+  .table{border:0;background:transparent;overflow:visible}
+  .table .tr.th{display:none}
+  .table .tr.row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:7px 10px;width:100%;margin-bottom:7px;padding:12px;border:1px solid #e4e4df;border-radius:11px;background:#fff;text-align:left}
+  .table .tr.row>span:nth-child(1){grid-column:1;grid-row:1;min-width:0}
+  .table .tr.row>span:nth-child(2){grid-column:1;grid-row:2;font-size:8px;color:#66665f;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .table .tr.row>span:nth-child(3){grid-column:1/-1;grid-row:3;font-size:8px;color:#777770;line-height:1.35;display:block!important}
+  .table .tr.row>span:nth-child(4){grid-column:1;grid-row:4;display:block!important}
+  .table .tr.row>span:nth-child(5){grid-column:2;grid-row:1;align-self:start;text-align:right;font-size:14px}
+  .personCell{min-width:0}
+  .personCell span{min-width:0}
+  .personCell b{font-size:10px}
+  .personCell small{font-size:7px}
+  .action{font-size:7px}
+  .outreachHero{padding:18px 15px;border-radius:12px}
+  .outreachHero h2{font-size:23px}
+  .queueProgress{margin-top:15px}
+  .queueItem{padding:11px 9px;gap:8px;align-items:flex-start}
+  .queueNumber{width:24px;height:24px;flex:none}
+  .queueMain{min-width:0;flex:1}
+  .queueMain b{font-size:9px}
+  .queueMain span{font-size:7px;line-height:1.3}
+  .queueMain p{font-size:7px;line-height:1.4}
+  .queueOpen{padding:7px 6px;font-size:7px;flex:none}
+  .queueScore{display:none}
+  .sidePlan{display:block;padding:14px;margin-top:8px}
+  .companyGrid{gap:8px}
+  .companyCard{padding:13px;border-radius:11px}
+  .companyTop{gap:8px}
+  .companyTop h3{font-size:11px}
+  .companyTop>strong{font-size:17px}
+  .companyStats{gap:6px;flex-wrap:wrap}
+  .companyStats span{font-size:7px}
+  .companyPeople button{padding:8px 0;min-height:44px}
+  .companyPath{padding:8px}
+  .followControls{align-items:stretch;flex-wrap:wrap}
+  .followControls .muted{margin-left:0}
+  .followControls .secondary{width:100%;margin-left:0;min-height:38px}
+  .followList{border-radius:11px}
+  .followRow{padding:11px 9px;gap:8px}
+  .followMain{min-width:0;gap:8px}
+  .followInfo{width:auto;min-width:0;flex:1}
+  .followInfo b,.followInfo span,.followInfo small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .followReason{display:none}
+  .followDone{width:34px;height:34px}
+  .completedLabel{font-size:7px}
+  .setupModal{width:calc(100vw - 20px);max-height:calc(100vh - 20px);padding:19px;border-radius:14px}
+  .setupModal h2{font-size:22px;line-height:1.1;padding-right:30px}
+  .modalSub{font-size:9px}
+  .setupSteps{grid-template-columns:1fr;gap:5px}
+  .step{padding:7px}
+  .step:not(.active){display:none}
+  .modalFields{gap:10px}
+  .modalFields input,.fieldRow input{height:42px;font-size:11px}
+  .goalPresets{gap:5px}
+  .goalPresets button{font-size:7px;padding:7px 8px}
+  .importBox{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px;min-height:0;padding:10px}
+  .importBox>button{grid-column:1/-1;width:100%;margin:0;min-height:40px}
+  .modalFooter{position:sticky;bottom:-1px;background:#fff;margin-left:-19px;margin-right:-19px;padding:12px 19px 0;z-index:2}
+  .modalFooter .primary,.modalFooter .secondary{min-height:40px;flex:1}
+  .profileImportBox{grid-template-columns:1fr;}
+  .profileUploadBtn{width:100%;justify-content:center;min-height:40px}
+  .profileFileList{grid-column:auto}
+  .drawer{width:100%;padding:20px 15px 30px}
+  .drawerHeader{padding-right:40px}
+  .profileActions{overflow-x:auto;flex-wrap:nowrap;padding-bottom:2px;scrollbar-width:none}
+  .profileActions::-webkit-scrollbar{display:none}
+  .profileActions a,.profileActions button{white-space:nowrap;min-height:38px}
+  .scoreBox{padding:13px}
+  .scoreBreakdown{grid-template-columns:1fr 1fr 1fr;gap:5px}
+  .scoreBreakdown div{padding:8px 6px}
+  .scoreBreakdown span{font-size:6px}
+  .scoreBreakdown b{font-size:8px}
+  .drawerCtas{grid-template-columns:1fr}
+  .drawerCtas .primary:last-child{grid-column:auto}
+  .drawerCtas .primary,.drawerCtas .secondary{min-height:42px;font-size:8px}
+  .message{max-width:95%}
+  .floatingImport{right:12px;left:12px;bottom:12px;justify-content:center;min-height:42px}
+}
+@media(max-width:380px){
+  .nav{min-width:76px;padding-left:8px;padding-right:8px}
+  .content{padding-left:10px;padding-right:10px}
+  .stats{gap:5px}
+  .stat{padding:9px 7px}
+  .stat strong{font-size:16px}
+  .statIcon{width:26px;height:26px}
+  .heroCopy h2{font-size:25px}
+}
