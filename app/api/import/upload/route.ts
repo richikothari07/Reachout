@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
-import crypto from 'crypto'
-import { supabaseAdmin, ensureImportBucket } from '@/lib/supabase-server'
+import { supabaseAdmin } from '@/lib/supabase-server'
+import { importCsvText } from '@/lib/importer'
 
 export const runtime = 'nodejs'
 export const maxDuration = 60
@@ -10,36 +10,25 @@ export async function POST(req: Request) {
     const form = await req.formData()
     const userId = String(form.get('userId') || '')
     const file = form.get('file')
+
     if (!userId || !(file instanceof File)) {
       return NextResponse.json({ error: 'userId and file are required.' }, { status: 400 })
     }
-    if (file.size > 4 * 1024 * 1024) {
-      return NextResponse.json({ error: 'FILE_TOO_LARGE', useSignedUpload: true }, { status: 413 })
+
+    // Normal LinkedIn exports are comfortably below this limit. Process them
+    // directly here so importing does not depend on Supabase Storage.
+    if (file.size <= 4 * 1024 * 1024) {
+      const supabase = supabaseAdmin()
+      const text = await file.text()
+      const result = await importCsvText(supabase, userId, file.name, text, null)
+      return NextResponse.json(result)
     }
 
-    const supabase = supabaseAdmin()
-    await ensureImportBucket(supabase)
-
-    const safe = file.name.replace(/[^a-zA-Z0-9._-]/g, '_')
-    const path = `${userId}/${crypto.randomUUID()}-${safe}`
-    const bytes = new Uint8Array(await file.arrayBuffer())
-    const { error } = await supabase.storage.from('reachout-imports').upload(path, bytes, {
-      contentType: file.type || 'text/csv', upsert: false,
-    })
-    if (error) throw error
-
-    const origin = new URL(req.url).origin
-    const processResponse = await fetch(`${origin}/api/import/process`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ userId, path, fileName: file.name }),
-      cache: 'no-store',
-    })
-    const result = await processResponse.json()
-    if (!processResponse.ok) throw new Error(result.error || 'Import processing failed.')
-    return NextResponse.json(result)
+    // Larger exports use the signed-upload path handled by the frontend.
+    return NextResponse.json({ error: 'FILE_TOO_LARGE', useSignedUpload: true }, { status: 413 })
   } catch (e) {
     console.error('Backend upload error:', e)
-    return NextResponse.json({ error: e instanceof Error ? e.message : 'Could not upload data.' }, { status: 500 })
+    const message = e instanceof Error ? e.message : 'Could not import data.'
+    return NextResponse.json({ error: message }, { status: 500 })
   }
 }
