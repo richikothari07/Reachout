@@ -155,3 +155,423 @@ html,body{overflow-x:hidden}
   .statIcon{width:26px;height:26px}
   .heroCopy h2{font-size:25px}
 }
+
+
+/* =========================================================
+   REACHOUT VISUAL SYSTEM — PREMIUM POLISH
+   Visual-only layer. No interaction/data behavior changed.
+   ========================================================= */
+
+:root{
+  --ro-bg:#f6f6f3;
+  --ro-surface:#ffffff;
+  --ro-ink:#171715;
+  --ro-muted:#777771;
+  --ro-faint:#a0a099;
+  --ro-line:#e7e7e1;
+  --ro-soft:#f1f1ec;
+  --ro-dark:#191918;
+  --ro-dark-2:#252522;
+  --ro-radius:14px;
+}
+
+html{background:var(--ro-bg);scroll-behavior:smooth}
+body{background:var(--ro-bg);color:var(--ro-ink);letter-spacing:-.005em}
+button,input,select{font-family:inherit}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{
+  outline:2px solid #777770;outline-offset:2px;
+}
+
+/* Desktop shell */
+.sidebar{
+  width:248px;
+  background:var(--ro-dark);
+  padding:25px 16px;
+  box-shadow:8px 0 30px rgba(0,0,0,.035);
+}
+.brand{
+  padding:0 10px 28px;
+  gap:10px;
+}
+.brandLogo{
+  width:36px;height:36px;
+  object-fit:contain;
+}
+.brand b{font-size:15px;font-weight:760}
+.brand span{font-size:7px;letter-spacing:.15em}
+.sideGoal{
+  margin:0 7px 24px;
+  padding:15px 13px;
+  background:#22221f;
+  border:1px solid #30302c;
+  border-radius:12px;
+}
+.sideGoal>b{font-size:10px;line-height:1.4}
+.sidebar nav{gap:3px}
+.nav{
+  padding:11px 11px;
+  border-radius:9px;
+  font-size:10px;
+  color:#989891;
+  transition:background .16s ease,color .16s ease,transform .16s ease;
+}
+.nav:hover{background:#242421;color:#fff;transform:translateX(1px)}
+.nav.active{background:#30302b;color:#fff;box-shadow:inset 0 0 0 1px rgba(255,255,255,.035)}
+.content{
+  margin-left:248px;
+  padding:44px 58px 80px;
+  max-width:1540px;
+}
+.topbar{margin-bottom:28px}
+.topbar h1{
+  font-size:36px;
+  font-weight:720;
+  letter-spacing:-.065em;
+  line-height:1.04;
+}
+.topbar p{font-size:12px;max-width:760px;color:#777770}
+.topActions{gap:9px}
+.refresh,.secondary,.primary{
+  min-height:38px;
+  border-radius:9px;
+  padding:9px 13px;
+  font-size:9px;
+  transition:all .16s ease;
+}
+.refresh,.secondary{border-color:#dfdfd9}
+.refresh:hover,.secondary:hover{border-color:#d0d0c9;box-shadow:0 4px 14px rgba(0,0,0,.045)}
+.primary{
+  background:#191918;
+  border-color:#191918;
+  box-shadow:0 5px 14px rgba(0,0,0,.10);
+}
+.primary:hover{background:#292926;transform:translateY(-1px);box-shadow:0 8px 18px rgba(0,0,0,.13)}
+.primary.big{min-height:42px;padding:11px 15px}
+.toast{border-radius:11px;padding:11px 15px;box-shadow:0 16px 40px rgba(0,0,0,.16)}
+.dataError{border-radius:12px}
+
+/* Home */
+.goalCard{
+  border-radius:16px;
+  padding:22px 24px;
+  margin-bottom:10px;
+  box-shadow:0 10px 30px rgba(0,0,0,.055);
+}
+.goalCard h2{font-size:19px}
+.goalProgress{width:330px}
+.progress{height:6px}
+.stats{gap:10px;margin-bottom:10px}
+.stat{
+  border-radius:13px;
+  padding:15px;
+  min-height:74px;
+  border-color:var(--ro-line);
+  transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease;
+}
+.stat:hover{transform:translateY(-1px);box-shadow:0 9px 24px rgba(0,0,0,.055);border-color:#dcdcd5}
+.statIcon{width:36px;height:36px;border-radius:10px;background:#f0f0eb}
+.stat strong{font-size:20px}
+.stat span{font-size:8px}
+.insightBar{
+  border-radius:13px;
+  padding:15px 18px;
+  margin-bottom:38px;
+}
+.signalList span{background:#fafaf7}
+
+/* Recommendation cards */
+.sectionHead{margin-bottom:15px}
+.sectionHead h2,.pageTitle h2{font-size:20px}
+.sectionHead p,.pageTitle p{font-size:9px}
+.cards{gap:12px}
+.personCard{
+  border-radius:14px;
+  padding:17px;
+  min-height:218px;
+  border-color:var(--ro-line);
+  box-shadow:0 3px 12px rgba(0,0,0,.025);
+}
+.personCard:hover{
+  transform:translateY(-3px);
+  box-shadow:0 15px 34px rgba(0,0,0,.08);
+  border-color:#d8d8d1;
+}
+.avatar{background:#efefe9;color:#4c4c46}
+.score strong{font-size:21px}
+.whyTag{background:#f4f4ef;border-radius:8px}
+.cardAction{padding-top:12px}
+
+/* Empty-state hero */
+.heroCard{
+  border-radius:18px;
+  padding:42px;
+  min-height:390px;
+  box-shadow:0 12px 35px rgba(0,0,0,.045);
+}
+.heroCopy h2{font-size:40px;max-width:720px}
+.heroCopy p{font-size:12px;max-width:630px}
+.heroVisual{
+  border-radius:15px;
+  padding:20px;
+  box-shadow:0 24px 55px rgba(0,0,0,.16);
+}
+.howItWorks{
+  border-radius:13px;
+  padding:16px 20px;
+}
+
+/* Secondary panels */
+.twoCol{gap:13px;margin-top:38px}
+.actionList,.explainCard,.table,.queueList,.sidePlan,.companyCard,.followList{
+  border-color:var(--ro-line);
+  box-shadow:0 3px 12px rgba(0,0,0,.018);
+}
+.actionRow{padding:14px 15px}
+.actionRow:hover{background:#fafaf7}
+.actionIcon,.companyIcon{background:#f0f0eb}
+
+/* Tables / list pages */
+.search{
+  height:44px;
+  border-radius:10px;
+  box-shadow:0 2px 8px rgba(0,0,0,.018);
+}
+.search:focus-within{border-color:#cfcfc8;box-shadow:0 0 0 3px rgba(0,0,0,.025)}
+.filterBar{border-radius:10px}
+.tr{padding:13px 15px}
+.tr.row:hover{background:#fbfbf8}
+
+/* Outreach */
+.outreachHero{
+  border-radius:16px;
+  padding:26px;
+  box-shadow:0 14px 38px rgba(0,0,0,.08);
+}
+.outreachHero h2{font-size:24px}
+.outreachGrid{gap:13px}
+.queueList,.sidePlan{border-radius:13px}
+.queueItem{padding:14px}
+.queueItem:hover{background:#fbfbf8}
+.sidePlan{padding:19px}
+.sidePlan h3{font-size:30px}
+
+/* Companies */
+.companyGrid{gap:13px}
+.companyCard{padding:17px;border-radius:14px}
+.companyStats span{background:#f5f5f0}
+
+/* Follow-ups */
+.followRow{padding:14px}
+.followRow:hover{background:#fbfbf8}
+
+/* Modal / drawer */
+.modalOverlay,.overlay{background:rgba(17,17,15,.58);backdrop-filter:blur(7px)}
+.setupModal{
+  border-radius:19px;
+  padding:32px;
+  box-shadow:0 35px 100px rgba(0,0,0,.22);
+}
+.setupModal h2{font-size:28px}
+.modalFields input,.fieldRow input{background:#fbfbf8;border-radius:9px}
+.modalFields input:hover,.fieldRow input:hover{border-color:#d1d1ca}
+.importBox,.profileImportBox{border-radius:12px}
+.importBox{background:#fafaf7}
+.drawer{
+  width:min(530px,100%);
+  padding:28px;
+  box-shadow:-25px 0 70px rgba(0,0,0,.14);
+}
+.drawerHeader h2{font-size:20px}
+.scoreBox{border-radius:12px;padding:17px}
+.scoreBox strong{font-size:31px}
+.nextAction{border-radius:11px}
+.draft{border-radius:11px}
+
+/* Floating CTA */
+.floatingImport{
+  right:32px;bottom:28px;
+  border-radius:11px;
+  min-height:42px;
+  padding:11px 15px;
+  box-shadow:0 14px 35px rgba(0,0,0,.18);
+  font-size:9px;
+}
+.floatingImport:hover{transform:translateY(-2px);background:#292926}
+
+/* =========================================================
+   MOBILE — app-like layout
+   ========================================================= */
+@media(max-width:760px){
+  body{padding-bottom:74px}
+
+  /* Compact brand bar; navigation becomes bottom dock */
+  .sidebar{
+    position:static;
+    width:100%;
+    height:58px;
+    padding:10px 13px;
+    background:transparent;
+    box-shadow:none;
+    z-index:50;
+  }
+  .brand{
+    width:max-content;
+    padding:5px 9px;
+    gap:9px;
+    border-radius:12px;
+    background:#191918;
+    box-shadow:0 8px 22px rgba(0,0,0,.11);
+  }
+  .brandLogo{width:29px;height:29px}
+  .brand b{font-size:13px}
+  .sidebar nav{
+    position:fixed;
+    left:10px;right:10px;bottom:10px;
+    height:58px;
+    z-index:55;
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:3px;
+    margin:0;
+    padding:5px;
+    overflow:visible;
+    background:rgba(25,25,24,.97);
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:17px;
+    box-shadow:0 14px 40px rgba(0,0,0,.20);
+    backdrop-filter:blur(14px);
+  }
+  .nav{
+    min-width:0;
+    width:100%;
+    height:48px;
+    padding:5px 3px;
+    border-radius:11px;
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    gap:3px;
+    font-size:7px;
+    color:#999992;
+  }
+  .nav:hover{transform:none;background:#292926}
+  .nav.active{background:#34342f;color:#fff}
+  .nav svg{width:16px;height:16px}
+  .nav span{display:block;line-height:1}
+  .nav em{
+    position:absolute;
+    margin:-28px -24px 0 0;
+    font-size:6px;
+    padding:2px 5px;
+  }
+  .sidebarBottom,.sideGoal{display:none}
+
+  .content{
+    width:100%;
+    margin-left:0;
+    padding:10px 14px 28px;
+  }
+  .topbar{margin-bottom:21px}
+  .topbar h1{font-size:27px;line-height:1.05;margin:3px 0 7px}
+  .topbar p{font-size:10px;line-height:1.55}
+  .topActions{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+    margin-top:14px;
+  }
+  .topActions button{min-height:42px}
+  .refresh,.secondary,.primary{min-height:40px}
+
+  .goalCard{
+    padding:18px 16px;
+    border-radius:14px;
+  }
+  .goalCard h2{font-size:18px}
+  .goalProgress{width:100%;margin-top:15px}
+  .stats{grid-template-columns:1fr 1fr;gap:8px}
+  .stat{
+    min-height:68px;
+    padding:11px 10px;
+    border-radius:12px;
+  }
+  .statIcon{width:30px;height:30px;border-radius:9px}
+  .statIcon svg{width:14px}
+  .stat strong{font-size:18px}
+  .stat span{font-size:7px}
+  .insightBar{padding:13px;border-radius:12px;margin-bottom:28px}
+  .sectionHead h2,.pageTitle h2{font-size:18px}
+  .sectionHead p,.pageTitle p{font-size:8px;line-height:1.5}
+  .cards{gap:9px}
+  .personCard{padding:14px;border-radius:13px;min-height:0}
+  .personCard:hover{transform:none;box-shadow:0 3px 12px rgba(0,0,0,.025)}
+
+  .heroCard{
+    padding:23px 18px;
+    gap:22px;
+    border-radius:16px;
+    min-height:0;
+  }
+  .heroCopy h2{font-size:29px;line-height:1.06}
+  .heroCopy p{font-size:10px;line-height:1.6}
+  .heroActions{margin-top:17px}
+  .heroActions .primary{width:100%;min-height:44px}
+  .heroVisual{padding:16px;border-radius:13px}
+  .howItWorks{border-radius:12px;padding:11px}
+  .howItWorks>div{padding:8px}
+
+  .search{height:45px;border-radius:10px}
+  .filterBar{border-radius:10px}
+  .table .tr.row{
+    border-radius:12px;
+    padding:13px;
+    box-shadow:0 2px 9px rgba(0,0,0,.018);
+  }
+
+  .outreachHero{
+    border-radius:14px;
+    padding:19px 16px;
+  }
+  .outreachHero h2{font-size:24px}
+  .queueProgress{width:100%;margin-top:15px}
+  .queueItem{padding:12px 10px;border-radius:0}
+  .queueOpen{min-height:34px}
+  .sidePlan{border-radius:12px}
+
+  .companyCard{border-radius:13px;padding:14px}
+  .followRow{padding:12px 10px}
+
+  .setupModal{
+    width:calc(100vw - 20px);
+    max-height:calc(100vh - 20px);
+    padding:20px 18px;
+    border-radius:16px;
+  }
+  .setupModal h2{font-size:23px}
+  .modalFooter{
+    margin-left:-18px;
+    margin-right:-18px;
+    padding-left:18px;
+    padding-right:18px;
+  }
+  .drawer{padding:21px 16px 32px}
+  .drawerHeader h2{font-size:19px}
+  .scoreBox{border-radius:11px}
+  .floatingImport{
+    left:14px;right:14px;bottom:82px;
+    justify-content:center;
+    min-height:44px;
+    border-radius:12px;
+  }
+}
+
+@media(max-width:380px){
+  .content{padding-left:11px;padding-right:11px}
+  .topbar h1{font-size:25px}
+  .heroCopy h2{font-size:26px}
+  .nav{font-size:6.5px}
+  .stats{gap:6px}
+  .stat{padding:9px 7px}
+}
