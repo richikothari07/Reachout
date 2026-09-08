@@ -4,7 +4,7 @@ import { ArrowRight, ArrowUpRight, BarChart3, Building2, Check, CheckCircle2, Ch
 
 type Connection={first_name:string;last_name:string;linkedin_url:string;company:string;position:string;connected_on:string}
 type Message={from:string;sender:string;to:string;recipient:string;date:string;content:string;folder:string}
-type Ranked=Connection & {score:number;reasons:string[];action:'Reach out'|'Follow up'|'Keep warm';lastOutgoing?:string|null;lastIncoming?:string|null;outgoingCount:number;incomingCount:number}
+type Ranked=Connection & {score:number;reasons:string[];action:'Reach out'|'Follow up'|'Keep warm';lastOutgoing?:string|null;lastIncoming?:string|null;outgoingCount:number;incomingCount:number;roleMatch:boolean;keywordMatches:string[]}
 type FileItem={id:string;name:string;type:'connections'|'messages'|null;rows:number;status:'ready'|'error'|'processing';error?:string}
 
 const roleHints=['Product Manager','Product Designer','Software Engineer','Growth Manager','Investment Analyst']
