@@ -16,7 +16,7 @@ async function allRows(client:any, table:string, userId:string, columns:string){
 function key(s=''){return s.toLowerCase().trim()}
 export async function GET(req:Request){
  try{
-  const u=new URL(req.url); const userId=u.searchParams.get('userId')||''; const target=u.searchParams.get('target')||'Product Manager'
+  const u=new URL(req.url); const userId=u.searchParams.get('userId')||''; const target=u.searchParams.get('target')||'Product Manager'; const keywords=u.searchParams.get('keywords')||''
   if(!userId) return NextResponse.json({error:'Missing userId.'},{status:400})
   const supabase=supabaseAdmin()
   const [connections,messages,imports]=await Promise.all([
@@ -36,7 +36,7 @@ export async function GET(req:Request){
    if(mine){s.outgoing_count++;if(!s.last_outgoing||dateMs(d)>dateMs(s.last_outgoing))s.last_outgoing=d}
    else {s.incoming_count++;if(!s.last_incoming||dateMs(d)>dateMs(s.last_incoming))s.last_incoming=d}
   }
-  const people=connections.map((c:any)=>classify(c,target,stats.get(key(c.linkedin_url))||stats.get(key(`${c.first_name} ${c.last_name}`)))).sort((a:any,b:any)=>b.score-a.score)
+  const people=connections.map((c:any)=>classify(c,target,stats.get(key(c.linkedin_url))||stats.get(key(`${c.first_name} ${c.last_name}`)),keywords)).sort((a:any,b:any)=>b.score-a.score)
   return NextResponse.json({connectionsCount:connections.length,messagesCount:messages.length,companiesCount:new Set(connections.map((x:any)=>x.company).filter(Boolean)).size,people,imports})
  }catch(e){console.error('DASHBOARD_ERROR',e);return NextResponse.json({error:e instanceof Error?e.message:'Could not load dashboard.'},{status:500})}
 }
