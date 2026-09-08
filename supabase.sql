@@ -98,3 +98,53 @@ $$;
 insert into storage.buckets (id, name, public)
 values ('reachout-imports', 'reachout-imports', false)
 on conflict (id) do nothing;
+
+
+-- Backend dashboard RPC. All dashboard table reads happen inside Postgres,
+-- so the Next.js API does not depend on PostgREST table schema discovery.
+create or replace function public.get_reachout_dashboard(p_user_id uuid)
+returns jsonb
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select jsonb_build_object(
+    'connections', coalesce((
+      select jsonb_agg(to_jsonb(c) - 'id')
+      from (
+        select first_name,last_name,linkedin_url,company,position,connected_on
+        from public.connections
+        where user_id = p_user_id
+        order by created_at desc
+        limit 50000
+      ) c
+    ), '[]'::jsonb),
+    'messages', coalesce((
+      select jsonb_agg(to_jsonb(m) - 'id')
+      from (
+        select sender_name,sender_url,recipient_name,recipient_urls,message_date
+        from public.messages
+        where user_id = p_user_id
+        order by created_at asc
+        limit 100000
+      ) m
+    ), '[]'::jsonb),
+    'imports', coalesce((
+      select jsonb_agg(to_jsonb(i) - 'user_id')
+      from (
+        select id,file_name,file_type,row_count,status,error,created_at
+        from public.imports
+        where user_id = p_user_id
+        order by created_at desc
+        limit 100
+      ) i
+    ), '[]'::jsonb)
+  );
+$$;
+
+revoke all on function public.get_reachout_dashboard(uuid) from public;
+grant execute on function public.get_reachout_dashboard(uuid) to service_role;
+
+-- Ask PostgREST to reload its schema immediately after the setup.
+notify pgrst, 'reload schema';

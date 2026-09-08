@@ -64,24 +64,32 @@ export async function GET(req:Request) {
     if (!userId) return NextResponse.json({ error:'userId is required.' }, { status:400 })
 
     const supabase = supabaseAdmin()
-    const [{ data:connections, error:cErr }, { data:imports, error:iErr }, messages] = await Promise.all([
-      supabase.from('connections').select('first_name,last_name,linkedin_url,company,position,connected_on').eq('user_id',userId).limit(50000),
-      supabase.from('imports').select('id,file_name,file_type,row_count,status,error,created_at').eq('user_id',userId).order('created_at',{ascending:false}).limit(100),
-      fetchAllMessages(supabase, userId)
-    ])
-    if (cErr) throw cErr
-    if (iErr) throw iErr
+
+    // Keep all table access inside Postgres. This avoids relying on the
+    // PostgREST table schema cache for the dashboard queries.
+    const { data: payload, error } = await supabase.rpc('get_reachout_dashboard', {
+      p_user_id: userId,
+    })
+    if (error) throw new Error(`Dashboard database error: ${error.message}`)
+
+    const connections = Array.isArray(payload?.connections) ? payload.connections : []
+    const messages = Array.isArray(payload?.messages) ? payload.messages : []
+    const imports = Array.isArray(payload?.imports) ? payload.imports : []
 
     const statsMap = buildMessageStats(messages, ownerName)
-    const ranked = (connections || [])
+    const ranked = connections
       .map((c:any) => classify(c as Connection, target, statsMap.get(String(c.linkedin_url || '').toLowerCase())))
       .sort((a:any,b:any) => b.score - a.score)
 
-    const followups = ranked.filter((p:any) => p.action === 'Follow up' && p.lastOutgoing && (Date.now() - dateMs(p.lastOutgoing)) / 86400000 >= days)
+    const followups = ranked.filter((p:any) =>
+      p.action === 'Follow up' && p.lastOutgoing &&
+      (Date.now() - dateMs(p.lastOutgoing)) / 86400000 >= days
+    )
+
     return NextResponse.json({
-      connectionsCount: connections?.length || 0,
+      connectionsCount: connections.length,
       messagesCount: messages.length,
-      imports: imports || [],
+      imports,
       people: ranked.slice(0,5000),
       recommended: ranked.filter((p:any) => p.action === 'Reach out').slice(0,10),
       followups: followups.slice(0,100)
