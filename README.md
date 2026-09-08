@@ -1,17 +1,16 @@
 # ReachOut
 
-Backend-driven LinkedIn network outreach CRM.
+A network intelligence dashboard for prioritising who to contact next.
 
-## Architecture
-The browser is UI only. LinkedIn CSV parsing, imports, database reads/writes, message analysis and recommendation scoring run in Next.js server/API routes on Vercel. Supabase is used for private file storage and Postgres.
+## Flow
+1. Open ReachOut.
+2. Enter your name and target role in the single setup panel.
+3. Select Connections.csv and messages.csv together.
+4. ReachOut parses the LinkedIn exports server-side and saves normalized rows to Supabase.
+5. The dashboard immediately reloads from Supabase and shows counts, ranked people, follow-ups and the people directory.
 
-For files larger than Vercel's request limit, the browser receives a short-lived signed Supabase Storage upload URL; the browser only transfers the raw file. The backend then downloads and parses it. No LinkedIn data is parsed or scored in React.
+## Required Vercel environment variables
+- `SUPABASE_URL` (or `NEXT_PUBLIC_SUPABASE_URL`)
+- `SUPABASE_SECRET_KEY` (or `SUPABASE_SERVICE_ROLE_KEY`)
 
-## Setup
-1. Connect the project to the Supabase Vercel Marketplace integration.
-2. Run `supabase.sql` once in Supabase SQL Editor.
-3. Deploy to Vercel.
-4. Visit `/api/health` on the deployed domain. It should return `ok: true` and show `imports`, `connections`, `messages`, and `storage` as healthy.
-5. Upload LinkedIn Connections.csv and messages.csv from the app.
-
-The backend accepts the Marketplace variables `SUPABASE_URL` and `SUPABASE_SECRET_KEY`, with legacy fallbacks for older projects.
+Run the SQL in `supabase.sql` once in the same Supabase project referenced by `SUPABASE_URL`.

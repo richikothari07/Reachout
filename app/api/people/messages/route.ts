@@ -1,17 +1,5 @@
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase-server'
 export const runtime='nodejs'
-export async function GET(req:Request){
-  try{
-    const u=new URL(req.url); const userId=u.searchParams.get('userId'); const linkedinUrl=u.searchParams.get('linkedinUrl')||''
-    if(!userId||!linkedinUrl) return NextResponse.json({error:'userId and linkedinUrl are required.'},{status:400})
-    const supabase=supabaseAdmin()
-    const [a,b]=await Promise.all([
-      supabase.from('messages').select('sender_name,sender_url,recipient_name,recipient_urls,message_date,content,folder').eq('user_id',userId).eq('sender_url',linkedinUrl).limit(50),
-      supabase.from('messages').select('sender_name,sender_url,recipient_name,recipient_urls,message_date,content,folder').eq('user_id',userId).eq('recipient_urls',linkedinUrl).limit(50)
-    ])
-    if(a.error)throw a.error;if(b.error)throw b.error
-    const seen=new Set<string>(); const data=[...(a.data||[]),...(b.data||[])].filter((m:any)=>{const k=`${m.message_date}|${m.sender_name}|${m.recipient_name}|${m.content}`;if(seen.has(k))return false;seen.add(k);return true}).sort((x:any,y:any)=>Date.parse(y.message_date)-Date.parse(x.message_date)).slice(0,50)
-    return NextResponse.json({messages:data.map((m:any)=>({from:m.sender_name,sender:m.sender_url,to:m.recipient_name,recipient:m.recipient_urls,date:m.message_date,content:m.content,folder:m.folder}))})
-  }catch(e){ return NextResponse.json({error:e instanceof Error?e.message:'Could not load messages.'},{status:500}) }
-}
+async function all(client:any,userId:string){let out:any[]=[];let from=0;while(true){const {data,error}=await client.from('messages').select('sender_name,sender_url,recipient_name,recipient_urls,message_date,content,folder').eq('user_id',userId).range(from,from+999);if(error)throw new Error(error.message);out.push(...(data||[]));if(!data||data.length<1000)break;from+=1000;if(from>100000)break}return out}
+export async function GET(req:Request){try{const u=new URL(req.url);const userId=u.searchParams.get('userId')||'';const url=(u.searchParams.get('linkedinUrl')||'').toLowerCase();if(!userId)return NextResponse.json({error:'Missing userId.'},{status:400});const s=supabaseAdmin();const allMessages=await all(s,userId);const messages=allMessages.filter((m:any)=>String(m.sender_url||'').toLowerCase()===url||String(m.recipient_urls||'').toLowerCase().includes(url));messages.sort((a:any,b:any)=>Date.parse(String(a.message_date||''))-Date.parse(String(b.message_date||'')));return NextResponse.json({messages})}catch(e){return NextResponse.json({error:e instanceof Error?e.message:'Could not load messages.'},{status:500})}}

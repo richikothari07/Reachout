@@ -1,21 +1,4 @@
 import { NextResponse } from 'next/server'
 import { supabaseAdmin, ensureImportBucket } from '@/lib/supabase-server'
-
-export const runtime = 'nodejs'
-export const dynamic = 'force-dynamic'
-
-export async function GET() {
-  try {
-    const supabase = supabaseAdmin()
-    await ensureImportBucket(supabase)
-    const checks: Record<string, unknown> = { backend: true, storage: true }
-    for (const table of ['imports', 'connections', 'messages']) {
-      const { error } = await supabase.from(table).select('*', { count: 'exact', head: true })
-      checks[table] = error ? error.message : true
-    }
-    const ok = Object.values(checks).every(v => v === true)
-    return NextResponse.json({ ok, checks }, { status: ok ? 200 : 500 })
-  } catch (e) {
-    return NextResponse.json({ ok: false, error: e instanceof Error ? e.message : 'Backend health check failed.' }, { status: 500 })
-  }
-}
+export const runtime='nodejs'
+export async function GET(){try{const s=supabaseAdmin();const [{data,error},{data:imports,error:ie}]=await Promise.all([s.from('connections').select('id').limit(1),s.from('imports').select('id').limit(1)]);if(error)throw new Error(error.message);if(ie)throw new Error(ie.message);await ensureImportBucket(s);return NextResponse.json({ok:true,db:true,bucket:true})}catch(e){return NextResponse.json({ok:false,error:e instanceof Error?e.message:'Health check failed.'},{status:500})}}
