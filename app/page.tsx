@@ -6,7 +6,7 @@ import { ArrowUpRight, Check, ChevronRight, Clock3, FileUp, Flame, MessageSquare
 type Connection={first:string;last:string;url:string;company:string;position:string;connected:string}
 type Message={from:string;sender:string;to:string;recipient:string;date:string;content:string;folder:string}
 type Ranked=Connection & {score:number; reasons:string[]; action:'Reach out'|'Follow up'|'Keep warm'; lastOutgoing?:string; lastIncoming?:string; outgoingCount:number; incomingCount:number}
-type FileItem={id:string;name:string;type:'connections'|'messages';rows:number;status:'ready'|'error';error?:string}
+type FileItem={id:string;name:string;type:'connections'|'messages'|null;rows:number;status:'ready'|'error';error?:string}
 
 const ROLE_SYNONYMS:Record<string,string[]>={
  'product manager':['product','product manager','product management','pm','platform','growth','product strategy','product lead','product head','chief product','cpo'],
