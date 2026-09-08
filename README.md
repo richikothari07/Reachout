@@ -1,66 +1,31 @@
 # ReachOut
 
-ReachOut is a network intelligence MVP: upload LinkedIn Connections and Messages exports, tell it the role you want, and it ranks who to contact and who is due for follow-up.
+ReachOut is a backend-driven network outreach CRM for LinkedIn exports.
 
 ## Architecture
 
-- Next.js 14 frontend + API routes
-- Supabase Postgres for persistent connections/messages/imports
-- Supabase private Storage for raw uploaded CSVs
-- Server-side parsing with Papa Parse
-- Batch upserts + database deduplication
-- Server-side recommendation and follow-up scoring
-- Direct-to-Storage uploads so large CSVs do not have to pass through a Vercel function
+The browser is a thin UI. LinkedIn CSV parsing, validation, deduplication, message analysis, ranking and database writes happen on Vercel server routes and Supabase.
+
+- `/api/import/upload` receives small CSV files on the Vercel backend and writes them to private Supabase Storage.
+- Files larger than the Vercel request limit automatically use a short-lived signed Storage upload; **the file is still processed only by the backend**.
+- `/api/import/process` downloads the uploaded file server-side, detects the LinkedIn export type, parses it and writes normalized rows to Postgres.
+- `/api/dashboard` reads the database and calculates message stats and recommendations server-side.
+- `/api/people/messages` reads conversations server-side.
+- The browser never parses the LinkedIn exports and no Supabase database queries are made from React.
 
 ## Supabase setup
 
-1. Create a Supabase project.
-2. Open **SQL Editor** and run `supabase.sql`.
-3. In Vercel, add:
+Run `supabase.sql` once in Supabase SQL Editor. It creates `imports`, `connections`, `messages`, indexes, and the private `reachout-imports` bucket.
 
-```env
-NEXT_PUBLIC_SUPABASE_URL=https://YOUR_PROJECT.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=YOUR_ANON_KEY
-SUPABASE_SERVICE_ROLE_KEY=YOUR_SERVICE_ROLE_KEY
-```
+## Vercel environment variables
 
-Keep `SUPABASE_SERVICE_ROLE_KEY` server-only. Do not expose it in client code.
+Use the Vercel Supabase integration. The server requires:
 
-4. Redeploy Vercel.
+- `SUPABASE_URL`
+- `SUPABASE_SECRET_KEY`
 
-The current MVP uses an anonymous browser-generated user ID so there is no auth setup required for the prototype. Add Supabase Auth before sharing the product with multiple users.
+The browser does not require a Supabase key for the application logic.
 
-## Local development
+## Deployment
 
-```bash
-npm install
-npm run dev
-```
-
-## LinkedIn import
-
-ReachOut can accept multiple CSVs at once and in any order. It detects Connections vs Messages from the file contents/name, stores the raw file in private Storage, parses it on the server, batches rows into Postgres, and deduplicates repeated exports.
-
-## Current recommendation logic
-
-For a target such as Product Manager, the backend considers:
-
-- title similarity to the target role
-- founders/executives/heads of product/hiring and recruiting roles
-- existing conversation history
-- whether the person has replied
-- whether an outgoing message is unanswered
-- how long it has been since the last outgoing message
-
-Jobs are intentionally not part of this version yet; they can be added as a separate signal later.
-
-
-## Vercel + Supabase
-
-Use the official Supabase integration in Vercel. It automatically syncs the Supabase project URL and publishable/secret keys to the Vercel project. This app expects `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_URL`, and `SUPABASE_SECRET_KEY`.
-
-After connecting the integration, run `supabase.sql` once in the Supabase SQL Editor, then redeploy.
-
-
-### Dashboard note
-The dashboard computes message statistics server-side instead of depending on the optional `get_message_stats` RPC, making the deployment more robust after database setup.
+Push the project to GitHub and connect it to Vercel. After changing environment variables, create a new deployment.
