@@ -60,3 +60,7 @@ Jobs are intentionally not part of this version yet; they can be added as a sepa
 Use the official Supabase integration in Vercel. It automatically syncs the Supabase project URL and publishable/secret keys to the Vercel project. This app expects `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_URL`, and `SUPABASE_SECRET_KEY`.
 
 After connecting the integration, run `supabase.sql` once in the Supabase SQL Editor, then redeploy.
+
+
+### Dashboard note
+The dashboard computes message statistics server-side instead of depending on the optional `get_message_stats` RPC, making the deployment more robust after database setup.
