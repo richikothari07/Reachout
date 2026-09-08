@@ -1,0 +1,100 @@
+create extension if not exists pgcrypto;
+
+create table if not exists public.imports (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null,
+  file_name text not null,
+  file_path text not null unique,
+  file_type text not null check (file_type in ('connections','messages')),
+  row_count integer not null default 0,
+  status text not null default 'processing',
+  error text,
+  created_at timestamptz not null default now()
+);
+
+create table if not exists public.connections (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null,
+  import_id uuid references public.imports(id) on delete cascade,
+  linkedin_url text,
+  dedupe_key text not null,
+  first_name text not null default '',
+  last_name text not null default '',
+  company text not null default '',
+  position text not null default '',
+  connected_on text not null default '',
+  created_at timestamptz not null default now(),
+  unique(user_id, dedupe_key)
+);
+
+create table if not exists public.messages (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null,
+  import_id uuid references public.imports(id) on delete cascade,
+  conversation_id text,
+  sender_name text not null default '',
+  sender_url text not null default '',
+  recipient_name text not null default '',
+  recipient_urls text not null default '',
+  message_date text not null default '',
+  content text not null default '',
+  folder text not null default '',
+  created_at timestamptz not null default now(),
+  dedupe_key text not null,
+  unique(user_id, dedupe_key)
+);
+
+create index if not exists connections_import_idx on public.connections(import_id);
+create index if not exists messages_import_idx on public.messages(import_id);
+create index if not exists connections_user_idx on public.connections(user_id);
+create index if not exists connections_company_idx on public.connections(user_id, company);
+create index if not exists messages_user_idx on public.messages(user_id);
+create index if not exists messages_sender_idx on public.messages(user_id, sender_url);
+create index if not exists messages_date_idx on public.messages(user_id, message_date desc);
+
+create or replace function public.get_message_stats(p_user_id uuid, p_owner_name text default 'Richi Kothari')
+returns table (
+  contact_url text,
+  contact_name text,
+  outgoing_count bigint,
+  incoming_count bigint,
+  last_outgoing text,
+  last_incoming text
+)
+language sql stable
+as $$
+  with expanded as (
+    select
+      m.*,
+      case
+        when lower(trim(m.sender_name)) = lower(trim(p_owner_name)) then true
+        else false
+      end as is_self
+    from public.messages m
+    where m.user_id = p_user_id
+  ),
+  contacts as (
+    select
+      case when is_self then nullif(recipient_urls,'') else nullif(sender_url,'') end as url,
+      case when is_self then nullif(recipient_name,'') else nullif(sender_name,'') end as name,
+      is_self,
+      message_date
+    from expanded
+  )
+  select
+    url,
+    max(name) filter (where name is not null),
+    count(*) filter (where is_self),
+    count(*) filter (where not is_self),
+    max(message_date) filter (where is_self),
+    max(message_date) filter (where not is_self)
+  from contacts
+  where url is not null
+  group by url;
+$$;
+
+-- Storage bucket. If this fails in SQL editor because storage already exists,
+-- create a private bucket named reachout-imports manually in Storage.
+insert into storage.buckets (id, name, public)
+values ('reachout-imports', 'reachout-imports', false)
+on conflict (id) do nothing;
