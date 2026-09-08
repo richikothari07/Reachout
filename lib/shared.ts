@@ -1,6 +1,6 @@
 export type Connection = { first_name:string; last_name:string; linkedin_url:string; company:string; position:string; connected_on:string }
 export type MessageStats = { contact_url:string; contact_name:string; outgoing_count:number; incoming_count:number; last_outgoing:string|null; last_incoming:string|null }
-export type RankedPerson = Connection & { score:number; reasons:string[]; action:'Reach out'|'Follow up'|'Keep warm'; lastOutgoing?:string|null; lastIncoming?:string|null; outgoingCount:number; incomingCount:number; roleMatch:boolean; keywordMatches:string[] }
+export type RankedPerson = Connection & { score:number; reasons:string[]; action:'Reach out'|'Follow up'|'Keep warm'; lastOutgoing?:string|null; lastIncoming?:string|null; outgoingCount:number; incomingCount:number; roleMatch:boolean; keywordMatches:string[]; profileFit:boolean }
 
 const ROLE_SYNONYMS: Record<string,string[]> = {
   'product manager':['product','product manager','product management','pm','platform','growth','product strategy','product lead','product head','chief product','cpo'],
@@ -17,10 +17,21 @@ export function termsFor(target:string){ const t=norm(target); for(const k of Ob
 export function keywordTerms(keywords:string|string[]=''){ const raw=Array.isArray(keywords)?keywords:keywords.split(','); return raw.map(norm).filter(x=>x.length>1) }
 export function dateMs(s:string|null|undefined){ if(!s) return 0; const d=Date.parse(s.replace(' UTC','Z')); return Number.isFinite(d)?d:0 }
 export function daysAgo(s:string|null|undefined){ const d=dateMs(s); return d ? Math.max(0, Math.floor((Date.now()-d)/86400000)) : 9999 }
-export function classify(c:Connection,target:string,stats?:MessageStats,keywords:string|string[]=''){
+
+export type ProfileContext = { name?:string; headline?:string; summary?:string; industry?:string; positions?:string[]; positionDescriptions?:string[]; skills?:string[] }
+function profileTerms(profile?:ProfileContext){
+  if(!profile) return [] as string[]
+  const raw=[profile.headline||'',profile.summary||'',profile.industry||'',...(profile.positions||[]),...(profile.positionDescriptions||[]),...(profile.skills||[])]
+  const stop=new Set(['the','and','with','from','for','this','that','have','been','into','your','work','working','using','over','more','across','role','roles','team','teams','company','companies','manager','management','analyst','senior','associate','intern','i','a','an','of','to','in','on','at','as','is','are','was','were','my','our','their'])
+  return [...new Set(raw.join(' ').toLowerCase().match(/[a-z][a-z0-9+.-]{2,}/g)||[])].filter(x=>!stop.has(x)).slice(0,120)
+}
+export function classify(c:Connection,target:string,stats?:MessageStats,keywords:string|string[]='',profile?:ProfileContext){
   const pos=norm(c.position), company=norm(c.company), terms=termsFor(target), keys=keywordTerms(keywords)
   const hits=terms.filter(t=>pos.includes(t)).length
   const keywordMatches=keys.filter(t=>pos.includes(t)||company.includes(t))
+  const pTerms=profileTerms(profile)
+  const profileMatches=pTerms.filter(t=>pos.includes(t)||company.includes(t))
+  const profileFit=profileMatches.length>=1
   const roleMatch=hits>0, hiring=HIRING.some(t=>pos.includes(t)), leadership=LEADERS.some(t=>pos.includes(t))
   const outgoing=stats?.outgoing_count||0, incoming=stats?.incoming_count||0
   const lastOut=stats?.last_outgoing||null, lastIn=stats?.last_incoming||null
@@ -28,10 +39,11 @@ export function classify(c:Connection,target:string,stats?:MessageStats,keywords
   let score=25; const reasons:string[]=[]
   if(roleMatch){score+=35; reasons.push(`Profile is relevant to ${target}`)}
   if(keywordMatches.length){score+=Math.min(15,keywordMatches.length*5); reasons.push(`Matches ${keywordMatches.slice(0,3).join(', ')}`)}
+  if(profileFit){score+=Math.min(10,profileMatches.length*3); reasons.push(`Good fit with your background`)}
   if(hiring){score+=28; reasons.push('Likely able to hire for this role')} else if(leadership){score+=18; reasons.push('Senior decision-maker at the company')}
   if(!outgoing && !incoming){score+=10; reasons.push('No previous conversation — good for first outreach')}
   if(awaiting && daysAgo(lastOut)>=7){score+=12; reasons.push(`You messaged ${daysAgo(lastOut)} days ago with no reply`)}
   if(incoming>0 && !awaiting) reasons.push('Has replied to you before')
   if(!roleMatch && !hiring && !leadership){score-=15; reasons.push('Lower relevance to your target')}
-  return { ...c, score:Math.max(1,Math.min(99,score)), reasons, action: awaiting && daysAgo(lastOut)>=7 ? 'Follow up' : (roleMatch||hiring||leadership ? 'Reach out':'Keep warm'), lastOutgoing:lastOut, lastIncoming:lastIn, outgoingCount:outgoing, incomingCount:incoming, roleMatch, keywordMatches }
+  return { ...c, score:Math.max(1,Math.min(99,score)), reasons, action: awaiting && daysAgo(lastOut)>=7 ? 'Follow up' : (roleMatch||hiring||leadership ? 'Reach out':'Keep warm'), lastOutgoing:lastOut, lastIncoming:lastIn, outgoingCount:outgoing, incomingCount:incoming, roleMatch, keywordMatches, profileFit }
 }
