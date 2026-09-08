@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import crypto from 'crypto'
-import { supabaseAdmin } from '@/lib/supabase-server'
+import { supabaseAdmin, ensureImportBucket } from '@/lib/supabase-server'
 
 export const runtime = 'nodejs'
 export const maxDuration = 60
@@ -16,17 +16,24 @@ export async function POST(req: Request) {
     if (file.size > 4 * 1024 * 1024) {
       return NextResponse.json({ error: 'FILE_TOO_LARGE', useSignedUpload: true }, { status: 413 })
     }
+
+    const supabase = supabaseAdmin()
+    await ensureImportBucket(supabase)
+
     const safe = file.name.replace(/[^a-zA-Z0-9._-]/g, '_')
     const path = `${userId}/${crypto.randomUUID()}-${safe}`
-    const supabase = supabaseAdmin()
     const bytes = new Uint8Array(await file.arrayBuffer())
-    const { error } = await supabase.storage.from('reachout-imports').upload(path, bytes, { contentType: file.type || 'text/csv', upsert: false })
+    const { error } = await supabase.storage.from('reachout-imports').upload(path, bytes, {
+      contentType: file.type || 'text/csv', upsert: false,
+    })
     if (error) throw error
+
     const origin = new URL(req.url).origin
     const processResponse = await fetch(`${origin}/api/import/process`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ userId, path, fileName: file.name })
+      body: JSON.stringify({ userId, path, fileName: file.name }),
+      cache: 'no-store',
     })
     const result = await processResponse.json()
     if (!processResponse.ok) throw new Error(result.error || 'Import processing failed.')
