@@ -71,7 +71,9 @@ export default function Home(){
  const followups=ranked.filter(x=>x.action==='Follow up'&&x.lastOutgoing&&daysAgo(x.lastOutgoing)>=days&&!followedUp.includes(x.linkedin_url||`${x.first_name}-${x.last_name}`))
  const recommended=ranked.filter(x=>x.action==='Reach out').slice(0,6)
  const queue=useMemo(()=>[...followups,...recommended].filter(p=>!contacted.includes(p.linkedin_url||`${p.first_name}-${p.last_name}`)).filter((p,i,a)=>a.findIndex(x=>(x.linkedin_url||`${x.first_name}-${x.last_name}`)===(p.linkedin_url||`${p.first_name}-${p.last_name}`))===i).slice(0,12),[followups,recommended])
- const people=ranked.filter(c=>{const q=`${c.first_name} ${c.last_name} ${c.company} ${c.position}`.toLowerCase().includes(query.toLowerCase());const f=filter==='All'||(filter==='Not contacted'?(c.outgoingCount===0&&c.incomingCount===0):c.action===filter);return q&&f})
+ const activeRanked=ranked.filter(p=>{const key=p.linkedin_url||`${p.first_name}-${p.last_name}`;return !contacted.includes(key)&&!followedUp.includes(key)})
+ const completedPeople=ranked.filter(p=>{const key=p.linkedin_url||`${p.first_name}-${p.last_name}`;return contacted.includes(key)||followedUp.includes(key)})
+ const people=activeRanked.filter(c=>{const q=`${c.first_name} ${c.last_name} ${c.company} ${c.position}`.toLowerCase().includes(query.toLowerCase());const f=filter==='All'||(filter==='Not contacted'?(c.outgoingCount===0&&c.incomingCount===0):c.action===filter);return q&&f})
  const highPriority=activeRanked.filter(x=>x.score>=75).length
  const hiringSignals=activeRanked.filter(x=>/founder|co-founder|ceo|cpo|vp|head of|director|recruit|talent|hiring/i.test(x.position||'')).length
  const companies=useMemo(()=>new Set(connections.map(c=>c.company).filter(Boolean)).size,[connections])
