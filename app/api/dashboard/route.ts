@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { supabaseAdmin } from '@/lib/supabase-server'
+import { authenticatedUser, supabaseAdmin } from '@/lib/supabase-server'
 import { classify, dateMs } from '@/lib/shared'
 export const runtime='nodejs'
 
@@ -16,11 +16,10 @@ async function allRows(client:any, table:string, userId:string, columns:string){
 function key(s=''){return s.toLowerCase().trim()}
 export async function GET(req:Request){
  try{
-  const u=new URL(req.url); const userId=u.searchParams.get('userId')||''; const target=u.searchParams.get('target')||'Product Manager'; const keywords=u.searchParams.get('keywords')||''; let profile:any={}; try{profile=JSON.parse(u.searchParams.get('profile')||'{}')}catch{}
-  if(!userId) return NextResponse.json({error:'Missing userId.'},{status:400})
+  const u=new URL(req.url); const user=await authenticatedUser(req); const userId=user.id; const target=u.searchParams.get('target')||'Product Manager'; const keywords=u.searchParams.get('keywords')||''; let profile:any={}; try{profile=JSON.parse(u.searchParams.get('profile')||'{}')}catch{}
   const supabase=supabaseAdmin()
   const [connections,messages,imports]=await Promise.all([
-   allRows(supabase,'connections',userId,'first_name,last_name,linkedin_url,company,position,connected_on'),
+   allRows(supabase,'connections',userId,'first_name,last_name,linkedin_url,company,position,connected_on,education'),
    allRows(supabase,'messages',userId,'sender_name,sender_url,recipient_name,recipient_urls,message_date,content,folder'),
    allRows(supabase,'imports',userId,'id,file_name,file_type,row_count,status,error,created_at')
   ])

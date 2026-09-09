@@ -16,8 +16,10 @@ function findHeader(text: string, matcher: (h: string[]) => boolean) {
 function guess(text: string, fileName: string) {
   const n = fileName.toLowerCase()
   if (n.includes('message')) return 'messages' as const
+  if (n.includes('education') || n.includes('school')) return 'education' as const
   if (n.includes('connection')) return 'connections' as const
   if (text.includes('CONVERSATION ID') && text.includes('CONTENT')) return 'messages' as const
+  if ((text.includes('School Name') || text.includes('SCHOOL NAME')) && (text.includes('First Name') || text.includes('FIRST NAME'))) return 'education' as const
   if (text.includes('First Name') && text.includes('Last Name') && text.includes('Company')) return 'connections' as const
   throw new Error('Could not identify this LinkedIn export. Upload the LinkedIn Connections.csv or messages.csv file.')
 }
@@ -80,6 +82,32 @@ export async function importCsvText(supabase: ImporterSupabase, userId: string, 
       const { error: updateError } = await supabase.from('imports').update({ row_count: rows.length, status: 'ready', error: null }).eq('id', importId)
       if (updateError) throw new Error(`Imported connections, but could not update import status: ${updateError.message}`)
       return { type, rows: rows.length, importId }
+    }
+
+    if (type === 'education') {
+      const body = findHeader(text, h => (h.includes('School Name') || h.includes('SCHOOL NAME')) && (h.includes('First Name') || h.includes('FIRST NAME')))
+      const parsed = Papa.parse<Record<string, string>>(body, { header: true, skipEmptyLines: true, transformHeader: h => h.replace(/^\uFEFF/, '').trim() })
+      const rows = parsed.data.map(x => {
+        const first = String(x['First Name'] || x['FIRST NAME'] || '').trim()
+        const last = String(x['Last Name'] || x['LAST NAME'] || '').trim()
+        const school = String(x['School Name'] || x['SCHOOL NAME'] || x['School'] || '').trim()
+        const degree = String(x['Degree Name'] || x['DEGREE NAME'] || '').trim()
+        const field = String(x['Field Of Study'] || x['FIELD OF STUDY'] || '').trim()
+        const url = String(x.URL || x['Profile URL'] || x['LinkedIn URL'] || '').trim()
+        return { first, last, school, education: [school, degree, field].filter(Boolean).join(' · '), url }
+      }).filter(x => x.first || x.last || x.url)
+      let updated = 0
+      for (const row of rows) {
+        let q = supabase.from('connections').update({ education: row.education }).eq('user_id', userId)
+        if (row.url) q = q.eq('linkedin_url', row.url)
+        else { q = q.eq('first_name', row.first).eq('last_name', row.last) }
+        const { data, error } = await q.select('id')
+        if (error) throw new Error(`Could not save education: ${error.message}`)
+        updated += (data || []).length
+      }
+      const { error: updateError } = await supabase.from('imports').update({ row_count: updated, status: 'ready', error: null }).eq('id', importId)
+      if (updateError) throw new Error(`Saved education, but could not update import status: ${updateError.message}`)
+      return { type, rows: updated, importId }
     }
 
     const body = findHeader(text, h => h.includes('CONVERSATION ID') && h.includes('FROM') && h.includes('TO') && h.includes('CONTENT'))

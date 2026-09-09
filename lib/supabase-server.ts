@@ -23,3 +23,13 @@ export async function ensureImportBucket(supabase: ReturnType<typeof supabaseAdm
     }
   }
 }
+
+export async function authenticatedUser(req: Request) {
+  const auth = req.headers.get('authorization') || ''
+  const token = auth.startsWith('Bearer ') ? auth.slice(7) : ''
+  if (!token) throw new Error('Authentication required. Please sign in.')
+  const supabase = supabaseAdmin()
+  const { data, error } = await supabase.auth.getUser(token)
+  if (error || !data.user) throw new Error('Your session has expired. Please sign in again.')
+  return data.user
+}
