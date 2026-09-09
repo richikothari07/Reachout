@@ -33,7 +33,7 @@ export default function Home(){
 
  useEffect(()=>{let mounted=true; supabaseBrowser.auth.getSession().then(({data})=>{if(!mounted)return;const session=data.session;if(session){setSignedIn(true);setUserId(session.user.id);setAccountEmail(session.user.email||'')}setAuthReady(true)});const {data:{subscription}}=supabaseBrowser.auth.onAuthStateChange((_event,session)=>{if(!mounted)return;if(session){setSignedIn(true);setUserId(session.user.id);setAccountEmail(session.user.email||'');setStateLoaded(false)}else{setSignedIn(false);setUserId('');setAccountEmail('');setStateLoaded(false)}});return()=>{mounted=false;subscription.unsubscribe()}},[])
  const apiFetch=async(input:string,init:RequestInit={})=>{const {data}=await supabaseBrowser.auth.getSession();const token=data.session?.access_token;if(!token)throw new Error('Please sign in again.');const headers=new Headers(init.headers||{});headers.set('Authorization',`Bearer ${token}`);return fetch(input,{...init,headers})}
- const loadState=async()=>{try{const r=await apiFetch('/api/state',{cache:'no-store'});const d=await r.json();if(!r.ok)throw new Error(d.error||'Could not load your account.');const x=d.state||{};if(x.owner_name!==undefined)setOwnerName(x.owner_name);if(x.target)setTarget(x.target);if(x.keywords!==undefined)setKeywords(x.keywords);if(x.goal)setGoal(x.goal);if(x.goal_target)setGoalTarget(Number(x.goal_target));if(x.conversations!==undefined)setConversations(Number(x.conversations));if(x.profile&&Object.keys(x.profile).length)setProfile(x.profile);if(Array.isArray(x.contacted))setContacted(x.contacted);if(Array.isArray(x.followed_up))setFollowedUp(x.followed_up);if(!d.exists)setOnboarding(true);setStateLoaded(true)}catch(e){flash(e instanceof Error?e.message:'Could not load account.');setStateLoaded(true)}}
+ const loadState=async()=>{try{const r=await apiFetch('/api/state',{cache:'no-store'});const d=await r.json();if(!r.ok)throw new Error(d.error||'Could not load your account.');const x=d.state||{};if(x.owner_name)setOwnerName(x.owner_name); else if(x.profile?.name)setOwnerName(x.profile.name);if(x.target)setTarget(x.target);if(x.keywords!==undefined)setKeywords(x.keywords);if(x.goal)setGoal(x.goal);if(x.goal_target)setGoalTarget(Number(x.goal_target));if(x.conversations!==undefined)setConversations(Number(x.conversations));if(x.profile&&Object.keys(x.profile).length)setProfile(x.profile);if(Array.isArray(x.contacted))setContacted(x.contacted);if(Array.isArray(x.followed_up))setFollowedUp(x.followed_up);if(!d.exists)setOnboarding(true);setStateLoaded(true)}catch(e){flash(e instanceof Error?e.message:'Could not load account.');setStateLoaded(true)}}
  useEffect(()=>{if(!signedIn)return;loadState()},[signedIn])
  const flash=(s:string)=>{setNotice(s);window.setTimeout(()=>setNotice(''),3500)}
  const loadDashboard=async(retries=2)=>{if(!userId)return;setLoading(true);setDataError('');let last='Could not load your dashboard.';try{for(let attempt=0;attempt<=retries;attempt++){try{const r=await apiFetch(`/api/dashboard?userId=${encodeURIComponent(userId)}&ownerName=${encodeURIComponent(ownerName)}&target=${encodeURIComponent(target)}&keywords=${encodeURIComponent(keywords)}&days=${days}&profile=${encodeURIComponent(JSON.stringify(profile||{}))}`,{cache:'no-store'});const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.error||`Dashboard request failed (${r.status})`);setConnectionCount(Number(d.connectionsCount||0));setMessageCount(Number(d.messagesCount||0));setRanked(Array.isArray(d.people)?d.people:[]);setConnections((d.people||[]).map((p:any)=>({first_name:p.first_name||'',last_name:p.last_name||'',linkedin_url:p.linkedin_url||'',company:p.company||'',position:p.position||'',connected_on:p.connected_on||''})));setFiles((d.imports||[]).map((x:any)=>({id:x.id,name:x.file_name,type:x.file_type,rows:Number(x.row_count||0),status:x.status==='error'?'error':'ready',error:x.error||undefined})));return}catch(e){last=e instanceof Error?e.message:String(e);if(attempt<retries)await new Promise(r=>setTimeout(r,700*(attempt+1)))}}throw new Error(last)}catch(e){const msg=e instanceof Error?e.message:last;setDataError(msg);flash(msg)}finally{setLoading(false)}}
@@ -78,8 +78,30 @@ export default function Home(){
  const hiringSignals=activeRanked.filter(x=>/founder|co-founder|ceo|cpo|vp|head of|director|recruit|talent|hiring/i.test(x.position||'')).length
  const hasData=connectionCount>0||messageCount>0
  const goalPct=Math.min(100,Math.round((conversations/Math.max(goalTarget,1))*100))
- const markContacted=(p:Ranked)=>{const key=p.linkedin_url||`${p.first_name}-${p.last_name}`;const isContacted=contacted.includes(key);const next=isContacted?contacted.filter(x=>x!==key):[...contacted,key];setContacted(next);flash(isContacted?'Contacted status removed. They are back in your outreach queue.':'Marked as contacted. Your outreach queue is updated.')}
- const toggleFollowedUp=(p:Ranked)=>{const key=p.linkedin_url||`${p.first_name}-${p.last_name}`;const next=followedUp.includes(key)?followedUp.filter(x=>x!==key):[...followedUp,key];setFollowedUp(next);flash(next.includes(key)?'Marked as followed up.':'Follow-up restored to your queue.')}
+ const persistActionState=async(nextContacted:string[],nextFollowedUp:string[])=>{
+  try{
+   const r=await apiFetch('/api/state',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({contacted:nextContacted,followed_up:nextFollowedUp})});
+   const d=await r.json().catch(()=>({}));
+   if(!r.ok)throw new Error(d.error||'Could not save action status.');
+   return true
+  }catch(e){flash(e instanceof Error?e.message:'Could not save action status.');return false}
+ }
+ const markContacted=(p:Ranked)=>{
+  const key=p.linkedin_url||`${p.first_name}-${p.last_name}`;
+  const isContacted=contacted.includes(key);
+  const next=isContacted?contacted.filter(x=>x!==key):[...contacted,key];
+  setContacted(next);
+  void persistActionState(next,followedUp).then(ok=>{if(!ok)setContacted(contacted)});
+  flash(isContacted?'Contacted status removed. They are back in your outreach queue.':'Marked as contacted. Your outreach queue is updated.');
+ }
+ const toggleFollowedUp=(p:Ranked)=>{
+  const key=p.linkedin_url||`${p.first_name}-${p.last_name}`;
+  const isFollowedUp=followedUp.includes(key);
+  const next=isFollowedUp?followedUp.filter(x=>x!==key):[...followedUp,key];
+  setFollowedUp(next);
+  void persistActionState(contacted,next).then(ok=>{if(!ok)setFollowedUp(followedUp)});
+  flash(isFollowedUp?'Follow-up restored to your queue.':'Follow-up completed.');
+ }
 
  if(!authReady)return <main className="authPage"><div className="authCard"><img src="/reachout-logo.png" className="authLogo"/><p>Loading ReachOut…</p></div></main>
  if(!signedIn)return <Login onAuthed={()=>setSignedIn(true)}/>

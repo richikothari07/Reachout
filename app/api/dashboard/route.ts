@@ -24,11 +24,11 @@ export async function GET(req:Request){
    allRows(supabase,'imports',userId,'id,file_name,file_type,row_count,status,error,created_at')
   ])
   const stats=new Map<string,{contact_url:string;contact_name:string;outgoing_count:number;incoming_count:number;last_outgoing:string|null;last_incoming:string|null}>()
-  const owner=key(u.searchParams.get('ownerName')||'')
+  const owner=key(u.searchParams.get('ownerName')||profile?.name||'')
   const ensure=(url:string,name:string)=>{const k=key(url)||key(name);if(!stats.has(k))stats.set(k,{contact_url:url,contact_name:name,outgoing_count:0,incoming_count:0,last_outgoing:null,last_incoming:null});return stats.get(k)!}
   for(const m of messages){
    const from=String(m.sender_name||''); const to=String(m.recipient_name||''); const senderUrl=String(m.sender_url||''); const recipientUrls=String(m.recipient_urls||'')
-   const mine=owner && key(from)===owner
+   const mine=!!owner && (key(from)===owner || key(from)===key(profile?.name||''))
    const contactName=mine?to:from; const contactUrl=mine?recipientUrls:senderUrl
    if(!contactName && !contactUrl) continue
    const s=ensure(contactUrl,contactName); const d=String(m.message_date||'')
