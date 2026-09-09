@@ -712,3 +712,124 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{
 .authSwitch{border:0;background:none;padding:14px 0 0;width:100%;font:inherit;font-size:13px;color:#666;text-decoration:underline;cursor:pointer}
 .signOut{border:0;background:none;padding:0;margin-left:8px;text-decoration:underline;color:inherit;font:inherit;cursor:pointer}
 @media(max-width:700px){.authCard{padding:28px;border-radius:16px}.authCard h1{font-size:28px}}
+
+
+/* ReachOut action-first polish */
+.quickAction{
+  border:0;
+  background:transparent;
+  color:#5f5f59;
+  display:inline-flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:7px;
+  padding:5px 0;
+  font-size:8px;
+  font-weight:750;
+  white-space:nowrap;
+}
+.quickAction:hover{color:#1d1d1b}
+.quickCheck{
+  width:23px;
+  height:23px;
+  border:1px solid #d7d7d1;
+  border-radius:7px;
+  display:grid;
+  place-items:center;
+  background:#fff;
+  transition:.15s ease;
+}
+.quickAction:hover .quickCheck{
+  background:#1d1d1b;
+  border-color:#1d1d1b;
+  color:#fff;
+}
+.cardAction{align-items:center}
+.cardAction .quickAction{margin-left:auto}
+.personCard{cursor:pointer}
+.tr.row{cursor:pointer}
+.tr.row .quickAction{justify-self:end}
+.tr.row > span:last-of-type{min-width:60px}
+.drawerCtas .secondary,.drawerCtas .primary{min-height:40px}
+.drawerTick{
+  width:20px;
+  height:20px;
+  border:1px solid currentColor;
+  border-radius:6px;
+  display:inline-grid;
+  place-items:center;
+  margin-left:3px;
+}
+.drawerCtas .primary .drawerTick{border-color:#686862;background:#fff;color:#1d1d1b}
+.drawerCtas .secondary.completed .drawerTick{background:#1d1d1b;color:#fff}
+
+@media(min-width:761px){
+  .personCard{min-height:205px}
+  .tr{grid-template-columns:1.8fr 1.05fr 1.9fr 1fr 72px}
+  .tr.th{grid-template-columns:1.8fr 1.05fr 1.9fr 1fr 72px}
+  .quickAction{font-size:8px}
+}
+@media(max-width:760px){
+  .cards{grid-template-columns:1fr}
+  .insightBar{display:block}
+  .signalList{margin-top:10px;flex-wrap:wrap}
+  .howItWorks{grid-template-columns:1fr}
+  .howItWorks>svg{display:none}
+  .howItWorks>div{grid-template-columns:28px 1fr}
+  .howItWorks span{width:28px;height:28px}
+  .table{
+    border:0;
+    background:transparent;
+    overflow:visible;
+  }
+  .table .tr.th{display:none}
+  .table .tr.row{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) auto;
+    gap:9px;
+    margin-bottom:8px;
+    background:#fff;
+    border:1px solid #e4e4df;
+    border-radius:12px;
+    min-height:0;
+  }
+  .table .tr.row > span:nth-child(2),
+  .table .tr.row > span:nth-child(3),
+  .table .tr.row > span:nth-child(4){
+    grid-column:1 / -1;
+  }
+  .table .tr.row > span:nth-child(2){
+    margin-top:-4px;
+    font-size:8px;
+    color:#777770;
+  }
+  .table .tr.row > span:nth-child(3){
+    font-size:8px;
+    line-height:1.4;
+    background:#f5f5f0;
+    padding:7px 8px;
+    border-radius:7px;
+  }
+  .table .tr.row > span:nth-child(4){
+    margin-top:-2px;
+  }
+  .table .tr.row > .quickAction{
+    grid-column:2;
+    grid-row:1;
+    align-self:center;
+  }
+  .quickAction span:first-child{display:none}
+  .quickCheck{width:30px;height:30px;border-radius:8px}
+  .followDone{
+    width:34px;
+    height:34px;
+  }
+  .queueItem{
+    grid-template-columns:26px 36px minmax(0,1fr) auto auto;
+  }
+  .queueItem .quickAction span:first-child{display:none}
+  .queueItem .quickCheck{width:32px;height:32px}
+  .queueOpen{padding:6px 7px}
+  .drawerCtas{display:grid}
+  .drawerCtas .primary,.drawerCtas .secondary{width:100%}
+}
