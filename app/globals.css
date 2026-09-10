@@ -1182,3 +1182,83 @@ input:focus,select:focus,textarea:focus{border-color:#7FAFD3!important;box-shado
   .table .tr.row{background:#FFFFFF!important;border-color:var(--ro-line)!important}
   .table .tr.row>span:nth-child(3){background:#F5F8FA!important;color:#536674!important}
 }
+
+
+/* ReachOut mobile-first usability layer */
+@media (max-width: 768px) {
+  html, body {
+    overflow-x: hidden !important;
+    width: 100% !important;
+  }
+
+  body {
+    min-width: 0 !important;
+  }
+
+  /* Prevent desktop-width layouts from overflowing */
+  main, section, [role="main"] {
+    max-width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  /* Sidebar becomes a compact mobile navigation instead of consuming desktop width */
+  aside {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    position: relative !important;
+    height: auto !important;
+  }
+
+  /* Keep cards and panels inside the viewport */
+  .card, [class*="rounded-xl"], [class*="rounded-2xl"] {
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Tables remain usable on narrow screens */
+  table {
+    width: 100% !important;
+  }
+
+  /* Avoid tiny desktop typography */
+  h1 {
+    font-size: clamp(1.75rem, 7vw, 2.5rem) !important;
+    line-height: 1.1 !important;
+  }
+
+  h2 {
+    font-size: clamp(1.25rem, 5vw, 1.75rem) !important;
+  }
+
+  button, input, select, textarea {
+    font-size: 16px !important;
+  }
+
+  input, select, textarea {
+    max-width: 100% !important;
+  }
+
+  /* Prevent long names/company names from breaking the layout */
+  td, th, p, span {
+    overflow-wrap: anywhere;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Give small screens comfortable edge spacing */
+  main {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+
+  /* Stack common horizontal controls */
+  [class*="flex-row"] {
+    flex-wrap: wrap;
+  }
+
+  /* Full-width primary actions are easier to tap */
+  button {
+    min-height: 44px;
+  }
+}
