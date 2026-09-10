@@ -1,0 +1,9 @@
+'use client'
+import { FormEvent, useEffect, useState } from 'react'
+import { supabaseBrowser } from '@/lib/supabase-browser'
+export default function ResetPassword(){
+ const [password,setPassword]=useState(''),[confirm,setConfirm]=useState(''),[busy,setBusy]=useState(false),[message,setMessage]=useState(''),[error,setError]=useState(''),[ready,setReady]=useState(false)
+ useEffect(()=>{supabaseBrowser.auth.getSession().then(({data})=>setReady(!!data.session))},[])
+ const submit=async(e:FormEvent)=>{e.preventDefault();setError('');setMessage('');if(password.length<6)return setError('Password must be at least 6 characters.');if(password!==confirm)return setError('Passwords do not match.');setBusy(true);try{const {error}=await supabaseBrowser.auth.updateUser({password});if(error)throw error;setMessage('Your password has been updated. You can now sign in with your new password.')}catch(e){setError(e instanceof Error?e.message:'Could not update your password.')}finally{setBusy(false)}}
+ return <main className="authPage"><div className="authCard"><img src="/reachout-logo.png" className="authLogo"/><span className="authEyebrow">ACCOUNT SECURITY</span><h1>Choose a new password.</h1><p>{ready?'Set a new password for your ReachOut account.':'Open this page from the password reset email to continue.'}</p>{ready?<form onSubmit={submit}><label>New password<input type="password" value={password} onChange={e=>setPassword(e.target.value)} required minLength={6} placeholder="••••••••"/></label><label>Confirm password<input type="password" value={confirm} onChange={e=>setConfirm(e.target.value)} required minLength={6} placeholder="••••••••"/></label>{error&&<div className="authError">{error}</div>}{message&&<div className="authSuccess">{message}</div>}<button className="primary full" disabled={busy}>{busy?'Updating…':'Update password'}</button></form>:<a className="primary full authLinkButton" href="/">Back to sign in</a>}</div></main>
+}

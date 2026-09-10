@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { authenticatedUser } from '@/lib/supabase-server'
 export const runtime='nodejs'
 const MODEL=process.env.GROQ_MODEL||'openai/gpt-oss-20b'
-const schema=`Return JSON only with this shape: {"action":"navigate|select|contact|followup|search|import|none","tab":"Home|Opportunities|Outreach|Follow-ups|null","person":"full name or null","query":"search text or null","reply":"short spoken confirmation"}. Never invent a person. Use action contact only when the user explicitly asks to mark reach out/contacted/complete. Use followup only when explicitly asking to mark a follow-up complete. For opening or viewing a person, use select. For navigation, use navigate.`
+const schema=`Return JSON only with this shape: {"action":"navigate|select|generate|contact|followup|search|import|none","tab":"Home|Opportunities|Outreach|Follow-ups|null","person":"full name or null","query":"search text or null","reply":"short spoken confirmation"}. Never invent a person. Use action contact only when the user explicitly asks to mark reach out/contacted/complete. Use followup only when explicitly asking to mark a follow-up complete. For opening or viewing a person, use select. For navigation, use navigate. Use generate when the user asks to generate, draft, or write a message for a specific person.`
 export async function POST(req:Request){
  try{
   await authenticatedUser(req); const key=process.env.GROQ_API_KEY
