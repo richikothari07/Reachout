@@ -1262,3 +1262,97 @@ input:focus,select:focus,textarea:focus{border-color:#7FAFD3!important;box-shado
     min-height: 44px;
   }
 }
+
+
+/* ReachOut mobile reliability fixes */
+@media (max-width: 767px) {
+  html, body, #__next {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow-x: hidden !important;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  main {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100vw !important;
+  }
+
+  /* Desktop flex/grid rows must collapse instead of squeezing content. */
+  .grid {
+    max-width: 100% !important;
+  }
+
+  [class*="grid-cols-4"],
+  [class*="grid-cols-3"],
+  [class*="grid-cols-2"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Keep common two-column dashboard areas usable on phones. */
+  [class*="md:grid-cols-"],
+  [class*="lg:grid-cols-"],
+  [class*="xl:grid-cols-"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Horizontal toolbars wrap on narrow screens. */
+  [class*="flex"] {
+    min-width: 0;
+  }
+
+  button, input, select, textarea {
+    max-width: 100%;
+  }
+
+  input, select, textarea {
+    min-width: 0 !important;
+  }
+
+  /* Tables get an intentional horizontal scroll rather than breaking the viewport. */
+  .overflow-x-auto,
+  [class*="overflow-x-auto"] {
+    max-width: 100%;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  table {
+    min-width: 640px;
+  }
+
+  /* Keep long profile/company text readable. */
+  td, th, p, span, a {
+    overflow-wrap: anywhere;
+  }
+
+  /* Touch targets. */
+  button, [role="button"] {
+    min-height: 44px;
+  }
+
+  h1 {
+    font-size: clamp(1.75rem, 8vw, 2.5rem) !important;
+    line-height: 1.1 !important;
+  }
+
+  h2 {
+    font-size: clamp(1.3rem, 6vw, 1.8rem) !important;
+    line-height: 1.2 !important;
+  }
+}
+
+@media (max-width: 480px) {
+  main {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+
+  [class*="gap-6"] { gap: 1rem !important; }
+  [class*="gap-8"] { gap: 1.25rem !important; }
+}
