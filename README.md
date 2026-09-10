@@ -33,3 +33,22 @@ ReachOut now supports AI-generated outreach and follow-up messages through Groq.
 5. Redeploy.
 
 Open a person in ReachOut and use **Generate with AI**. The prompt includes the user's imported profile, target role, the selected person's details/reasons, and recent conversation history. The numerical match score is never sent to the model or shown in the UI.
+
+## Voice bot
+
+ReachOut now includes a floating voice assistant. On supported browsers (Chrome/Edge), tap the microphone once to grant microphone permission and start speaking. The assistant can then understand commands such as:
+
+- “Show my follow-ups”
+- “Open opportunities”
+- “Find Rahul from Razorpay”
+- “Mark reach out complete for Aditi Sharma”
+- “Mark follow-up complete for Aditi Sharma”
+- “Generate a message for Aditi Sharma”
+- “Search fintech product managers”
+- “Open my LinkedIn import”
+
+Speech recognition happens in the browser using the Web Speech API. Natural-language command interpretation is handled server-side by Groq through `/api/voice`, so the Groq key is never exposed to the browser.
+
+Note: browsers require an initial microphone permission gesture. After that, each listening turn can be started from the microphone control; fully passive always-on listening/wake-word behavior is intentionally not enabled because browser microphone policies vary.
+
+Add `GROQ_API_KEY` in Vercel as usual. `GROQ_MODEL` remains optional and defaults to `openai/gpt-oss-20b`.
