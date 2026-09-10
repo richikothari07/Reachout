@@ -77,8 +77,8 @@ export default function Home(){
   const text=(command||'Create my best outreach plan').trim()
   setAgentBusy(true);setAgentError('');setAgentReply('');setAgentActions([]);setAgentOpen(true)
   try{
-   const peopleForAgent=ranked.slice(0,80).map(p=>({name:`${p.first_name} ${p.last_name}`,company:p.company,position:p.position,linkedin_url:p.linkedin_url,score:p.score,reasons:p.reasons.slice(0,4),action:p.action,lastOutgoing:p.lastOutgoing,lastIncoming:p.lastIncoming,outgoingCount:p.outgoingCount,incomingCount:p.incomingCount}))
-   const fups=followups.slice(0,40).map(p=>({name:`${p.first_name} ${p.last_name}`,company:p.company,position:p.position,linkedin_url:p.linkedin_url,score:p.score,reasons:p.reasons.slice(0,4),lastOutgoing:p.lastOutgoing}))
+   const peopleForAgent=ranked.slice(0,25).map(p=>({name:`${p.first_name} ${p.last_name}`,company:p.company,position:p.position,linkedin_url:p.linkedin_url,score:p.score,reasons:p.reasons.slice(0,4),action:p.action,lastOutgoing:p.lastOutgoing,lastIncoming:p.lastIncoming,outgoingCount:p.outgoingCount,incomingCount:p.incomingCount}))
+   const fups=followups.slice(0,10).map(p=>({name:`${p.first_name} ${p.last_name}`,company:p.company,position:p.position,linkedin_url:p.linkedin_url,score:p.score,reasons:p.reasons.slice(0,4),lastOutgoing:p.lastOutgoing}))
    const r=await apiFetch('/api/agent',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({command:text,target,ownerName,profile,people:peopleForAgent,followups:fups})})
    const d=await r.json().catch(()=>({}))
    if(!r.ok)throw new Error(d.error||'Could not run the outreach agent.')
