@@ -1601,3 +1601,83 @@ input:focus,select:focus,textarea:focus{border-color:#7FAFD3!important;box-shado
 }
 
 @media (max-width:700px){.authCard{padding:28px;border-radius:16px}.authCard h1{font-size:28px}}
+
+/* =========================================================
+   MOBILE MODAL / IMPORT CORRECTION
+   This block is mobile-only. Desktop rules remain untouched.
+   ========================================================= */
+@media (max-width: 900px) {
+  .modalOverlay {
+    z-index: 200 !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 12px !important;
+    padding-top: max(12px, env(safe-area-inset-top)) !important;
+    padding-bottom: max(12px, env(safe-area-inset-bottom)) !important;
+  }
+
+  .setupModal {
+    width: min(100%, 720px) !important;
+    max-width: 100% !important;
+    max-height: calc(100svh - 24px - env(safe-area-inset-top) - env(safe-area-inset-bottom)) !important;
+    min-width: 0 !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    padding: 18px !important;
+    border-radius: 16px !important;
+  }
+
+  /* The import component is flex on desktop. On phones it must become
+     a real 2-row grid so the CTA cannot overlap the description. */
+  .importBox {
+    display: grid !important;
+    grid-template-columns: 38px minmax(0, 1fr) !important;
+    grid-template-rows: auto auto !important;
+    align-items: start !important;
+    column-gap: 10px !important;
+    row-gap: 10px !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    padding: 12px !important;
+  }
+
+  .importBox .uploadIcon {
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+    margin-top: 1px !important;
+  }
+
+  .importBox > div:nth-child(3) {
+    grid-column: 2 !important;
+    grid-row: 1 !important;
+    width: auto !important;
+    min-width: 0 !important;
+    flex: none !important;
+  }
+
+  .importBox > div:nth-child(3) b,
+  .importBox > div:nth-child(3) span,
+  .importBox > div:nth-child(3) small {
+    width: 100% !important;
+    max-width: none !important;
+    overflow-wrap: anywhere !important;
+    white-space: normal !important;
+  }
+
+  .importBox > button {
+    grid-column: 1 / -1 !important;
+    grid-row: 2 !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 42px !important;
+    margin: 0 !important;
+  }
+
+  .modalFooter {
+    position: sticky !important;
+    bottom: 0 !important;
+    z-index: 3 !important;
+    background: #fff !important;
+  }
+}
