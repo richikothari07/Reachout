@@ -1356,3 +1356,332 @@ input:focus,select:focus,textarea:focus{border-color:#7FAFD3!important;box-shado
   [class*="gap-6"] { gap: 1rem !important; }
   [class*="gap-8"] { gap: 1.25rem !important; }
 }
+
+
+/* FINAL MOBILE LAYOUT OVERRIDES
+   These rules intentionally come last so legacy desktop/mobile theme rules
+   cannot force fixed widths or desktop grids onto phone screens. */
+@media (max-width: 760px) {
+  *, *::before, *::after { box-sizing: border-box !important; }
+
+  html, body {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+  }
+
+  .app {
+    display: block !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    overflow-x: clip !important;
+  }
+
+  .sidebar {
+    position: sticky !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    height: auto !important;
+    max-height: none !important;
+    padding: 10px 12px !important;
+    z-index: 100 !important;
+  }
+
+  .brand {
+    width: 100% !important;
+    min-width: 0 !important;
+    padding: 0 2px 10px !important;
+  }
+
+  .brand > div {
+    min-width: 0 !important;
+  }
+
+  .sidebar nav {
+    width: 100% !important;
+    min-width: 0 !important;
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 5px !important;
+    overflow: visible !important;
+  }
+
+  .nav {
+    width: 100% !important;
+    min-width: 0 !important;
+    justify-content: center !important;
+    padding: 9px 4px !important;
+    gap: 5px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+  }
+
+  .nav span {
+    display: block !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  .nav em {
+    display: none !important;
+  }
+
+  .content {
+    display: block !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 16px 12px 80px !important;
+  }
+
+  .topbar {
+    width: 100% !important;
+    min-width: 0 !important;
+    display: block !important;
+  }
+
+  .topbar > div:first-child,
+  .topActions {
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .topbar h1, .topbar p {
+    max-width: 100% !important;
+    overflow-wrap: anywhere !important;
+  }
+
+  .topActions {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0,1fr)) !important;
+    width: 100% !important;
+  }
+
+  .topActions > * {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .goalCard,
+  .heroCard,
+  .twoCol,
+  .cards,
+  .companyGrid,
+  .stats,
+  .outreachGrid {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .stats {
+    grid-template-columns: repeat(2, minmax(0,1fr)) !important;
+  }
+
+  .cards,
+  .companyGrid,
+  .twoCol,
+  .outreachGrid {
+    grid-template-columns: minmax(0,1fr) !important;
+  }
+
+  .heroCard {
+    grid-template-columns: minmax(0,1fr) !important;
+    overflow: hidden !important;
+  }
+
+  .heroCopy, .heroVisual, .goalProgress {
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .heroVisual {
+    width: 100% !important;
+  }
+
+  .insightBar {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .signalList {
+    max-width: 100% !important;
+    overflow-x: auto !important;
+  }
+
+  .search {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .search input {
+    min-width: 0 !important;
+    width: 100% !important;
+  }
+
+  .filterBar {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: auto !important;
+  }
+
+  /* Opportunity rows become true phone cards. */
+  .table {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    overflow: visible !important;
+  }
+
+  .table .tr.row {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    display: grid !important;
+    grid-template-columns: minmax(0,1fr) auto !important;
+  }
+
+  .table .tr.row > * {
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .personCell {
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .personCell > span {
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .personCell b,
+  .personCell small,
+  .table .tr.row > span {
+    overflow-wrap: anywhere !important;
+  }
+
+  .agentCard {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .agentInput {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .agentInput input,
+  .agentInput button {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .setupModal {
+    width: calc(100vw - 24px) !important;
+    max-width: calc(100vw - 24px) !important;
+    max-height: calc(100dvh - 24px) !important;
+    overflow-y: auto !important;
+    margin: 12px !important;
+  }
+
+  .modalOverlay {
+    padding: 12px !important;
+    align-items: center !important;
+  }
+
+  .modalFields,
+  .fieldRow,
+  .profileImportBox {
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .fieldRow {
+    grid-template-columns: minmax(0,1fr) !important;
+  }
+
+  .profileImportBox {
+    grid-template-columns: minmax(0,1fr) !important;
+  }
+
+  .profileUploadBtn {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+
+  .importBox {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .importBox > div {
+    min-width: 0 !important;
+  }
+
+  .importBox > button {
+    margin-left: 0 !important;
+    width: 100% !important;
+  }
+
+  .modalFooter {
+    display: grid !important;
+    grid-template-columns: minmax(0,1fr) !important;
+    gap: 7px !important;
+  }
+
+  .modalFooter > * {
+    width: 100% !important;
+  }
+
+  .drawer {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    min-width: 0 !important;
+    padding: 20px 16px !important;
+  }
+
+  .drawerCtas {
+    grid-template-columns: minmax(0,1fr) !important;
+  }
+
+  .drawerCtas .primary:last-child {
+    grid-column: auto !important;
+  }
+
+  .voicePanel {
+    left: 12px !important;
+    right: 12px !important;
+    bottom: 78px !important;
+    width: auto !important;
+    max-width: none !important;
+  }
+
+  .voiceCopy {
+    min-width: 0 !important;
+  }
+
+  .voiceCopy span {
+    max-width: 100% !important;
+  }
+}
+
+@media (max-width: 390px) {
+  .sidebar { padding-left: 8px !important; padding-right: 8px !important; }
+  .content { padding-left: 10px !important; padding-right: 10px !important; }
+  .nav { font-size: 7px !important; }
+  .nav svg { width: 14px !important; height: 14px !important; }
+  .stats { gap: 6px !important; }
+  .stat { padding: 9px 7px !important; }
+  .stat strong { font-size: 15px !important; }
+  .topActions { grid-template-columns: minmax(0,1fr) !important; }
+}
