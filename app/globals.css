@@ -896,3 +896,58 @@ html,body{background:var(--ro-bg);color:var(--ro-text)}
 .primary.full{margin-top:14px}
 input,select,textarea{background:#fff;color:#18181B;border-color:#CBD5E1}input::placeholder,textarea::placeholder{color:#94A3B8}
 .modalOverlay{background:rgba(15,23,42,.28)}.setupModal,.drawer{background:#fff;color:#18181B;border-color:#E2E8F0}.modalSub,.keywordHint,.profileImportBox small{color:#64748B}.setupSteps .step span{background:#EEF2FF;color:#4F46E5}.setupSteps .step.active span{background:#4F46E5;color:#fff}.importBox{background:linear-gradient(135deg,#F8FAFC,#EEF2FF);border-color:#C7D2FE}.uploadIcon{background:#E0E7FF;color:#4F46E5}.importBox button{background:#4F46E5;color:#fff;border-color:#4F46E5}.profileImportBox{background:#F8FAFC}.voiceFab{background:linear-gradient(135deg,#4F46E5,#06B6D4)!important;color:#fff!important;box-shadow:0 8px 24px rgba(79,70,229,.25)!important}.voicePanel{background:#fff!important;border-color:#DBEAFE!important;color:#172554!important}.voicePrompt,.voiceTranscript{background:#F8FAFC!important;border-color:#E2E8F0!important}.aiBadge{background:#EEF2FF!important;color:#4F46E5!important}.aiGenerate{background:#EEF2FF!important;color:#4F46E5!important;border-color:#C7D2FE!important}
+
+
+/* ReachOut LinkedIn-inspired light palette */
+:root {
+  --reachout-bg: #F3F6F8;
+  --reachout-card: #FFFFFF;
+  --reachout-primary: #0A66C2;
+  --reachout-primary-dark: #004182;
+  --reachout-primary-light: #DDEBF7;
+  --reachout-hover: #EEF3F8;
+  --reachout-text: #1D2226;
+  --reachout-muted: #666666;
+  --reachout-subtle: #8A8D91;
+  --reachout-success: #057642;
+  --reachout-success-bg: #DFF3E8;
+  --reachout-warning: #F5C33B;
+  --reachout-warning-bg: #FFF7D6;
+  --reachout-error: #CC1016;
+  --reachout-error-bg: #FDE7E9;
+}
+
+html, body {
+  background: var(--reachout-bg) !important;
+  color: var(--reachout-text) !important;
+}
+
+body {
+  background-color: var(--reachout-bg) !important;
+}
+
+button[class*="primary"],
+a[class*="primary"],
+[class*="bg-blue-600"],
+[class*="bg-indigo-"],
+[class*="bg-purple-"] {
+  background-color: var(--reachout-primary) !important;
+}
+
+[class*="text-blue-"],
+[class*="text-indigo-"],
+[class*="text-purple-"] {
+  color: var(--reachout-primary) !important;
+}
+
+[class*="border-blue-"],
+[class*="border-indigo-"],
+[class*="border-purple-"] {
+  border-color: var(--reachout-primary-light) !important;
+}
+
+[class*="bg-blue-50"],
+[class*="bg-indigo-50"],
+[class*="bg-purple-50"] {
+  background-color: var(--reachout-primary-light) !important;
+}
