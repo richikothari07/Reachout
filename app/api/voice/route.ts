@@ -8,10 +8,10 @@ export async function POST(req:Request){
   await authenticatedUser(req); const key=process.env.GROQ_API_KEY
   if(!key)return NextResponse.json({error:'Groq is not configured yet.'},{status:503})
   const {command,people,followups,followupCount,recentContext}=await req.json()
-  const compact=Array.isArray(people)?people.slice(0,120):[]
-  const due=Array.isArray(followups)?followups.slice(0,60):[]
-  const context=Array.isArray(recentContext)?recentContext.slice(-60):[]
-  const prompt=`You control the ReachOut web app by voice. Interpret the user's command using the current app state, not just keywords. Current follow-ups due: ${Number(followupCount||0)}. Follow-up candidates: ${JSON.stringify(due)}. People available: ${JSON.stringify(compact)}. Recent conversation context: ${JSON.stringify(context)}.\n\nUser said: ${String(command||'')}\n\n${schema}`
+  const compact=Array.isArray(people)?people.slice(0,30):[]
+  const due=Array.isArray(followups)?followups.slice(0,15):[]
+  const context=Array.isArray(recentContext)?recentContext.slice(-10):[]
+  const prompt=`Current follow-ups due: ${Number(followupCount||0)}. Follow-up candidates: ${JSON.stringify(due)}. People available: ${JSON.stringify(compact)}. Recent conversation context: ${JSON.stringify(context)}.\n\nUser said: ${String(command||'')}`
   const response=await fetch('https://api.groq.com/openai/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json',Authorization:`Bearer ${key}`},body:JSON.stringify({model:MODEL,temperature:.1,max_completion_tokens:500,reasoning_effort:'low',include_reasoning:false,response_format:{type:'json_object'},messages:[{role:'system',content:'You are a context-aware action agent for ReachOut. '+schema},{role:'user',content:prompt}]})})
   const data=await response.json().catch(()=>({})); if(!response.ok)return NextResponse.json({error:data?.error?.message||`Groq request failed (${response.status}).`},{status:502})
   const raw=data?.choices?.[0]?.message?.content; const parsed=typeof raw==='string'?JSON.parse(raw):raw
