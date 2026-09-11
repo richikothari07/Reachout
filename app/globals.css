@@ -1888,3 +1888,179 @@ input:focus,select:focus,textarea:focus{border-color:#7FAFD3!important;box-shado
  .cleanOnboardingActions{position:sticky!important;bottom:-20px!important;margin-left:-20px!important;margin-right:-20px!important;padding:12px 20px 20px!important;background:#fffdf7!important}
 }
 @media(prefers-reduced-motion:reduce){.onboardingModalClean *{animation:none!important;transition:none!important}}
+
+/* =========================================================
+   Final visual cleanup — keep ReachOut's existing blue/navy
+   palette. No layout behavior changes.
+   ========================================================= */
+.brandLogo{
+  filter:brightness(0) invert(1)!important;
+}
+
+/* The large Goal Momentum panel was intentionally removed from the
+   HomeView. Keep this defensive rule so older markup cannot bring it back. */
+.goalCard{display:none!important}
+
+/* Action Plan: use the same navy/blue language as the sidebar and CTAs,
+   with high-contrast text instead of the previous black/grey treatment. */
+.outreachHero{
+  background:var(--ro-sidebar)!important;
+  color:#FFFFFF!important;
+  border:1px solid rgba(255,255,255,.08)!important;
+  box-shadow:0 10px 28px rgba(25,49,70,.10)!important;
+}
+.outreachHero h2,
+.outreachHero h2 em{
+  color:#FFFFFF!important;
+}
+.outreachHero p,
+.outreachHero .sectionEyebrow,
+.queueProgress span{
+  color:#C8D6E1!important;
+}
+.outreachHero .progress{
+  background:#C8D6E1!important;
+}
+.outreachHero .progress i{
+  background:var(--ro-primary)!important;
+}
+
+/* Keep onboarding on the established ReachOut blue/navy palette.
+   Lemon-yellow was an idea reference only, not the product palette. */
+.onboardingModalClean{
+  --ro-yellow:var(--ro-primary)!important;
+  --ro-yellow-soft:var(--ro-primary-soft)!important;
+  --ro-black:var(--ro-ink)!important;
+  background:#FFFFFF!important;
+  color:var(--ro-ink)!important;
+  border-color:var(--ro-line)!important;
+}
+.onboardingModalClean .modalClose{
+  background:var(--ro-surface-alt)!important;
+  color:var(--ro-muted)!important;
+}
+.onboardingModalClean .modalClose:hover{
+  background:var(--ro-primary-soft)!important;
+  color:var(--ro-primary-dark)!important;
+}
+.onboardingModalClean .onboardingKicker,
+.onboardingModalClean .guideStepLabel{
+  color:#667784!important;
+}
+.onboardingModalClean .cleanOnboardingHeader h2,
+.onboardingModalClean .guideCopy h3,
+.onboardingModalClean .cleanUploadIntro h3{
+  color:var(--ro-ink)!important;
+}
+.onboardingModalClean .cleanOnboardingHeader .modalSub,
+.onboardingModalClean .guideCopy p,
+.onboardingModalClean .cleanUploadIntro p{
+  color:var(--ro-muted)!important;
+}
+.onboardingModalClean .cleanStepCount{
+  background:var(--ro-primary-soft)!important;
+  color:var(--ro-primary-dark)!important;
+  border:1px solid var(--ro-primary-line)!important;
+}
+.onboardingModalClean .cleanStep.active{color:var(--ro-ink)!important}
+.onboardingModalClean .cleanStep.active span{
+  background:var(--ro-primary)!important;
+  color:#FFFFFF!important;
+}
+.onboardingModalClean .cleanStepBar>i.done{background:#8DBCE0!important}
+.onboardingModalClean .linkedinGuide{
+  background:var(--ro-surface-alt)!important;
+  border:1px solid var(--ro-line)!important;
+}
+.onboardingModalClean .guideVisual{
+  background:var(--ro-sidebar)!important;
+  border-color:rgba(255,255,255,.08)!important;
+}
+.onboardingModalClean .guideCopy{
+  background:#FFFFFF!important;
+}
+.onboardingModalClean .guideCopy h3{color:var(--ro-ink)!important}
+.onboardingModalClean .guideHighlight{
+  background:rgba(10,102,194,.16)!important;
+  color:#FFFFFF!important;
+}
+.onboardingModalClean .guidePanel b,
+.onboardingModalClean .guidePanel small,
+.onboardingModalClean .guidePanel>span{
+  color:#FFFFFF!important;
+}
+.onboardingModalClean .guideButton,
+.onboardingModalClean .guideChoose{
+  background:var(--ro-primary)!important;
+  color:#FFFFFF!important;
+}
+.onboardingModalClean .guideFile{
+  background:#FFFFFF!important;
+  border-color:var(--ro-line)!important;
+}
+.onboardingModalClean .guideFile span{
+  background:var(--ro-primary-soft)!important;
+  color:var(--ro-primary)!important;
+}
+.onboardingModalClean .guideProgress{background:#D7E0E7!important}
+.onboardingModalClean .guideProgress span{background:var(--ro-primary)!important}
+.onboardingModalClean .guideDots button{background:#C9D4DC!important}
+.onboardingModalClean .guideDots button.active{background:var(--ro-primary)!important}
+.onboardingModalClean .downloadPath{
+  display:flex;
+  flex-direction:column;
+  gap:5px;
+  margin-top:12px;
+  padding:11px 12px;
+  border:1px solid var(--ro-primary-line);
+  border-radius:10px;
+  background:var(--ro-primary-soft);
+}
+.onboardingModalClean .downloadPath .sectionEyebrow{
+  color:var(--ro-primary-dark)!important;
+}
+.onboardingModalClean .downloadPath b{
+  color:var(--ro-ink)!important;
+  font-size:9px;
+  line-height:1.45;
+}
+.onboardingModalClean .emailTiming{
+  background:#F8FAFC!important;
+  border-color:var(--ro-line)!important;
+  color:var(--ro-muted)!important;
+}
+.onboardingModalClean .emailTiming svg{color:var(--ro-primary)!important}
+.onboardingModalClean .emailTiming b{color:var(--ro-ink)!important}
+.onboardingModalClean .cleanUpload{
+  border-color:#AFC8DA!important;
+  background:#F8FAFC!important;
+}
+.onboardingModalClean .cleanUpload .primary,
+.onboardingModalClean .cleanOnboardingActions .primary{
+  background:var(--ro-primary)!important;
+  border-color:var(--ro-primary)!important;
+  color:#FFFFFF!important;
+  box-shadow:0 5px 0 var(--ro-primary-dark)!important;
+}
+.onboardingModalClean .cleanUpload .primary:hover,
+.onboardingModalClean .cleanOnboardingActions .primary:hover{
+  background:var(--ro-primary-dark)!important;
+}
+.onboardingModalClean .cleanOnboardingActions .primary:active{
+  box-shadow:0 2px 0 var(--ro-primary-dark)!important;
+}
+.onboardingModalClean .cleanOnboardingActions .secondary{
+  color:var(--ro-muted)!important;
+}
+.onboardingModalClean .cleanOnboardingActions .secondary:hover{
+  background:var(--ro-surface-alt)!important;
+}
+.onboardingModalClean .cleanProfile{
+  background:var(--ro-surface-alt)!important;
+  border:1px solid var(--ro-line)!important;
+}
+
+@media(max-width:760px){
+  .onboardingModalClean .downloadPath b{font-size:9px!important}
+  .onboardingModalClean .emailTiming{font-size:9px!important}
+}
