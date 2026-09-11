@@ -1820,3 +1820,71 @@ input:focus,select:focus,textarea:focus{border-color:#7FAFD3!important;box-shado
 .cleanOnboardingHeader{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:2px 2px 12px}.cleanOnboardingHeader h2{font-size:23px!important;letter-spacing:-.04em!important;margin:3px 0 3px!important}.cleanOnboardingHeader .modalSub{font-size:10px!important;margin:0!important;color:#64748b}.cleanStepCount{font-size:10px;font-weight:800;color:#64748b;background:#f4f7fa;border:1px solid #e2e8f0;padding:6px 9px;border-radius:999px;white-space:nowrap}.cleanStepBar{display:flex;align-items:center;gap:7px;padding:2px 2px 14px}.cleanStep{display:flex;align-items:center;gap:6px;color:#9aa4b2;font-size:8px;white-space:nowrap}.cleanStep span{width:21px;height:21px;border-radius:50%;display:grid;place-items:center;background:#f1f4f7;color:#7b8794;font-weight:800}.cleanStep.active{color:#334155}.cleanStep.active span{background:#0a66c2;color:#fff}.cleanStepBar>i{height:1px;background:#e2e8f0;flex:1}.cleanStepBar>i.done{background:#9cc8eb}.cleanOnboardingStep{min-height:330px}.cleanGuide{margin-top:0}.cleanInfo{display:flex;align-items:center;gap:8px;padding:9px 11px;margin-top:10px;border:1px solid #e2e8f0;border-radius:9px;background:#f8fafc;color:#64748b;font-size:9px;line-height:1.45}.cleanInfo svg{color:#0a66c2;flex:none}.cleanInfo b{color:#334155}.cleanUploadIntro{display:flex;align-items:center;gap:10px;padding:8px 2px 12px}.cleanUploadIntro h3{font-size:14px;margin:0 0 2px}.cleanUploadIntro p{font-size:9px;color:#64748b;margin:0}.cleanUpload{margin:8px 0!important}.cleanFields{display:grid!important;grid-template-columns:1fr 1fr;gap:12px!important}.cleanFields>label{display:flex;flex-direction:column;gap:5px}.cleanFields label span{font-size:9px;font-weight:750;color:#475569}.cleanFields label em{font-style:normal;font-weight:500;color:#94a3b8}.cleanFields input{width:100%}.cleanProfile{margin-top:14px!important}.cleanOnboardingActions{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid #e8edf1}.cleanOnboardingActions button{min-height:36px}.cleanOnboardingActions .primary:disabled{opacity:.5;cursor:not-allowed;box-shadow:none}.onboardingModalClean .linkedinGuide{grid-template-columns:1.05fr .95fr;min-height:245px}.onboardingModalClean .guideVisual{min-height:245px}.onboardingModalClean .guideCopy h3{font-size:17px}.onboardingModalClean .guideCopy p{font-size:9px;line-height:1.55}.onboardingModalClean .guideEmailNote{font-size:8px}.onboardingModalClean .guideDots{margin:7px 0 0}
 @media(max-width:760px){.onboardingModalClean{width:min(100% - 20px,560px)!important;max-height:calc(100svh - 20px)!important}.cleanOnboardingHeader h2{font-size:20px!important}.cleanStepBar{gap:5px}.cleanStep b{display:none}.cleanStepBar>i{min-width:16px}.cleanOnboardingStep{min-height:0}.onboardingModalClean .linkedinGuide{grid-template-columns:1fr;min-height:0}.onboardingModalClean .guideVisual{min-height:150px}.onboardingModalClean .guideCopy{padding-top:10px}.cleanFields{grid-template-columns:1fr!important}.cleanOnboardingActions{position:sticky;bottom:0;background:#fff;padding-bottom:2px}.cleanOnboardingActions button{flex:1}.cleanUpload{grid-template-columns:1fr!important}}
 @media(prefers-reduced-motion:reduce){.onboardingModalClean *{animation:none!important;transition:none!important}}
+
+/* ReachOut onboarding refresh — playful editorial style, scoped to onboarding only. Desktop app UX remains untouched. */
+.onboardingModalClean{
+  --ro-yellow:#FFD84D; --ro-yellow-soft:#FFF7CC; --ro-black:#171715;
+  width:min(760px,calc(100vw - 40px))!important; max-width:760px!important;
+  border:1px solid #e5e3d8!important; border-radius:22px!important;
+  padding:28px!important; background:#fffdf7!important; color:var(--ro-black)!important;
+  box-shadow:0 28px 80px rgba(23,23,21,.16)!important;
+}
+.onboardingModalClean .modalClose{background:#f3f1e8!important;color:#59574f!important;border:0!important;width:30px!important;height:30px!important;border-radius:50%!important}
+.onboardingModalClean .modalClose:hover{background:var(--ro-yellow)!important;color:var(--ro-black)!important}
+.cleanOnboardingHeader{padding:2px 2px 18px!important;align-items:center!important}
+.onboardingKicker{font-size:8px!important;letter-spacing:.18em!important;font-weight:900!important;color:#77736a!important}
+.cleanOnboardingHeader h2{font-size:30px!important;line-height:1!important;letter-spacing:-.06em!important;color:var(--ro-black)!important;margin:6px 0 7px!important}
+.cleanOnboardingHeader .modalSub{font-size:11px!important;color:#77736a!important;line-height:1.45!important}
+.cleanStepCount{background:var(--ro-yellow)!important;border:0!important;color:var(--ro-black)!important;font-size:9px!important;font-weight:900!important;padding:7px 10px!important}
+.cleanStepBar{padding:0 2px 18px!important;gap:8px!important}
+.cleanStep{font-size:8px!important;color:#aaa79d!important}
+.cleanStep span{width:22px!important;height:22px!important;background:#eeece3!important;color:#77736a!important}
+.cleanStep.active{color:var(--ro-black)!important}
+.cleanStep.active span{background:var(--ro-black)!important;color:var(--ro-yellow)!important;box-shadow:none!important}
+.cleanStepBar>i{background:#e7e4d9!important}
+.cleanStepBar>i.done{background:var(--ro-yellow)!important}
+.cleanOnboardingStep{min-height:290px!important}
+.onboardingModalClean .linkedinGuide{grid-template-columns:1fr 1fr!important;gap:18px!important;min-height:235px!important;border:0!important;border-radius:18px!important;background:#f3f0e7!important;overflow:hidden!important}
+.onboardingModalClean .guideVisual{min-height:235px!important;background:#171715!important}
+.onboardingModalClean .guideCopy{padding:26px!important;display:flex!important;flex-direction:column!important;justify-content:center!important;background:#fffdf7!important}
+.onboardingModalClean .guideStepLabel{font-size:8px!important;letter-spacing:.14em!important;font-weight:900!important;color:#a09b8d!important}
+.onboardingModalClean .guideCopy h3{font-size:24px!important;line-height:1.02!important;letter-spacing:-.045em!important;color:var(--ro-black)!important;margin:8px 0 9px!important}
+.onboardingModalClean .guideCopy p{font-size:10px!important;line-height:1.55!important;color:#77736a!important;margin:0!important}
+.onboardingModalClean .guideEmailNote{background:var(--ro-yellow-soft)!important;border:0!important;color:#625b2d!important;font-size:9px!important;padding:9px 10px!important;margin-top:14px!important}
+.onboardingModalClean .guideEmailNote svg{color:#171715!important}
+.onboardingModalClean .guideDots{margin:10px 0 0!important;display:flex!important;gap:5px!important;justify-content:center!important}
+.onboardingModalClean .guideDots button{width:7px!important;height:7px!important;border:0!important;background:#d9d5c8!important;border-radius:50%!important;padding:0!important}
+.onboardingModalClean .guideDots button.active{width:22px!important;border-radius:10px!important;background:var(--ro-black)!important}
+.onboardingModalClean .yellowInfo{background:var(--ro-yellow-soft)!important;border:0!important;color:#625b2d!important;margin-top:12px!important;padding:10px 12px!important}
+.onboardingModalClean .yellowInfo svg{color:var(--ro-black)!important}
+.cleanUploadIntro{padding:4px 2px 16px!important}
+.cleanUploadIntro h3{font-size:22px!important;letter-spacing:-.04em!important;color:var(--ro-black)!important}
+.cleanUploadIntro p{font-size:10px!important;color:#77736a!important}
+.cleanUpload{border:1.5px dashed #c9c3ae!important;background:#fff!important;border-radius:16px!important;padding:20px!important;min-height:110px!important}
+.cleanUpload .primary{background:var(--ro-black)!important;border-color:var(--ro-black)!important}
+.cleanUpload .primary:hover{background:#302f2b!important}
+.cleanFields{gap:14px!important}
+.cleanFields label span{font-size:9px!important;color:#5f5b51!important}
+.cleanFields input{border-radius:10px!important;border:1px solid #ddd9cb!important;background:#fff!important;padding:11px 12px!important;font-size:10px!important}
+.cleanFields input:focus{outline:2px solid #ffd84d66!important;border-color:#c6b63d!important}
+.cleanProfile{background:#f5f2e8!important;border:0!important;border-radius:14px!important;padding:13px!important}
+.cleanOnboardingActions{margin-top:14px!important;padding-top:14px!important;border-top:1px solid #e6e2d7!important}
+.cleanOnboardingActions .secondary{background:transparent!important;border-color:transparent!important;color:#77736a!important}
+.cleanOnboardingActions .secondary:hover{background:#f1eee5!important}
+.cleanOnboardingActions .primary{background:var(--ro-yellow)!important;border-color:var(--ro-yellow)!important;color:var(--ro-black)!important;font-weight:850!important;box-shadow:0 5px 0 #d1b62f!important;transform:translateY(-1px)!important}
+.cleanOnboardingActions .primary:hover{background:#ffdc5f!important}
+.cleanOnboardingActions .primary:active{transform:translateY(2px)!important;box-shadow:0 2px 0 #d1b62f!important}
+@media(max-width:760px){
+ .onboardingModalClean{width:calc(100vw - 20px)!important;padding:20px!important;border-radius:18px!important}
+ .cleanOnboardingHeader h2{font-size:24px!important}
+ .cleanOnboardingHeader .modalSub{font-size:10px!important}
+ .cleanStep b{display:none!important}
+ .onboardingModalClean .linkedinGuide{grid-template-columns:1fr!important;gap:0!important;min-height:0!important}
+ .onboardingModalClean .guideVisual{min-height:155px!important}
+ .onboardingModalClean .guideCopy{padding:18px!important}
+ .onboardingModalClean .guideCopy h3{font-size:20px!important}
+ .cleanOnboardingStep{min-height:0!important}
+ .cleanUpload{padding:16px!important}
+ .cleanOnboardingActions{position:sticky!important;bottom:-20px!important;margin-left:-20px!important;margin-right:-20px!important;padding:12px 20px 20px!important;background:#fffdf7!important}
+}
+@media(prefers-reduced-motion:reduce){.onboardingModalClean *{animation:none!important;transition:none!important}}

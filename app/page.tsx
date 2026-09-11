@@ -235,12 +235,12 @@ function SetupModal({ownerName,setOwnerName,target,setTarget,keywords,setKeyword
  return <div className="modalOverlay"><div className={`setupModal ${onboarding?'onboardingModalClean':''}`}>
   <button className="modalClose" onClick={close}><X size={18}/></button>
   {onboarding ? <>
-   <div className="cleanOnboardingHeader"><div><div className="onboardingKicker">WELCOME TO REACHOUT</div><h2>Let’s get you set up.</h2><p className="modalSub">A few quick steps and we’ll turn your network into a focused outreach plan.</p></div><div className="cleanStepCount">{onboardingStep+1} / 3</div></div>
+   <div className="cleanOnboardingHeader"><div><div className="onboardingKicker">LET’S GET STARTED</div><h2>Let’s make your network useful.</h2><p className="modalSub">Three quick steps. Then ReachOut does the sorting.</p></div><div className="cleanStepCount">{onboardingStep+1} / 3</div></div>
    <div className="cleanStepBar">{stepNames.map((name,i)=><React.Fragment key={name}><div className={`cleanStep ${i<=onboardingStep?'active':''}`}><span>{i<onboardingStep?<Check size={11}/>:i+1}</span><b>{name}</b></div>{i<stepNames.length-1&&<i className={i<onboardingStep?'done':''}/>}</React.Fragment>)}</div>
    {onboardingStep===0 && <div className="cleanOnboardingStep">
     <div className="linkedinGuide cleanGuide"><div className="guideVisual" key={guideStep}>{guide[guideStep].ui}</div><div className="guideCopy"><div className="guideStepLabel">STEP {guideStep+1} OF {guide.length}</div><h3>{guide[guideStep].title}</h3><p>{guide[guideStep].text}</p>{guideStep===2&&<div className="guideEmailNote"><Mail size={13}/><span>LinkedIn can take up to <b>24 hours</b> to send the download email.</span></div>}</div></div>
     <div className="guideDots">{guide.map((_,i)=><button key={i} className={i===guideStep?'active':''} aria-label={`Show step ${i+1}`} onClick={()=>setGuideStep(i)}></button>)}</div>
-    <div className="cleanInfo"><Mail size={15}/><span><b>One thing to know:</b> LinkedIn sends the download link by email, sometimes within 24 hours.</span></div>
+    <div className="cleanInfo yellowInfo"><Mail size={15}/><span><b>Good to know:</b> LinkedIn emails the download link. It can take up to 24 hours.</span></div>
    </div>}
    {onboardingStep===1 && <div className="cleanOnboardingStep">
     <div className="cleanUploadIntro"><div className="onboardingSpark"><UploadCloud size={16}/></div><div><h3>Got your LinkedIn ZIP?</h3><p>Unzip it first, then upload <b>Connections.csv</b> and <b>messages.csv</b>.</p></div></div>
