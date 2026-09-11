@@ -1691,3 +1691,109 @@ input:focus,select:focus,textarea:focus{border-color:#7FAFD3!important;box-shado
     display:none !important;
   }
 }
+
+/* ReachOut motion polish — visual-only, no layout changes. */
+@keyframes ro-fade-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes ro-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes ro-slide-in-right {
+  from { opacity: 0; transform: translateX(18px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes ro-scale-in {
+  from { opacity: 0; transform: scale(.985); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes ro-pulse-ring {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(10,102,194,.10); }
+  50% { box-shadow: 0 0 0 8px rgba(10,102,194,.06); }
+}
+@keyframes ro-shimmer {
+  0% { background-position: 120% 0; }
+  100% { background-position: -120% 0; }
+}
+
+/* Page sections enter softly when a tab/view mounts. */
+.content > .topbar,
+.content > .insightBar,
+.content > .agentCard,
+.content > .pageTitle,
+.content > .search,
+.content > .opportunityControls,
+.content > .table,
+.content > .outreachHero,
+.content > .outreachGrid,
+.content > .followControls,
+.content > .followList,
+.content > .completedFollowups,
+.content > .emptyHome,
+.content > .howItWorks {
+  animation: ro-fade-up .24s cubic-bezier(.22,1,.36,1) both;
+}
+
+/* Recommendation/action lists get a restrained stagger. */
+.table .row,
+.personCard,
+.queueItem,
+.followRow,
+.actionRow,
+.agentAction {
+  animation: ro-fade-up .28s cubic-bezier(.22,1,.36,1) both;
+}
+.table .row:nth-child(2), .personCard:nth-child(1), .queueItem:nth-child(1), .followRow:nth-child(1), .actionRow:nth-child(1), .agentAction:nth-child(1) { animation-delay: .02s; }
+.table .row:nth-child(3), .personCard:nth-child(2), .queueItem:nth-child(2), .followRow:nth-child(2), .actionRow:nth-child(2), .agentAction:nth-child(2) { animation-delay: .05s; }
+.table .row:nth-child(4), .personCard:nth-child(3), .queueItem:nth-child(3), .followRow:nth-child(3), .actionRow:nth-child(3), .agentAction:nth-child(3) { animation-delay: .08s; }
+.table .row:nth-child(5), .personCard:nth-child(4), .queueItem:nth-child(4), .followRow:nth-child(4), .actionRow:nth-child(4), .agentAction:nth-child(4) { animation-delay: .11s; }
+.table .row:nth-child(6), .personCard:nth-child(5), .queueItem:nth-child(5), .followRow:nth-child(5), .actionRow:nth-child(5), .agentAction:nth-child(5) { animation-delay: .14s; }
+.table .row:nth-child(n+7) { animation-delay: .17s; }
+
+/* Keep interaction feedback snappy without changing component dimensions. */
+.primary, .secondary, .refresh, .quickAction, .queueOpen,
+.followDone, .agentChips button, .voiceClose, .modalClose,
+.profileActions a, .profileActions button, .sideSettings {
+  transition: transform .16s ease, box-shadow .16s ease, background-color .16s ease, border-color .16s ease, color .16s ease;
+}
+.primary:active, .secondary:active, .refresh:active, .quickAction:active,
+.queueOpen:active, .followDone:active, .agentChips button:active {
+  transform: scale(.98);
+}
+
+/* AI agent: a subtle sweep while the agent is working. */
+.agentPulse {
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.agentInput button:disabled {
+  background-image: linear-gradient(100deg, transparent 25%, rgba(255,255,255,.22) 50%, transparent 75%);
+  background-size: 220% 100%;
+  animation: ro-shimmer 1.35s linear infinite;
+}
+
+/* Import/setup and profile surfaces feel lighter when opening. */
+.modalOverlay { animation: ro-fade-in .18s ease both; }
+.setupModal { animation: ro-scale-in .22s cubic-bezier(.22,1,.36,1) both; }
+.overlay { animation: ro-fade-in .18s ease both; }
+.drawer { animation: ro-slide-in-right .24s cubic-bezier(.22,1,.36,1) both; }
+
+/* Voice interaction: visible listening state without moving layout. */
+.voiceFab.listening { animation: ro-pulse-ring 1.45s ease-in-out infinite; }
+.voiceOrb.active { animation: ro-pulse-ring 1.35s ease-in-out infinite; }
+.voicePanel { animation: ro-fade-up .2s cubic-bezier(.22,1,.36,1) both; }
+
+/* Progress bars animate their fill when their value changes. */
+.progress i, .goalMini i, .goalProgress i {
+  transition: width .55s cubic-bezier(.22,1,.36,1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: .01ms !important;
+  }
+}
