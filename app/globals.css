@@ -1886,3 +1886,136 @@ input:focus,select:focus,textarea:focus{border-color:#7FAFD3!important;box-shado
 .onboardingPayoff{padding:12px 13px;margin:0 0 10px;border:1px solid #dce6ef;border-radius:11px;background:linear-gradient(135deg,#f8fbff,#f7f5ff)}.onboardingPayoff>span{display:block;font-size:7px;letter-spacing:.14em;font-weight:850;color:#708096;margin-bottom:8px}.onboardingPayoff>div{display:flex;gap:7px;flex-wrap:wrap}.onboardingPayoff b{font-size:8px;font-weight:750;color:#334155;background:#fff;border:1px solid #e4eaf1;border-radius:999px;padding:6px 8px;box-shadow:0 2px 6px rgba(15,23,42,.03)}
 @keyframes cardShimmer{from{left:-120%}to{left:160%}}@keyframes buttonShimmer{from{right:-120%}to{right:160%}}@keyframes emptyBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}@keyframes toastIn{from{opacity:0;transform:translateY(-6px) scale(.98)}to{opacity:1;transform:none}}@keyframes toastCheck{from{opacity:0;transform:scale(.65)}to{opacity:1;transform:scale(1)}}
 @media(prefers-reduced-motion:reduce){.personCard:before,.aiFriendButton:after,.emptyPage .emptyIcon,.toast,.toast svg{animation:none!important}.personCard,.quickAction,.cardAction>span:first-child,.quickAction .quickCheck{transition:none!important}}
+
+/* FUN COLOR SYSTEM
+   Keeps ReachOut polished while adding more personality. */
+:root{
+  --ro-bg:#f7f5ff;
+  --ro-surface:#ffffff;
+  --ro-ink:#17213b;
+  --ro-muted:#68738a;
+  --ro-faint:#9aa3b5;
+  --ro-line:#e5e7f0;
+  --ro-soft:#f1efff;
+  --ro-dark:#17213b;
+  --ro-dark-2:#242e4a;
+  --ro-purple:#6d5ce7;
+  --ro-blue:#3b82f6;
+  --ro-mint:#27b99a;
+  --ro-coral:#f4776b;
+  --ro-yellow:#f2c75c;
+}
+html,body{background:var(--ro-bg);color:var(--ro-ink)}
+.sidebar{background:linear-gradient(180deg,#17213b 0%,#202a49 100%);box-shadow:8px 0 30px rgba(37,44,77,.08)}
+.brand span{color:#9da7c0}
+.sideGoal{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.11)}
+.goalMini{background:rgba(255,255,255,.13)}
+.goalMini i{background:linear-gradient(90deg,#7c6cf0,#57a7ff)}
+.nav{color:#aeb7cb}
+.nav:hover{background:rgba(109,92,231,.18);color:#fff}
+.nav.active{background:linear-gradient(90deg,rgba(109,92,231,.32),rgba(59,130,246,.18));color:#fff;box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}
+.nav em{background:#ffd86b;color:#27304a}
+.sideSettings{color:#aeb7cb;border-color:rgba(255,255,255,.1)}
+.sideMetric{border-color:rgba(255,255,255,.1)}
+.sideMetric span,.sideMetric small{color:#8994ad}
+.sideFooter{color:#7f8aa3}
+.topbar h1{color:#17213b}
+.topbar p,.sectionHead p,.pageTitle p{color:#6c7890}
+.refresh,.secondary{background:#fff;border-color:#dfe3ee;color:#47536b}
+.refresh:hover,.secondary:hover{background:#faf9ff;border-color:#cfc9fb;color:#5144bf}
+.primary{background:linear-gradient(135deg,#6d5ce7,#4b82ef);border-color:#6d5ce7;box-shadow:0 7px 18px rgba(109,92,231,.22)}
+.primary:hover{background:linear-gradient(135deg,#5f4fd5,#3b74df);box-shadow:0 10px 22px rgba(109,92,231,.28)}
+.toast{background:#17213b;border:1px solid rgba(255,255,255,.08)}
+.goalCard{background:linear-gradient(135deg,#18233f 0%,#2d3260 62%,#4f478d 100%);box-shadow:0 14px 32px rgba(40,42,82,.14)}
+.progress{background:rgba(255,255,255,.16)}
+.progress i{background:linear-gradient(90deg,#ffd86b,#7c6cf0)}
+.stat{border-color:#e3e6f0;box-shadow:0 4px 16px rgba(54,62,95,.035)}
+.statIcon{background:#f0edff;color:#6555d8}
+.stats .stat:nth-child(2) .statIcon{background:#eaf2ff;color:#3b82f6}
+.stats .stat:nth-child(3) .statIcon{background:#e9faf5;color:#159a7d}
+.stats .stat:nth-child(4) .statIcon{background:#fff4df;color:#c08b18}
+.insightBar{border-color:#e1e4ef;background:linear-gradient(100deg,#fff 0%,#fbfaff 100%)}
+.signalList span{border-color:#dddaf8;background:#f7f5ff;color:#6259a5}
+.signalList span:nth-child(2){border-color:#d9e7ff;background:#f3f7ff;color:#3971c7}
+.signalList span:nth-child(3){border-color:#d7eee7;background:#f1fbf8;color:#258d78}
+.personCard{border-color:#e2e5ef;box-shadow:0 4px 14px rgba(45,52,82,.035)}
+.personCard:nth-child(1){border-top:3px solid #6d5ce7}
+.personCard:nth-child(2){border-top:3px solid #3b82f6}
+.personCard:nth-child(3){border-top:3px solid #27b99a}
+.personCard:hover{border-color:#c9c5f3;box-shadow:0 14px 32px rgba(68,59,142,.12)}
+.avatar,.profileAvatar{background:linear-gradient(135deg,#ece9ff,#e7f1ff);color:#5145a6}
+.whyTag{background:#f5f2ff;color:#514a88}
+.personCard:nth-child(2) .whyTag{background:#eff6ff;color:#3d67a6}
+.personCard:nth-child(3) .whyTag{background:#ecfaf6;color:#277b69}
+.cardAction{border-color:#ececf4;color:#4f44b8}
+.cardAction .quickAction{color:#4f44b8}
+.actionIcon{background:#f0edff;color:#6555d8}
+.actionRow:hover{background:#faf9ff}
+.heroCard{border-color:#e0e3ef;background:linear-gradient(135deg,#fff 0%,#fbfaff 68%,#f1efff 100%)}
+.heroCopy h2 em{color:#6d5ce7}
+.heroVisual{background:linear-gradient(145deg,#17213b,#303663 70%,#4e4784);box-shadow:0 20px 45px rgba(36,42,83,.18)}
+.visualReason{background:rgba(255,255,255,.08);color:#d7dcef}
+.visualButton{background:linear-gradient(135deg,#ffd86b,#ffbf4d);color:#202941}
+.howItWorks{border-color:#e0e3ef;background:#fff}
+.howItWorks>div>span{background:#f0edff;color:#5b4ec7}
+.agentCard{background:linear-gradient(135deg,#f5f2ff 0%,#edf6ff 52%,#edfbf7 100%);border:1px solid #dddff0;box-shadow:0 12px 32px rgba(67,60,137,.07)}
+.agentPulse{background:#fff;border-color:#d9d5fb;color:#5c4ed0}
+.agentInput input{border-color:#dfe3ee;background:#fff}
+.agentInput input:focus{border-color:#8a7cf0;box-shadow:0 0 0 3px rgba(109,92,231,.11)}
+.agentChips button{background:#fff;border-color:#dddff0;color:#536078}
+.agentChips button:hover{background:#f8f6ff;border-color:#c9c3f6;color:#5a4dc5}
+.agentReply{background:#fff;border-color:#ddd8fa;color:#514a88}
+.emptyPage{background:linear-gradient(135deg,#fff 0%,#faf9ff 100%);border-color:#e1e4ef}
+.emptyIcon{background:#f0edff;color:#6d5ce7}
+.pageTitle .sectionEyebrow,.sectionEyebrow{color:#7066bd}
+.outreachHero{background:linear-gradient(135deg,#f0edff,#eef6ff);border-color:#dddff0}
+.queueProgress strong{color:#5d4fd0}
+.queueItem{border-color:#e3e6ef;background:#fff}
+.queueItem:hover{border-color:#c9c4f7;box-shadow:0 10px 24px rgba(71,62,145,.08)}
+.queueNumber{background:#f0edff;color:#5d4fd0}
+.quickAction{background:#f5f2ff;border-color:#ddd8fa;color:#5b4ec7}
+.quickAction:hover{background:#ece8ff;border-color:#c9c2f4}
+.followControls select{border-color:#dfe3ee;background:#fff;color:#47536b}
+.followMain:hover{background:#faf9ff}
+.followDone:hover{background:#f0edff;border-color:#c9c2f4;color:#5b4ec7}
+.completedLabel{color:#27866f}
+.secondary.completed{background:#ecfaf6;border-color:#ccebe2;color:#27866f}
+.search input{border-color:#dfe3ee;background:#fff}
+.search input:focus{border-color:#8a7cf0;box-shadow:0 0 0 3px rgba(109,92,231,.1)}
+.filterBar button.selectedFilter{background:#f0edff;color:#594cc4;border-color:#d3cdf8}
+.table .row:hover{background:#faf9ff}
+.drawer{background:#fff;color:#17213b}
+.close{background:#f0edff;color:#5b4ec7}
+.profileActions a,.profileActions button{border-color:#dfe3ee;background:#fff;color:#536078}
+.why{border-color:#e7e8f0}
+.nextAction{background:#f5f2ff;border:1px solid #e1dcfa}
+.draft{border-color:#e1e3ed}
+.draftHead{background:#faf9ff;border-color:#e8e8f0}
+.aiBadge{background:#f0edff;color:#5c4ed0}
+.aiGenerate{background:linear-gradient(135deg,#6d5ce7,#4b82ef)!important;border-color:#6d5ce7!important}
+.message{background:#f3f5ff}
+.message.mine{background:#f2fbf8}
+.floatingImport{background:linear-gradient(135deg,#6d5ce7,#4b82ef);box-shadow:0 12px 30px rgba(75,76,180,.24)}
+.dropOverlay{background:rgba(23,33,59,.88)}
+.dropOverlay>div{border-color:#9f95ef}
+.onboardingNotice{background:linear-gradient(135deg,#f0edff,#edf6ff)!important;border-color:#d7d3fa!important}
+.onboardingNoticeIcon{background:#fff!important;color:#5d4fd0!important}
+.onboardingPayoff{background:linear-gradient(135deg,#f5f2ff,#eef7ff,#effbf8)!important;border-color:#dddff0!important}
+.onboardingPayoff b{border-color:#e1e3ed!important;background:#fff!important}
+.guideHighlight{border-color:#bdb5f6!important;background:#f5f2ff!important}
+.cleanStep.current span{background:#6d5ce7!important;box-shadow:0 0 0 4px rgba(109,92,231,.12)}
+.cleanStep.complete span{background:#27b99a!important;color:#fff!important}
+.guideDots button.active{background:#6d5ce7!important;box-shadow:0 0 0 4px rgba(109,92,231,.1)}
+.guideDots button.complete{background:#27b99a!important}
+.cleanOnboardingActions .primary{background:linear-gradient(135deg,#6d5ce7,#4b82ef)}
+.profileImportBox{background:#f8f8ff;border-color:#e0e2ef}
+.profileFileList>div{background:#ecfaf6;color:#287d6a}
+
+/* Keep the new personality human and quiet. */
+@media(max-width:760px){.content{padding:26px 18px 60px}.topbar h1{font-size:29px}.cards{grid-template-columns:1fr}}
+.action.reach{color:#5f50cf;background:#f0edff;border:1px solid #ddd7fb;border-radius:999px;padding:5px 8px;font-style:normal}
+.action.reach:hover{background:#e9e5ff}
+.opportunityControls .secondary{background:#fff7e8;border-color:#f1dfb7;color:#956c17}
+.sectionHead .textBtn{color:#5d50c9}
+.voiceFab{background:linear-gradient(135deg,#6d5ce7,#4b82ef)!important;box-shadow:0 10px 24px rgba(77,72,180,.25)!important}
+.voicePanel{border-color:#ddd9f7!important;box-shadow:0 18px 45px rgba(45,49,90,.16)!important}

@@ -52,7 +52,7 @@ export function classify(c:Connection,target:string,stats?:MessageStats,keywords
   if(iitMatch){score+=7; reasons.push('IIT connection')}
   if(reputedStartupMatch){score+=8; reasons.push('Reputed startup / scale-up')}
   if(hiring){score+=28; reasons.push('Likely able to hire for this role')} else if(leadership){score+=18; reasons.push('Senior decision-maker at the company')}
-  if(!outgoing && !incoming){score+=10; reasons.push('No previous conversation — good for first outreach')}
+  if(!outgoing && !incoming){score+=10; reasons.push('No previous conversation. Good time to say hi')}
   if(awaiting && daysAgo(lastOut)>=7){score+=12; reasons.push(`You messaged ${daysAgo(lastOut)} days ago with no reply`)}
   if(incoming>0 && !awaiting) reasons.push('Has replied to you before')
   if(!roleMatch && !hiring && !leadership){score-=15; reasons.push('Lower relevance to your target')}
