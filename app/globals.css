@@ -2077,26 +2077,3 @@ html,body{background:var(--ro-bg);color:var(--ro-ink)}
 .outreachHero{background:linear-gradient(135deg,#f1ecff,#eef4ff);border-color:#ded8ef}
 .drawer{color:#25223a}
 .dropOverlay{background:rgba(94,72,174,.9)}
-
-/* FINAL BRAND OVERRIDE: no navy as a ReachOut brand color */
-:root{
-  --ro-brand:#7357e8;
-  --ro-brand-2:#8b6ff0;
-  --ro-brand-blue:#4f7df3;
-  --ro-text:#27243a;
-}
-html,body{color:var(--ro-text)}
-.sidebar{background:linear-gradient(180deg,#7357e8 0%,#8669ee 52%,#704fd6 100%)!important}
-.brandmark{background:#fff!important;color:#7357e8!important}
-.sideGoal{background:rgba(255,255,255,.13)!important;border-color:rgba(255,255,255,.2)!important}
-.nav.active{background:rgba(255,255,255,.2)!important}
-.nav:hover{background:rgba(255,255,255,.14)!important}
-.topbar h1,.pageTitle h2,.sectionHead h2{color:#27243a!important}
-.primary{background:linear-gradient(135deg,#7357e8,#4f7df3)!important;border-color:#7357e8!important}
-.toast{background:linear-gradient(135deg,#7357e8,#684bd8)!important}
-.goalCard{background:linear-gradient(135deg,#7357e8 0%,#8467ed 55%,#4f7df3 100%)!important}
-.heroVisual{background:linear-gradient(145deg,#7357e8 0%,#8669ee 58%,#4f7df3 100%)!important}
-.visualReason{background:rgba(255,255,255,.14)!important;color:#fff!important;border-color:rgba(255,255,255,.2)!important}
-.drawer{color:#27243a!important}
-.dropOverlay{background:rgba(115,87,232,.92)!important}
-.voiceFab{background:linear-gradient(135deg,#7357e8,#4f7df3)!important}
