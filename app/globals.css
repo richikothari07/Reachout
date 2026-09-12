@@ -2019,3 +2019,61 @@ html,body{background:var(--ro-bg);color:var(--ro-ink)}
 .sectionHead .textBtn{color:#5d50c9}
 .voiceFab{background:linear-gradient(135deg,#6d5ce7,#4b82ef)!important;box-shadow:0 10px 24px rgba(77,72,180,.25)!important}
 .voicePanel{border-color:#ddd9f7!important;box-shadow:0 18px 45px rgba(45,49,90,.16)!important}
+
+/* PURPLE CORE BRAND
+   Purple is the ReachOut brand anchor. Navy is reserved nowhere in the core UI. */
+:root{
+  --ro-bg:#faf8ff;
+  --ro-surface:#ffffff;
+  --ro-ink:#25223a;
+  --ro-muted:#6f6a82;
+  --ro-faint:#a19caf;
+  --ro-line:#e8e4f2;
+  --ro-soft:#f1edff;
+  --ro-dark:#4a3a86;
+  --ro-dark-2:#624eb1;
+  --ro-purple:#7357e8;
+  --ro-blue:#4f7df3;
+  --ro-mint:#35c7a1;
+  --ro-coral:#ff7a70;
+  --ro-yellow:#f3c85b;
+}
+html,body{background:var(--ro-bg);color:var(--ro-ink)}
+.sidebar{background:linear-gradient(180deg,#6b50d9 0%,#795de5 52%,#694fcf 100%);box-shadow:8px 0 30px rgba(86,65,160,.14)}
+.brand span{color:#e7e1ff}
+.sideGoal{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.18)}
+.goalMini{background:rgba(255,255,255,.16)}
+.goalMini i{background:linear-gradient(90deg,#ffd96b,#fff0b0)}
+.nav{color:#eeeaff}
+.nav:hover{background:rgba(255,255,255,.13);color:#fff}
+.nav.active{background:rgba(255,255,255,.18);color:#fff;box-shadow:inset 0 0 0 1px rgba(255,255,255,.14)}
+.nav em{background:#ffe071;color:#59450b}
+.sideSettings{color:#eeeaff;border-color:rgba(255,255,255,.16)}
+.sideMetric{border-color:rgba(255,255,255,.16)}
+.sideMetric span,.sideMetric small{color:#ded7fb}
+.sideFooter{color:#d5cef5}
+.topbar h1{color:#25223a}
+.topbar p,.sectionHead p,.pageTitle p{color:#746f86}
+.refresh,.secondary{background:#fff;border-color:#e4e0ec;color:#514c63}
+.refresh:hover,.secondary:hover{background:#fcfaff;border-color:#d5ccf4;color:#654fd0}
+.primary{background:linear-gradient(135deg,#7357e8,#4f7df3);border-color:#7357e8;box-shadow:0 7px 18px rgba(115,87,232,.22)}
+.primary:hover{background:linear-gradient(135deg,#684bd8,#416fe1);box-shadow:0 10px 22px rgba(115,87,232,.28)}
+.toast{background:#684fd0;border:1px solid rgba(255,255,255,.12)}
+.goalCard{background:linear-gradient(135deg,#6548cf 0%,#7656dc 58%,#4f7df3 100%);box-shadow:0 14px 32px rgba(91,68,171,.18)}
+.progress{background:rgba(255,255,255,.2)}
+.progress i{background:linear-gradient(90deg,#ffe071,#fff2ae)}
+.stat{border-color:#e6e2ef;box-shadow:0 4px 16px rgba(77,60,126,.045)}
+.insightBar{border-color:#e5e1ee;background:linear-gradient(100deg,#fff 0%,#fbf9ff 100%)}
+.personCard{border-color:#e5e1ee;box-shadow:0 4px 14px rgba(77,60,126,.04)}
+.personCard:nth-child(1){border-top-color:#7357e8}
+.personCard:nth-child(2){border-top-color:#4f7df3}
+.personCard:nth-child(3){border-top-color:#35c7a1}
+.personCard:hover{border-color:#cec4f4;box-shadow:0 14px 32px rgba(90,70,158,.13)}
+.heroCard{border-color:#e4e0ed;background:linear-gradient(135deg,#fff 0%,#fcfaff 68%,#f1edff 100%)}
+.heroCopy h2 em{color:#7357e8}
+.heroVisual{background:linear-gradient(145deg,#694fd0,#7a5ce2 62%,#4f7df3);box-shadow:0 20px 45px rgba(88,67,163,.2)}
+.agentCard{background:linear-gradient(135deg,#f4efff 0%,#eef4ff 52%,#edfbf7 100%);border-color:#ded8ef;box-shadow:0 12px 32px rgba(91,72,151,.08)}
+.emptyPage{background:linear-gradient(135deg,#fff 0%,#fbf9ff 100%);border-color:#e5e1ee}
+.outreachHero{background:linear-gradient(135deg,#f1ecff,#eef4ff);border-color:#ded8ef}
+.drawer{color:#25223a}
+.dropOverlay{background:rgba(94,72,174,.9)}
