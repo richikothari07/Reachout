@@ -7,7 +7,7 @@ import { ArrowRight, ArrowUpRight, BarChart3, Check, CheckCircle2, ChevronDown, 
 
 type Connection={first_name:string;last_name:string;linkedin_url:string;company:string;position:string;connected_on:string;education?:string}
 type Message={from:string;sender:string;to:string;recipient:string;date:string;content:string;folder:string}
-type Ranked=Connection & {score:number;reasons:string[];action:'Reach out'|'Follow up'|'Keep warm';lastOutgoing?:string|null;lastIncoming?:string|null;outgoingCount:number;incomingCount:number;roleMatch:boolean;keywordMatches:string[];iitMatch?:boolean}
+type Ranked=Connection & {score:number;reasons:string[];action:'Reach out'|'Follow up'|'Keep warm';lastOutgoing?:string|null;lastIncoming?:string|null;outgoingCount:number;incomingCount:number;roleMatch:boolean;keywordMatches:string[];iitMatch?:boolean;reputedStartupMatch?:boolean}
 type FileItem={id:string;name:string;type:'connections'|'messages'|'education'|null;rows:number;status:'ready'|'error'|'processing';error?:string}
 type ProfileContext={name:string;headline:string;summary:string;industry:string;positions:string[];positionDescriptions:string[];skills:string[]}
 
