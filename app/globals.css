@@ -3166,3 +3166,96 @@ html, body, .app, .content, .sidebar {
     line-height: 1 !important;
   }
 }
+
+
+/* =========================================================
+   HOME HERO — screenshot-aligned visual treatment
+   ========================================================= */
+@media (min-width: 901px){
+  .topbar{
+    position:relative;
+    min-height:122px;
+    margin-bottom:26px !important;
+    align-items:flex-start !important;
+  }
+  .topbar > div:first-child{position:relative;z-index:2}
+  .topbar h1{
+    font-size:42px !important;
+    line-height:1.02 !important;
+    letter-spacing:-.06em !important;
+    margin-top:4px !important;
+    margin-bottom:9px !important;
+    max-width:720px !important;
+  }
+  .topbar p{
+    font-size:15px !important;
+    line-height:1.45 !important;
+    max-width:760px !important;
+  }
+  .homeGreeting{
+    font-size:10px !important;
+    letter-spacing:.15em !important;
+    margin-bottom:8px !important;
+    color:#64718a !important;
+  }
+  .homeAccent{color:#155EEF !important}
+  .topbarRight{position:relative;z-index:3;align-self:flex-start;margin-top:22px}
+  .topActions .refresh,.topActions .primary{
+    min-height:44px !important;
+    padding:11px 16px !important;
+    border-radius:11px !important;
+    font-size:12px !important;
+  }
+  .topbar::after{
+    content:"";
+    position:absolute;
+    right:178px;
+    top:12px;
+    width:185px;
+    height:82px;
+    pointer-events:none;
+    opacity:.9;
+    background:
+      radial-gradient(circle at 82% 74%, #FFF84D 0 3px, transparent 4px),
+      radial-gradient(circle at 89% 57%, #FFF84D 0 3px, transparent 4px),
+      radial-gradient(circle at 75% 52%, #FFF84D 0 3px, transparent 4px);
+  }
+  .topbarRight::before{
+    content:"Build\A meaningful\A connections";
+    white-space:pre;
+    position:absolute;
+    right:188px;
+    top:0;
+    width:120px;
+    color:#17224A;
+    font-size:11px;
+    line-height:1.05;
+    font-weight:650;
+    font-style:italic;
+    transform:rotate(-8deg);
+    pointer-events:none;
+  }
+  .topbarRight::after{
+    content:"➜";
+    position:absolute;
+    right:156px;
+    top:46px;
+    color:#17224A;
+    font-size:28px;
+    transform:rotate(8deg);
+    pointer-events:none;
+  }
+}
+@media (max-width: 900px){
+  .topbar h1{
+    font-size:clamp(30px,9vw,38px) !important;
+    line-height:1.04 !important;
+    letter-spacing:-.055em !important;
+  }
+  .topbar p{font-size:13px !important;line-height:1.5 !important}
+  .homeGreeting{font-size:9px !important;margin-bottom:7px !important}
+  .homeAccent{color:#155EEF !important}
+}
+
+/* Never show the old centered loading/marketing treatment on Home. */
+.homeLoadState{display:none !important}
