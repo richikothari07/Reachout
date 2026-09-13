@@ -3187,4 +3187,26 @@ html, body, .app, .content, .sidebar {
 @media(max-width:900px){
   .homeHeroDecor,.agentDecor{display:none!important}
 }
-\n\n/* FINAL HOME VISUAL CLEANUP\n   Keep the dashboard visible during data fetch; avoid the old loading/marketing flash. */\n.homeLoadState{display:none!important}\n.topbar{overflow:visible!important}\n.homeHeroDecor{right:330px!important;top:16px!important;width:180px!important;height:82px!important}\n.homeHeroDecor span{font-size:11px!important;line-height:1.03!important}\n.homeHeroDecor svg{left:60px!important;top:18px!important;width:88px!important;height:58px!important}\n.homeHeroDecor i{left:122px!important;top:47px!important}\n.homeHeroDecor b{left:146px!important;top:64px!important}\n\n/* Keep the AI decoration anchored to the card and out of the status pill/input. */\n.agentCard{position:relative!important;overflow:hidden!important}\n.agentDecor{right:36px!important;top:42px!important;width:300px!important;height:118px!important;z-index:0!important}\n.agentDecor svg{left:0!important;top:0!important;width:140px!important;height:86px!important}\n.agentNoteCard{right:4px!important;top:10px!important;width:132px!important;min-height:82px!important;padding:12px 14px!important;font-size:15px!important;line-height:1.06!important;transform:rotate(-6deg)!important;z-index:0!important}\n.agentTop{position:relative!important;z-index:2!important}\n.agentPulse{position:relative!important;z-index:3!important}\n.agentInput,.agentChips,.agentReply,.agentActions,.agentNote{position:relative!important;z-index:2!important}\n@media(max-width:900px){\n  .homeHeroDecor,.agentDecor{display:none!important}\n}\n
+
+
+/* FINAL HOME VISUAL CLEANUP
+   Keep the dashboard visible during data fetch; avoid the old loading/marketing flash. */
+.homeLoadState{display:none!important}
+.topbar{overflow:visible!important}
+.homeHeroDecor{right:330px!important;top:16px!important;width:180px!important;height:82px!important}
+.homeHeroDecor span{font-size:11px!important;line-height:1.03!important}
+.homeHeroDecor svg{left:60px!important;top:18px!important;width:88px!important;height:58px!important}
+.homeHeroDecor i{left:122px!important;top:47px!important}
+.homeHeroDecor b{left:146px!important;top:64px!important}
+
+/* Keep the AI decoration anchored to the card and out of the status pill/input. */
+.agentCard{position:relative!important;overflow:hidden!important}
+.agentDecor{right:36px!important;top:42px!important;width:300px!important;height:118px!important;z-index:0!important}
+.agentDecor svg{left:0!important;top:0!important;width:140px!important;height:86px!important}
+.agentNoteCard{right:4px!important;top:10px!important;width:132px!important;min-height:82px!important;padding:12px 14px!important;font-size:15px!important;line-height:1.06!important;transform:rotate(-6deg)!important;z-index:0!important}
+.agentTop{position:relative!important;z-index:2!important}
+.agentPulse{position:relative!important;z-index:3!important}
+.agentInput,.agentChips,.agentReply,.agentActions,.agentNote{position:relative!important;z-index:2!important}
+@media(max-width:900px){
+  .homeHeroDecor,.agentDecor{display:none!important}
+}
