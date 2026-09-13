@@ -185,7 +185,7 @@ export default function Home(){
 
  return <main className="app" onDragOver={e=>{e.preventDefault();setDrag(true)}} onDragLeave={()=>setDrag(false)} onDrop={e=>{e.preventDefault();setDrag(false);importFiles(e.dataTransfer.files)}}>
   <aside className="sidebar">
-   <div className="brand" data-build="ux-refresh"><img className="brandLogo" src="/reachout-logo.png" alt="ReachOut"/><div><b>ReachOut</b><span>OUTREACH INTELLIGENCE</span></div></div>
+   <div className="brand"><img className="brandLogo" src="/reachout-logo.png" alt="ReachOut"/><div><b>ReachOut</b><span>OUTREACH INTELLIGENCE</span></div></div>
    <div className="sideGoal"><span>YOUR GOAL</span><b>{goal}</b><div className="goalMini"><i style={{width:`${goalPct}%`}}/></div><small>{conversations} / {goalTarget} conversations</small></div>
    <nav>{([['Home',Sparkles],['Opportunities',Flame],['Outreach',Zap],['Follow-ups',Clock3]] as const).map(([x,Icon])=><button key={x} className={tab===x?'nav active':'nav'} onClick={()=>setTab(x as any)}><Icon size={17}/><span>{x==='Follow-ups'?'Follow ups':x}</span>{x==='Follow-ups'&&followups.length>0&&<em>{followups.length}</em>}</button>)}</nav>
    <div className="sidebarBottom"><button className="sideSettings" onClick={()=>setSetupOpen(true)}><Settings2 size={15}/> Goal & data</button><div className="sideMetric"><span>NETWORK</span><b>{connectionCount.toLocaleString()}</b><small>people analyzed</small></div><div className="sideMetric"><span>ACTIONS</span><b>{queue.length}</b><small>next actions</small></div><div className="sideFooter">{accountEmail}<button className="signOut" onClick={()=>supabaseBrowser.auth.signOut()}>Sign out</button><br/>Your network, made easier to act on.</div></div>
