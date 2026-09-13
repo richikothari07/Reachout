@@ -2191,3 +2191,221 @@ html,body{background:var(--ro-bg);color:var(--ro-ink)}
 .sidebarAccountRow{
   margin-top:auto !important;
 }
+
+/* =========================================================
+   HORIZONTAL TOP TASKBAR
+   UX-only shell change. Existing navigation/actions preserved.
+   ========================================================= */
+@media (min-width: 761px) {
+  .sidebar{
+    position:fixed !important;
+    inset:0 0 auto 0 !important;
+    width:100% !important;
+    height:76px !important;
+    box-sizing:border-box !important;
+    background:var(--ro-bg,#f6f6f3) !important;
+    color:var(--ro-ink,#171715) !important;
+    border-right:0 !important;
+    border-bottom:1px solid var(--ro-line,#e7e7e1) !important;
+    box-shadow:0 4px 18px rgba(23,23,21,.035) !important;
+    padding:0 28px !important;
+    display:flex !important;
+    flex-direction:row !important;
+    align-items:center !important;
+    gap:24px !important;
+    z-index:20 !important;
+  }
+
+  .sidebar .brand{
+    flex:0 0 auto !important;
+    padding:0 !important;
+    margin:0 !important;
+    gap:10px !important;
+    align-items:center !important;
+  }
+
+  .sidebar .brandLogo{
+    width:34px !important;
+    height:34px !important;
+    filter:brightness(0) !important;
+  }
+
+  .sidebar .brand b{
+    color:var(--ro-ink,#171715) !important;
+    font-size:15px !important;
+  }
+
+  .sidebar .brand span{
+    color:var(--ro-muted,#777771) !important;
+    font-size:7px !important;
+  }
+
+  .sidebar .sideGoal{
+    flex:0 1 220px !important;
+    min-width:150px !important;
+    margin:0 !important;
+    padding:8px 11px !important;
+    background:transparent !important;
+    border:0 !important;
+    border-radius:9px !important;
+  }
+
+  .sidebar .sideGoal>span{
+    color:var(--ro-muted,#777771) !important;
+  }
+
+  .sidebar .sideGoal>b{
+    color:var(--ro-ink,#171715) !important;
+    margin:3px 0 5px !important;
+    white-space:nowrap !important;
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+  }
+
+  .sidebar .goalMini{
+    background:#e7e7e1 !important;
+  }
+
+  .sidebar .goalMini i{
+    background:var(--ro-ink,#171715) !important;
+  }
+
+  .sidebar .sideGoal small{
+    color:var(--ro-muted,#777771) !important;
+    margin-top:4px !important;
+  }
+
+  .sidebar nav{
+    flex:1 1 auto !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    gap:4px !important;
+    min-width:0 !important;
+    margin:0 !important;
+  }
+
+  .sidebar .nav{
+    flex:0 0 auto !important;
+    padding:10px 13px !important;
+    color:#666660 !important;
+    background:transparent !important;
+    border-radius:9px !important;
+    white-space:nowrap !important;
+  }
+
+  .sidebar .nav:hover{
+    color:var(--ro-ink,#171715) !important;
+    background:#efefea !important;
+  }
+
+  .sidebar .nav.active{
+    color:var(--ro-ink,#171715) !important;
+    background:#ffffff !important;
+    box-shadow:0 1px 4px rgba(23,23,21,.08) !important;
+  }
+
+  .sidebar .nav em{
+    background:#ffffff !important;
+    color:var(--ro-ink,#171715) !important;
+  }
+
+  .sidebar .sidebarAccountRow{
+    flex:0 0 auto !important;
+    margin:0 !important;
+    padding:0 !important;
+    order:5 !important;
+  }
+
+  .sidebar .accountButton{
+    width:34px !important;
+    height:34px !important;
+    background:#ffffff !important;
+    border:1px solid #deded7 !important;
+    color:var(--ro-ink,#171715) !important;
+  }
+
+  .sidebar .accountAvatar{
+    background:transparent !important;
+    color:var(--ro-ink,#171715) !important;
+  }
+
+  .sidebar .accountMenu{
+    left:auto !important;
+    right:0 !important;
+    top:42px !important;
+    bottom:auto !important;
+  }
+
+  .sidebar .sidebarBottom{
+    display:contents !important;
+  }
+
+  .content{
+    margin-left:0 !important;
+    width:100% !important;
+    max-width:none !important;
+    padding:114px clamp(38px,4.2vw,72px) 84px !important;
+  }
+}
+
+@media (max-width: 760px) {
+  .sidebar{
+    position:fixed !important;
+    inset:0 0 auto 0 !important;
+    width:100% !important;
+    height:68px !important;
+    box-sizing:border-box !important;
+    background:var(--ro-bg,#f6f6f3) !important;
+    color:var(--ro-ink,#171715) !important;
+    border:0 !important;
+    border-bottom:1px solid var(--ro-line,#e7e7e1) !important;
+    box-shadow:0 3px 14px rgba(23,23,21,.035) !important;
+    padding:0 12px !important;
+    display:flex !important;
+    flex-direction:row !important;
+    align-items:center !important;
+  }
+
+  .sidebar .brand,
+  .sidebar .sideGoal{
+    display:none !important;
+  }
+
+  .sidebar nav{
+    flex:1 !important;
+    display:flex !important;
+    justify-content:center !important;
+    gap:2px !important;
+    margin:0 !important;
+  }
+
+  .sidebar .nav{
+    height:44px !important;
+    padding:6px 8px !important;
+    color:#666660 !important;
+    background:transparent !important;
+  }
+
+  .sidebar .nav.active{
+    background:#ffffff !important;
+    color:var(--ro-ink,#171715) !important;
+  }
+
+  .sidebar .sidebarAccountRow{
+    display:flex !important;
+    margin:0 !important;
+    padding:0 !important;
+  }
+
+  .sidebar .accountButton{
+    width:32px !important;
+    height:32px !important;
+  }
+
+  .content{
+    margin-left:0 !important;
+    width:100% !important;
+    padding-top:88px !important;
+  }
+}
