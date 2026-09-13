@@ -10,6 +10,7 @@ export default function Login({ onAuthed }: { onAuthed: () => void }) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [busy, setBusy] = useState(false)
+  const [googleBusy, setGoogleBusy] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
 
@@ -57,6 +58,26 @@ export default function Login({ onAuthed }: { onAuthed: () => void }) {
     setMode(nextMode)
     setError('')
     setSuccess('')
+  }
+
+  const continueWithGoogle = async () => {
+    setGoogleBusy(true)
+    setError('')
+    setSuccess('')
+
+    try {
+      const { error: googleError } = await supabaseBrowser.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: window.location.origin,
+        },
+      })
+
+      if (googleError) throw googleError
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Could not continue with Google.')
+      setGoogleBusy(false)
+    }
   }
 
   return (
@@ -118,6 +139,18 @@ export default function Login({ onAuthed }: { onAuthed: () => void }) {
                   : 'Send reset link'}
           </button>
         </form>
+
+        {mode !== 'reset' && (
+          <div className="authGoogleArea">
+            <div className="authDivider"><span>OR</span></div>
+            <button className="googleButton" type="button" onClick={continueWithGoogle} disabled={busy || googleBusy}>
+              <span className="googleIcon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="18" height="18"><path fill="#4285F4" d="M21.35 12.27c0-.71-.06-1.39-.18-2.05H12v3.88h5.23a4.47 4.47 0 0 1-1.94 2.93v2.43h3.14c1.84-1.69 2.92-4.18 2.92-7.19Z"/><path fill="#34A853" d="M12 21.75c2.63 0 4.84-.87 6.45-2.34l-3.14-2.43c-.87.58-1.98.92-3.31.92-2.55 0-4.71-1.72-5.49-4.03H3.27v2.5A9.75 9.75 0 0 0 12 21.75Z"/><path fill="#FBBC05" d="M6.51 13.87A5.86 5.86 0 0 1 6.2 12c0-.65.11-1.28.31-1.87v-2.5H3.27A9.75 9.75 0 0 0 2.25 12c0 1.57.38 3.06 1.02 4.37l3.24-2.5Z"/><path fill="#EA4335" d="M12 6.1c1.43 0 2.71.49 3.72 1.45l2.79-2.79C16.84 3.2 14.63 2.25 12 2.25a9.75 9.75 0 0 0-8.73 5.38l3.24 2.5C7.29 7.82 9.45 6.1 12 6.1Z"/></svg>
+              </span>
+              {googleBusy ? 'Connecting…' : 'Continue with Google'}
+            </button>
+          </div>
+        )}
 
         {mode === 'login' && (
           <button className="forgotPassword" type="button" onClick={() => switchMode('reset')}>
