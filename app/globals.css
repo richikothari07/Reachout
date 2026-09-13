@@ -3455,3 +3455,38 @@ html,body,.app,.content,.sidebar{background:var(--final-bg)!important;color:var(
   .cards{grid-template-columns:1fr!important;gap:12px!important}
   .personCard{min-height:0!important;padding:15px!important;border-radius:14px!important}
 }
+
+/* Final screenshot-alignment cleanup: neutralize duplicate decorative layers */
+@media (min-width: 901px){
+  .topbar::before{content:none!important;background:none!important}
+  .topbar::after{content:none!important;background:none!important}
+  .topbarRight::before{content:none!important}
+  .topbarRight::after{content:none!important}
+
+  .topbar{position:relative!important;display:flex!important;justify-content:space-between!important;align-items:flex-start!important;min-height:0!important;margin:0 auto 30px!important}
+  .topbar > div:first-child{max-width:900px!important}
+  .topbar h1{max-width:820px!important;font-size:46px!important;line-height:1.06!important;letter-spacing:-.058em!important}
+  .topbar p{max-width:760px!important;font-size:14px!important}
+
+  /* Single, restrained handwritten hero accent */
+  .topbarRight{position:relative!important;margin-top:8px!important;min-width:330px!important}
+  .topbarRight::before{content:"Build\A meaningful\A connections"!important;white-space:pre!important;position:absolute!important;right:210px!important;top:3px!important;width:105px!important;color:#1D2B50!important;font-size:11px!important;line-height:1.05!important;font-weight:700!important;font-style:italic!important;transform:rotate(-7deg)!important;pointer-events:none!important}
+  .topbarRight::after{content:"↘"!important;position:absolute!important;right:169px!important;top:55px!important;color:#1D2B50!important;font-size:27px!important;transform:rotate(-8deg)!important;pointer-events:none!important}
+
+  .agentCard::before,.agentCard::after{content:none!important;display:none!important}
+  .agentDecorNote{right:44px!important;top:24px!important;width:112px!important;padding:11px 12px 12px!important;border-radius:8px!important;background:#DFFF73!important;color:#172033!important;font:700 13px/1.18 "Comic Sans MS","Bradley Hand",cursive!important;transform:rotate(-5deg)!important;box-shadow:0 7px 18px rgba(56,72,122,.08)!important;z-index:4!important;overflow:visible!important}
+  .agentDecorNote span{display:block!important;white-space:nowrap!important}
+  .agentDecorNote::before{content:""!important;position:absolute!important;left:-76px!important;top:7px!important;width:87px!important;height:48px!important;border-top:3px solid #173C93!important;border-right:0!important;border-radius:70% 0 0 0!important;transform:rotate(14deg)!important}
+  .agentDecorNote::after{content:"↘"!important;position:absolute!important;left:-83px!important;top:28px!important;font:700 26px/1 sans-serif!important;color:#173C93!important;transform:rotate(-8deg)!important}
+
+  .agentCard{max-width:1240px!important;min-height:220px!important;margin:0 auto 34px!important;padding:28px 28px 22px!important}
+  .agentTop{padding-right:240px!important}
+  .agentTop h2{font-size:27px!important}
+  .agentTop p{font-size:12px!important}
+}
+
+@media (max-width: 900px){
+  .topbar::before,.topbar::after,.topbarRight::before,.topbarRight::after{content:none!important}
+  .agentCard::before,.agentCard::after{content:none!important;display:none!important}
+  .agentDecorNote{display:none!important}
+}
