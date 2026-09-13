@@ -3,11 +3,11 @@
 A network intelligence dashboard for prioritising who to contact next.
 
 ## Flow
-1. Open ReachOut.
-2. Enter your name and target role in the single setup panel.
-3. Select Connections.csv and messages.csv together.
+1. Open ReachOut and set a goal such as a target role or career objective.
+2. Explore the product without uploading data if you want to see how it works first.
+3. Optionally upload Connections.csv and messages.csv from your LinkedIn export.
 4. ReachOut parses the LinkedIn exports server-side and saves normalized rows to Supabase.
-5. The dashboard immediately reloads from Supabase and shows counts, ranked people, follow-ups and the people directory.
+5. The dashboard turns the network into focused queues built around three questions: who to contact, why they matter, and what to say.
 
 ## Required Vercel environment variables
 - `SUPABASE_URL` (or `NEXT_PUBLIC_SUPABASE_URL`)
