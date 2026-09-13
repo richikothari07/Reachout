@@ -3073,3 +3073,36 @@ body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,
   border-color: #5145c6 !important;
   color: #5145c6 !important;
 }
+
+/* MOBILE MESSAGE ACTION — same clean treatment as desktop */
+@media (max-width: 760px) {
+  .quickAction,
+  .quickAction:hover,
+  .quickAction:active,
+  .quickAction:focus,
+  .quickAction:focus-visible {
+    background: transparent !important;
+    background-color: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    color: #5145c6 !important;
+    padding: 4px 0 !important;
+  }
+
+  .quickAction .quickCheck {
+    background: #fff !important;
+    background-color: #fff !important;
+    border: 1px solid #cfd5e2 !important;
+    color: #5145c6 !important;
+    box-shadow: none !important;
+  }
+
+  .quickAction:hover .quickCheck,
+  .quickAction:active .quickCheck,
+  .quickAction:focus-visible .quickCheck {
+    background: #fff !important;
+    background-color: #fff !important;
+    border-color: #5145c6 !important;
+    color: #5145c6 !important;
+  }
+}
