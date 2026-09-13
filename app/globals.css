@@ -2092,3 +2092,76 @@ html,body{background:var(--ro-bg);color:var(--ro-ink)}
 
 /* Account menu / logout */
 .topbarRight{display:flex;align-items:flex-start;gap:9px;position:relative}.accountMenuWrap{position:relative}.accountButton{height:36px;border:1px solid var(--ro-border,#deded7);background:#fff;border-radius:10px;padding:0 9px;display:flex;align-items:center;gap:7px;color:var(--ro-ink,#25223a);font-size:9px;max-width:230px}.accountButton:hover{background:#faf9ff;border-color:#d8d2f4}.accountAvatar{width:23px;height:23px;border-radius:7px;background:#eee9ff;color:#6655c8;display:grid;place-items:center;flex:none}.accountEmail{max-width:155px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.accountMenu{position:absolute;right:0;top:43px;width:230px;background:#fff;border:1px solid #e3e0ed;border-radius:12px;padding:9px;box-shadow:0 18px 45px #25223a22;z-index:30}.accountMenuLabel{font-size:7px;letter-spacing:.14em;font-weight:800;color:#9a96a7;padding:4px 7px}.accountMenuEmail{font-size:9px;color:#4d4960;padding:3px 7px 9px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;border-bottom:1px solid #efedf3;margin-bottom:5px}.accountMenu button{width:100%;border:0;background:transparent;border-radius:8px;padding:9px 8px;display:flex;align-items:center;gap:8px;text-align:left;font-size:9px;color:#4d4960}.accountMenu button:hover{background:#f6f3ff;color:#4e43a5}.accountMenu .accountLogout{color:#a15e5e}.accountMenu .accountLogout:hover{background:#fff3f1;color:#9a4e4e}@media(max-width:760px){.topbarRight{gap:6px}.accountEmail{display:none}.accountButton{width:36px;padding:0;justify-content:center}.accountButton>svg{display:none}.accountMenu{right:0;width:220px}.topActions .refresh{display:none}}
+
+/* =========================================================
+   TOP NAV + ICON ACCOUNT CONTROL
+   ========================================================= */
+@media (min-width: 901px) {
+  .sidebar nav { display:none !important; }
+  .topbar { border-bottom:0 !important; padding-bottom:0 !important; }
+  .topbarMain { display:flex; align-items:flex-start; justify-content:space-between; gap:24px; }
+  .mainTabs {
+    display:flex;
+    align-items:center;
+    gap:5px;
+    margin-top:24px;
+    padding:5px;
+    width:max-content;
+    max-width:100%;
+    background:#fff;
+    border:1px solid #e6e3ee;
+    border-radius:12px;
+    box-shadow:0 5px 18px rgba(50,42,90,.045);
+  }
+  .mainTab {
+    position:relative;
+    display:flex;
+    align-items:center;
+    gap:7px;
+    min-height:36px;
+    padding:8px 13px;
+    border:0;
+    border-radius:8px;
+    background:transparent;
+    color:#777386;
+    font-size:9px;
+    font-weight:650;
+    cursor:pointer;
+    transition:background .18s ease,color .18s ease,transform .18s ease;
+  }
+  .mainTab:hover { background:#f6f3ff; color:#5545a9; transform:translateY(-1px); }
+  .mainTab.active { background:#eee9ff; color:#5545b5; }
+  .mainTab em {
+    min-width:17px;
+    height:17px;
+    padding:0 4px;
+    display:grid;
+    place-items:center;
+    border-radius:999px;
+    background:#6b50d9;
+    color:#fff;
+    font-size:7px;
+    font-style:normal;
+    line-height:1;
+  }
+  .accountButton {
+    width:38px !important;
+    height:38px !important;
+    padding:0 !important;
+    justify-content:center !important;
+    border-radius:11px !important;
+    cursor:pointer;
+  }
+  .accountButton .accountAvatar { width:26px; height:26px; border-radius:8px; }
+  .accountButton > svg { display:none !important; }
+  .accountMenuName { font-size:10px; font-weight:750; color:#28243a; padding:2px 7px 1px; }
+}
+
+@media (max-width: 900px) {
+  .mainTabs { display:none !important; }
+  .topbarMain { display:flex; align-items:flex-start; justify-content:space-between; gap:10px; }
+  .accountButton { width:36px !important; height:36px !important; padding:0 !important; justify-content:center !important; }
+  .accountButton > svg { display:none !important; }
+  .accountEmail { display:none !important; }
+  .accountAvatar { width:24px; height:24px; }
+}
