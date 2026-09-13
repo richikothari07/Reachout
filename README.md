@@ -1,9 +1,8 @@
-# ReachOut Home final fixes
+ReachOut Home update
 
-- Removed the full-page Home loading state so the dashboard layout renders immediately while data loads.
-- Removed the delayed dashboard fetch.
-- Disabled the old initial marketing hero fallback on Home.
-- Kept the existing Home content and functionality.
-- Kept decorations as HTML/CSS/SVG and anchored them to their sections.
-- Prevented AI Sidekick decoration from overlapping the Ready status pill.
-- Hid decorative artwork on mobile while preserving the content and controls.
+Changes in this version:
+- Home no longer shows the centered Loading state while the dashboard request is in flight.
+- Removed the delayed 350ms initial dashboard fetch; it starts immediately after sign-in state is ready.
+- Removed the old marketing/onboarding hero from the normal Home render path.
+- Home hero styling is aligned to the supplied reference: cool background, compact greeting, dark heading with blue “reach out”, integrated action area, and subtle decorative marks.
+- Existing product content and functionality are preserved.
