@@ -2636,3 +2636,245 @@ html,body{background:var(--ro-bg)!important;color:var(--ro-ink)!important}
 @media(max-width:420px){
   .stats{grid-template-columns:1fr!important}.topbar h1{font-size:29px!important}.heroCopy h2{font-size:34px!important}
 }
+
+/* =========================================================
+   FINAL VISUAL DIRECTION — playful, cohesive, professional
+   Visual-only. No copy, structure, or behavior changes.
+   ========================================================= */
+:root{
+  --ro-bg:#f6f4ff;
+  --ro-surface:#ffffff;
+  --ro-ink:#20202a;
+  --ro-muted:#77738a;
+  --ro-border:#e5e1f0;
+  --ro-primary:#6246e5;
+  --ro-primary-dark:#5135cf;
+  --ro-primary-soft:#eeeaff;
+  --ro-coral:#f16b5f;
+  --ro-coral-soft:#fff0ed;
+  --ro-mint:#42a985;
+  --ro-mint-soft:#eaf7f2;
+  --ro-yellow:#e8b93d;
+}
+
+html,body{background:var(--ro-bg)!important;color:var(--ro-ink)!important}
+
+/* Desktop header: it is part of the page, not a white floating strip. */
+@media (min-width:761px){
+  .sidebar{
+    height:78px!important;
+    padding:0 34px!important;
+    background:var(--ro-bg)!important;
+    border-bottom:1px solid rgba(98,70,229,.10)!important;
+    box-shadow:0 3px 18px rgba(60,46,110,.035)!important;
+    backdrop-filter:none!important;
+    -webkit-backdrop-filter:none!important;
+    gap:0!important;
+  }
+  .sidebar .brand{width:250px!important;gap:10px!important}
+  .sidebar .brandLogo{width:32px!important;height:32px!important}
+  .sidebar .brand b{font-size:17px!important;letter-spacing:-.04em!important;color:var(--ro-ink)!important}
+  .sidebar .brand span{display:none!important}
+  .sidebar .sideGoal{display:none!important}
+  .sidebar nav{
+    flex:1!important;
+    justify-content:center!important;
+    align-items:center!important;
+    gap:4px!important;
+    margin:0!important;
+    background:transparent!important;
+    box-shadow:none!important;
+    border:0!important;
+    padding:0!important;
+  }
+  .sidebar .nav{
+    height:38px!important;
+    padding:8px 14px!important;
+    border-radius:9px!important;
+    background:transparent!important;
+    color:#6f6a7b!important;
+    font-size:12px!important;
+    font-weight:650!important;
+    letter-spacing:-.01em!important;
+    box-shadow:none!important;
+    transform:none!important;
+  }
+  .sidebar .nav svg{display:none!important}
+  .sidebar .nav:hover{background:rgba(98,70,229,.07)!important;color:var(--ro-primary)!important}
+  .sidebar .nav.active{
+    background:var(--ro-primary-soft)!important;
+    color:var(--ro-primary)!important;
+    box-shadow:none!important;
+  }
+  .sidebar .nav em{
+    background:var(--ro-coral)!important;
+    color:#fff!important;
+    padding:2px 6px!important;
+    margin-left:6px!important;
+    border-radius:999px!important;
+    font-size:9px!important;
+  }
+  .sidebar .sidebarAccountRow{margin-left:auto!important}
+  .sidebar .accountButton{
+    width:38px!important;height:38px!important;
+    border:1px solid rgba(98,70,229,.13)!important;
+    background:#fff!important;
+    color:var(--ro-primary)!important;
+    box-shadow:0 4px 14px rgba(68,51,130,.08)!important;
+  }
+  .sidebar .accountButton:hover{background:var(--ro-primary-soft)!important;border-color:#d9d0fb!important}
+  .sidebar .accountAvatar{background:var(--ro-primary-soft)!important;color:var(--ro-primary)!important}
+
+  .content{
+    padding:116px clamp(30px,5vw,78px) 82px!important;
+    max-width:1480px!important;
+    margin:0 auto!important;
+  }
+}
+
+/* More coherent typography and spacing */
+.topbar{margin-bottom:28px!important}
+.topbar h1{
+  font-size:clamp(36px,3vw,43px)!important;
+  line-height:1.04!important;
+  letter-spacing:-.055em!important;
+  color:var(--ro-ink)!important;
+}
+.topbar p{font-size:14px!important;line-height:1.55!important;color:var(--ro-muted)!important}
+
+/* Buttons: one clear brand action instead of many competing colors. */
+.refresh,.secondary,.primary{
+  min-height:42px!important;
+  border-radius:10px!important;
+  padding:9px 15px!important;
+  font-size:11px!important;
+  font-weight:700!important;
+}
+.refresh,.secondary{
+  background:#fff!important;
+  border-color:var(--ro-border)!important;
+  color:#5d5969!important;
+  box-shadow:0 3px 10px rgba(65,50,120,.035)!important;
+}
+.refresh:hover,.secondary:hover{
+  background:var(--ro-primary-soft)!important;
+  border-color:#d9d0fb!important;
+  color:var(--ro-primary)!important;
+}
+.primary{
+  background:var(--ro-primary)!important;
+  border-color:var(--ro-primary)!important;
+  color:#fff!important;
+  box-shadow:0 7px 16px rgba(98,70,229,.20)!important;
+}
+.primary:hover{background:var(--ro-primary-dark)!important;border-color:var(--ro-primary-dark)!important}
+
+/* Goal / focus: calmer white surface with a single purple anchor. */
+.goalCard{
+  background:#fff!important;
+  color:var(--ro-ink)!important;
+  border:1px solid var(--ro-border)!important;
+  box-shadow:0 8px 24px rgba(67,51,125,.045)!important;
+}
+.goalCard h2{font-size:21px!important;color:var(--ro-ink)!important}
+.goalCard p{font-size:11px!important;color:var(--ro-muted)!important}
+.goalProgress strong{font-size:25px!important;color:var(--ro-primary)!important}
+.goalProgress span,.goalProgress small{font-size:10px!important;color:#847f8f!important}
+.progress{background:#ece9f5!important}
+.progress i{background:var(--ro-primary)!important}
+
+/* Stats: same family, small color moments rather than four pastel blocks. */
+.stats{gap:12px!important;margin-bottom:16px!important}
+.stat{
+  min-height:82px!important;
+  padding:16px!important;
+  border-radius:14px!important;
+  background:#fff!important;
+  border-color:var(--ro-border)!important;
+  box-shadow:0 7px 20px rgba(68,51,112,.04)!important;
+}
+.stat strong{font-size:23px!important;color:var(--ro-ink)!important}
+.stat span{font-size:10px!important;color:#817c8d!important}
+.statIcon{
+  width:38px!important;height:38px!important;border-radius:11px!important;
+  box-shadow:none!important;
+  background:var(--ro-primary-soft)!important;
+  color:var(--ro-primary)!important;
+}
+.stat:nth-child(2) .statIcon{background:var(--ro-coral-soft)!important;color:var(--ro-coral)!important}
+.stat:nth-child(3) .statIcon{background:#f2eeff!important;color:var(--ro-primary)!important}
+.stat:nth-child(4) .statIcon{background:var(--ro-mint-soft)!important;color:var(--ro-mint)!important}
+
+/* Focus bar */
+.insightBar{
+  margin-bottom:28px!important;
+  padding:17px 20px!important;
+  border-radius:15px!important;
+  border-color:var(--ro-border)!important;
+  background:#fff!important;
+  box-shadow:0 7px 20px rgba(68,51,112,.035)!important;
+}
+.insightBar b{font-size:14px!important}
+.signalList span{font-size:9px!important;padding:6px 9px!important;border-radius:999px!important}
+.signalList span:nth-child(1){background:var(--ro-primary-soft)!important;color:var(--ro-primary)!important;border-color:#ddd4ff!important}
+.signalList span:nth-child(2){background:var(--ro-coral-soft)!important;color:#d85c52!important;border-color:#ffd9d3!important}
+.signalList span:nth-child(3){background:var(--ro-mint-soft)!important;color:#2f8f70!important;border-color:#d3eee3!important}
+
+/* AI Sidekick: signature ReachOut moment, but restrained. */
+.agentCard{
+  margin:24px 0 34px!important;
+  padding:26px!important;
+  border:1px solid #ddd5f5!important;
+  border-radius:20px!important;
+  background:linear-gradient(135deg,#f0ecff 0%,#f8f6ff 68%,#fff7f4 100%)!important;
+  box-shadow:0 14px 34px rgba(85,61,157,.085)!important;
+}
+.agentTop h2{font-size:23px!important;letter-spacing:-.035em!important}
+.agentTop p{font-size:12px!important;line-height:1.6!important;color:#756f80!important}
+.agentPulse{background:#fff!important;border-color:#ddd4f5!important;color:var(--ro-primary)!important}
+.agentInput input{height:48px!important;border-radius:11px!important;font-size:12px!important}
+.agentInput input:focus{border-color:#a792ef!important;box-shadow:0 0 0 3px rgba(98,70,229,.10)!important}
+.agentChips button:hover{background:var(--ro-primary-soft)!important;border-color:#cec2f4!important;color:var(--ro-primary)!important}
+.agentPriority{background:var(--ro-primary-soft)!important;color:var(--ro-primary)!important}
+
+/* People cards: clean first, playful second. */
+.cards{gap:14px!important}
+.personCard{
+  min-height:220px!important;
+  padding:18px!important;
+  border-radius:15px!important;
+  background:#fff!important;
+  border-color:var(--ro-border)!important;
+  box-shadow:0 7px 22px rgba(68,51,112,.04)!important;
+}
+.personCard:hover{transform:translateY(-3px)!important;border-color:#d3c9f6!important;box-shadow:0 16px 34px rgba(83,61,154,.10)!important}
+.avatar,.profileAvatar{background:var(--ro-primary-soft)!important;color:var(--ro-primary)!important}
+.score strong{color:var(--ro-primary)!important}
+.whyTag{background:#f7f5fc!important;color:#5d5868!important}
+
+/* Floating voice: single energetic accent, no rainbow gradient. */
+.voiceFab{
+  width:56px!important;height:56px!important;
+  background:var(--ro-primary)!important;
+  border:0!important;
+  box-shadow:0 12px 28px rgba(98,70,229,.24)!important;
+}
+.voiceFab:hover{background:var(--ro-primary-dark)!important}
+.voiceFab.listening{box-shadow:0 0 0 7px rgba(98,70,229,.12),0 12px 28px rgba(98,70,229,.24)!important}
+
+/* Mobile follows the same visual language. */
+@media(max-width:760px){
+  .sidebar{
+    height:64px!important;
+    background:var(--ro-bg)!important;
+    border-bottom:1px solid rgba(98,70,229,.10)!important;
+    box-shadow:0 3px 16px rgba(67,48,120,.05)!important;
+    backdrop-filter:none!important;
+  }
+  .sidebar nav{background:transparent!important;border:0!important;box-shadow:none!important}
+  .sidebar .nav.active{background:var(--ro-primary-soft)!important;color:var(--ro-primary)!important;box-shadow:none!important}
+  .sidebar .accountButton{background:#fff!important;border-color:rgba(98,70,229,.13)!important;color:var(--ro-primary)!important}
+  .content{padding-top:86px!important;background:var(--ro-bg)!important}
+  .topbar h1{font-size:32px!important}
+  .stats{grid-template-columns:repeat(2,1fr)!important}
+}
