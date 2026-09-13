@@ -2094,253 +2094,304 @@ html,body{background:var(--ro-bg);color:var(--ro-ink)}
 .topbarRight{display:flex;align-items:flex-start;gap:9px;position:relative}.accountMenuWrap{position:relative}.accountButton{height:36px;border:1px solid var(--ro-border,#deded7);background:#fff;border-radius:10px;padding:0 9px;display:flex;align-items:center;gap:7px;color:var(--ro-ink,#25223a);font-size:9px;max-width:230px}.accountButton:hover{background:#faf9ff;border-color:#d8d2f4}.accountAvatar{width:23px;height:23px;border-radius:7px;background:#eee9ff;color:#6655c8;display:grid;place-items:center;flex:none}.accountEmail{max-width:155px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.accountMenu{position:absolute;right:0;top:43px;width:230px;background:#fff;border:1px solid #e3e0ed;border-radius:12px;padding:9px;box-shadow:0 18px 45px #25223a22;z-index:30}.accountMenuLabel{font-size:7px;letter-spacing:.14em;font-weight:800;color:#9a96a7;padding:4px 7px}.accountMenuEmail{font-size:9px;color:#4d4960;padding:3px 7px 9px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;border-bottom:1px solid #efedf3;margin-bottom:5px}.accountMenu button{width:100%;border:0;background:transparent;border-radius:8px;padding:9px 8px;display:flex;align-items:center;gap:8px;text-align:left;font-size:9px;color:#4d4960}.accountMenu button:hover{background:#f6f3ff;color:#4e43a5}.accountMenu .accountLogout{color:#a15e5e}.accountMenu .accountLogout:hover{background:#fff3f1;color:#9a4e4e}@media(max-width:760px){.topbarRight{gap:6px}.accountEmail{display:none}.accountButton{width:36px;padding:0;justify-content:center}.accountButton>svg{display:none}.accountMenu{right:0;width:220px}.topActions .refresh{display:none}}
 
 /* =========================================================
-   FINAL REACHOUT PRODUCT UI
-   The desktop and mobile shells are intentionally separate.
-   This layer overrides the earlier visual experiments so there
-   is one coherent design system rather than competing styles.
+   REACHOUT UX HEADER — visual/layout only
+   Do not alter app functionality, data, AI agent, or page content.
    ========================================================= */
-:root{
-  --ro-bg:#fbfaff;
-  --ro-surface:#fff;
-  --ro-ink:#17213b;
-  --ro-muted:#718096;
-  --ro-line:#e7e8f2;
-  --ro-purple:#6c4fe8;
-  --ro-purple-soft:#f0ebff;
-  --ro-mint:#4dc49b;
-  --ro-yellow:#f4bd35;
-}
-*{box-sizing:border-box}
-html,body{margin:0;min-width:320px;background:var(--ro-bg);color:var(--ro-ink)}
-body{overflow-x:hidden}
-.app{min-height:100svh;background:var(--ro-bg)}
-.sidebar{display:none!important}
-.content{margin:0!important;width:100%!important;max-width:none!important;padding:0 0 72px!important;background:var(--ro-bg)!important}
-
-/* Header */
-.topbar{
+.referenceHeader{
   position:relative;
-  z-index:50;
-  width:100%;
-  height:134px;
-  margin:0!important;
-  padding:0 clamp(28px,5vw,104px)!important;
+  z-index:20;
+  min-height:82px;
+  height:82px;
+  margin:0;
+  padding:0 clamp(28px,5vw,72px);
+  display:grid;
+  grid-template-columns:minmax(220px,1fr) auto minmax(150px,1fr);
+  align-items:center;
+  gap:28px;
+  background:#fff !important;
+  border-bottom:1px solid #e7e4ef;
+  box-shadow:0 1px 8px rgba(35,29,70,.025);
+}
+.referenceHeader .headerBrand{
   display:flex;
   align-items:center;
-  border-bottom:1px solid #e1e2ec;
-  background:rgba(255,255,255,.97);
-  box-shadow:0 1px 0 rgba(30,40,70,.02);
+  gap:11px;
+  min-width:0;
+  padding:0;
 }
-.headerBrand{display:flex;align-items:center;gap:16px;flex:0 0 350px;min-width:0}
-.headerBrandLogo{width:64px;height:64px;object-fit:contain;display:block}
-.headerBrand>div{display:flex;flex-direction:column;gap:5px;min-width:0}
-.headerBrand b{font-size:35px;line-height:1;font-weight:800;letter-spacing:-.055em;color:#1d2b46}
-.headerBrand span{font-size:14px;line-height:1;color:#78849a;letter-spacing:.105em;font-weight:500;white-space:nowrap}
-.mainNav{height:100%;display:flex;align-items:center;justify-content:center;gap:clamp(28px,4.5vw,76px);flex:1;min-width:0}
-.mainNavItem{position:relative;height:100%;padding:0 4px;border:0;background:transparent;color:#17213b;font:500 20px/1 inherit;white-space:nowrap;cursor:pointer}
-.mainNavItem:hover{color:var(--ro-purple)}
-.mainNavItem.active{color:var(--ro-purple);font-weight:700}
-.mainNavItem.active:after{content:"";position:absolute;left:0;right:0;bottom:9px;height:3px;border-radius:3px;background:var(--ro-purple)}
-.mainNavItem em{display:inline-grid;place-items:center;margin-left:13px;min-width:56px;height:48px;padding:0 15px;border-radius:24px;background:#f0ebff;color:#6849df;font-style:normal;font-size:17px;font-weight:700;vertical-align:middle}
-.topbarRight{display:flex;align-items:center;justify-content:flex-end;gap:10px;flex:0 0 86px;min-width:86px}
-.topActions{display:none!important}
-.accountMenuWrap{position:relative}
-.accountButton{width:64px!important;height:64px!important;padding:0!important;border:0!important;border-radius:50%!important;background:#f0ebff!important;display:grid!important;place-items:center!important;color:#694ce1!important;cursor:pointer}
-.accountButton:hover{background:#e9e2ff!important}
-.accountAvatar{width:auto!important;height:auto!important;background:transparent!important;color:inherit!important;border-radius:0!important;display:grid!important;place-items:center!important}
-.accountEmail,.accountButton>svg{display:none!important}
-.accountMenu{position:absolute;right:-20px;top:76px;width:310px;padding:25px 28px;background:#fff;border:1px solid #e5e6ef;border-radius:16px;box-shadow:0 18px 45px rgba(35,43,72,.12);z-index:100}
-.accountMenu button{width:100%;padding:11px 8px;border:0;background:transparent;border-radius:7px;text-align:left;color:#17213b;font-size:18px;line-height:1.3;cursor:pointer}
-.accountMenu button:hover{background:#f7f5ff;color:#6549d6}
-.accountMenuDivider{height:1px;background:#e3e4ec;margin:14px 8px}
-.accountMenu .accountLogout{color:#df394b}
-.accountMenu .accountLogout:hover{background:#fff3f4;color:#d52f43}
-.topbarCopy{display:none}
-.mobileNav{display:none}
+.referenceHeader .headerBrandLogo{
+  width:42px;
+  height:42px;
+  object-fit:contain;
+  filter:brightness(0) saturate(100%) invert(16%) sepia(19%) saturate(1162%) hue-rotate(181deg) brightness(91%) contrast(91%);
+}
+.referenceHeader .headerBrand b{
+  display:block;
+  color:#25304a;
+  font-size:24px;
+  line-height:1;
+  font-weight:760;
+  letter-spacing:-.045em;
+}
+.referenceHeader .headerBrand span{
+  display:block;
+  margin-top:5px;
+  color:#8790a3;
+  font-size:7px;
+  line-height:1;
+  font-weight:650;
+  letter-spacing:.15em;
+}
+.referenceHeader .mainNav{
+  display:flex;
+  align-self:stretch;
+  align-items:center;
+  justify-content:center;
+  gap:42px;
+  min-width:0;
+}
+.referenceHeader .mainNavItem{
+  position:relative;
+  height:100%;
+  padding:0 2px;
+  border:0;
+  background:transparent;
+  color:#27334b;
+  font-size:16px;
+  line-height:1;
+  font-weight:500;
+  white-space:nowrap;
+  cursor:pointer;
+}
+.referenceHeader .mainNavItem:hover{color:#694fe0}
+.referenceHeader .mainNavItem.active{color:#694fe0;font-weight:700}
+.referenceHeader .mainNavItem.active::after{
+  content:"";
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  height:3px;
+  border-radius:3px 3px 0 0;
+  background:#7357e8;
+}
+.referenceHeader .mainNavItem em{
+  display:inline-grid;
+  place-items:center;
+  min-width:34px;
+  height:30px;
+  margin-left:9px;
+  padding:0 8px;
+  border-radius:16px;
+  background:#f0eaff;
+  color:#694fe0;
+  font-size:12px;
+  font-style:normal;
+  font-weight:700;
+}
+.referenceHeader .topbarRight{
+  justify-self:end;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  min-width:0;
+}
+.referenceHeader .topActions{display:flex;align-items:center;gap:8px}
+.referenceHeader .refresh,
+.referenceHeader .primary{min-height:36px;padding:8px 11px;font-size:9px}
+.referenceHeader .accountMenuWrap{position:relative}
+.referenceHeader .accountButton{
+  width:46px;
+  height:46px;
+  padding:0;
+  border:0;
+  border-radius:50%;
+  background:#f0eaff;
+  color:#694fe0;
+  display:grid;
+  place-items:center;
+  cursor:pointer;
+  box-shadow:none;
+}
+.referenceHeader .accountButton:hover{background:#e9e1ff;color:#5d45d0}
+.referenceHeader .accountAvatar{
+  width:auto;
+  height:auto;
+  border:0;
+  border-radius:0;
+  background:transparent;
+  color:inherit;
+}
+.referenceHeader .accountMenu{
+  top:56px;
+  width:250px;
+  padding:13px;
+  border-radius:14px;
+  border:1px solid #e5e1ee;
+  box-shadow:0 18px 45px rgba(40,32,80,.12);
+}
+.referenceHeader .accountMenu button{font-size:10px;padding:10px 9px}
+.referenceHeader .mobileNav{display:none}
+.referenceHeader + .toast{margin-top:14px}
 
-/* Home copy: matches the reference hierarchy */
-.content>.goalCard,.content>.stats,.content>.insightBar,.content>.agentCard,.content>.sectionHead,.content>.cards,.content>.twoCol,.content>.pageTitle,.content>.search,.content>.filterBar,.content>.opportunityControls,.content>.table,.content>.followControls,.content>.followList,.content>.completedFollowups,.content>.outreachHero,.content>.outreachGrid,.content>.emptyHome,.content>.howItWorks{width:min(100% - 176px,1870px);margin-left:auto;margin-right:auto}
-.content>.goalCard{margin-top:44px}
-
-/* Home dashboard visual rhythm */
-.goalCard{border-radius:20px!important;border:1px solid #e5e3f0!important}
-.stats{gap:30px!important}
-.stat{min-height:124px!important;border-radius:22px!important;background:#fff!important;padding:25px!important}
-.statIcon{width:55px!important;height:55px!important;border-radius:17px!important}
-.stat strong{font-size:32px!important}
-.stat span{font-size:14px!important}
-.insightBar{border-radius:18px!important}
-.agentCard{border-radius:22px!important}
-.personCard{border-radius:20px!important}
-
-/* Reference home page should read as one hero, not an overloaded app screen. */
-.homeReferenceSpacer{display:none}
-
-/* All other pages inherit the same grid, typography and surfaces. */
-.pageTitle h2,.sectionHead h2{color:var(--ro-ink)!important}
-.pageTitle p,.sectionHead p{color:var(--ro-muted)!important}
-.search,.filterBar,.table,.followList,.completedFollowups,.outreachHero,.queueList,.sidePlan,.companyCard,.actionList{background:#fff!important;border-color:var(--ro-line)!important}
-.primary{background:linear-gradient(135deg,#7256e8,#5d7df1)!important;border-color:#7256e8!important}
-
-/* Tablet */
-@media (max-width:1100px){
-  .topbar{padding:0 32px!important}
-  .headerBrand{flex-basis:280px}
-  .headerBrandLogo{width:54px;height:54px}
-  .headerBrand b{font-size:29px}
-  .headerBrand span{font-size:10px}
-  .mainNav{gap:25px}
-  .mainNavItem{font-size:17px}
-  .mainNavItem em{min-width:44px;height:38px;margin-left:7px;padding:0 10px;font-size:14px}
-  .accountButton{width:54px!important;height:54px!important}
-  .content>.goalCard,.content>.stats,.content>.insightBar,.content>.agentCard,.content>.sectionHead,.content>.cards,.content>.twoCol,.content>.pageTitle,.content>.search,.content>.filterBar,.content>.opportunityControls,.content>.table,.content>.followControls,.content>.followList,.content>.completedFollowups,.content>.outreachHero,.content>.outreachGrid,.content>.emptyHome,.content>.howItWorks{width:min(100% - 64px,1280px)}
+/* Hide the legacy sidebar visually; it remains in the DOM so no application behavior is removed. */
+@media(min-width:761px){
+  .referenceHeader ~ *{box-sizing:border-box}
+  .app>.sidebar{display:none}
+  .app>.content{margin-left:0;width:100%;max-width:none;padding:0 0 80px}
+  .app>.content>.topbar.referenceHeader{width:100%;max-width:none}
+  .app>.content>.toast,
+  .app>.content>.dataError,
+  .app>.content>section,
+  .app>.content>.goalCard,
+  .app>.content>.stats,
+  .app>.content>.insightBar,
+  .app>.content>.agentCard,
+  .app>.content>.sectionHead,
+  .app>.content>.cards,
+  .app>.content>.twoCol,
+  .app>.content>.pageTitle,
+  .app>.content>.search,
+  .app>.content>.filterBar,
+  .app>.content>.opportunityControls,
+  .app>.content>.table,
+  .app>.content>.followControls,
+  .app>.content>.followList,
+  .app>.content>.completedFollowups,
+  .app>.content>.outreachHero,
+  .app>.content>.outreachGrid,
+  .app>.content>.emptyHome,
+  .app>.content>.howItWorks{max-width:1400px;margin-left:auto;margin-right:auto}
 }
 
-/* Phone: completely independent from desktop positioning. */
-@media (max-width:760px){
-  .content{padding-bottom:40px!important}
-  .topbar{
-    height:auto!important;
-    min-height:128px;
-    padding:0 16px!important;
-    display:grid!important;
+@media(max-width:1100px) and (min-width:761px){
+  .referenceHeader{grid-template-columns:220px minmax(0,1fr) 50px;padding:0 28px;gap:18px}
+  .referenceHeader .mainNav{gap:22px}
+  .referenceHeader .mainNavItem{font-size:14px}
+  .referenceHeader .topActions{display:none}
+}
+
+/* Mobile has its own composition. Nothing is squeezed from the desktop header. */
+@media(max-width:760px){
+  .app>.sidebar{display:none}
+  .app>.content{margin-left:0;width:100%;max-width:none;padding:0 0 48px;overflow-x:hidden}
+  .referenceHeader{
+    width:100%;
+    min-height:118px;
+    height:118px;
+    padding:0 16px;
+    display:grid;
     grid-template-columns:minmax(0,1fr) 44px;
-    grid-template-rows:72px 56px;
-    align-items:center;
-    column-gap:12px;
-    background:#fff;
+    grid-template-rows:66px 52px;
+    gap:0 10px;
+    background:#fff !important;
   }
-  .headerBrand{grid-column:1;grid-row:1;flex:none;gap:10px}
-  .headerBrandLogo{width:44px;height:44px}
-  .headerBrand b{font-size:24px;letter-spacing:-.05em}
-  .headerBrand span{font-size:7px;letter-spacing:.11em}
-  .topbarRight{grid-column:2;grid-row:1;min-width:44px;flex:none;justify-content:flex-end}
-  .accountButton{width:44px!important;height:44px!important}
-  .accountAvatar svg{width:22px;height:22px}
-  .accountMenu{right:0;top:52px;width:min(280px,calc(100vw - 32px));padding:18px 20px;border-radius:14px}
-  .accountMenu button{font-size:16px;padding:10px 5px}
-  .accountMenuDivider{margin:10px 5px}
-  .mainNav{display:none!important}
-  .mobileNav{
+  .referenceHeader .headerBrand{grid-column:1;grid-row:1;gap:9px}
+  .referenceHeader .headerBrandLogo{width:38px;height:38px}
+  .referenceHeader .headerBrand b{font-size:21px}
+  .referenceHeader .headerBrand span{font-size:6px;margin-top:4px}
+  .referenceHeader .topbarRight{grid-column:2;grid-row:1;justify-self:end}
+  .referenceHeader .topActions{display:none}
+  .referenceHeader .accountButton{width:42px;height:42px}
+  .referenceHeader .accountMenu{top:50px;right:0;width:min(250px,calc(100vw - 32px))}
+  .referenceHeader .mainNav{display:none}
+  .referenceHeader .mobileNav{
     grid-column:1 / -1;
     grid-row:2;
-    width:calc(100vw - 32px);
-    height:56px;
     display:flex;
     align-items:stretch;
-    gap:4px;
+    width:100%;
+    min-width:0;
     overflow-x:auto;
     overflow-y:hidden;
     scrollbar-width:none;
+    gap:2px;
   }
-  .mobileNav::-webkit-scrollbar{display:none}
-  .mobileNavItem{
+  .referenceHeader .mobileNav::-webkit-scrollbar{display:none}
+  .referenceHeader .mobileNavItem{
     position:relative;
     flex:0 0 auto;
-    height:56px;
-    padding:0 14px;
+    height:52px;
+    padding:0 13px;
     border:0;
     background:transparent;
-    color:#28344e;
-    font-size:14px;
-    font-weight:600;
+    color:#27334b;
+    font-size:13px;
+    font-weight:550;
     white-space:nowrap;
   }
-  .mobileNavItem.active{color:var(--ro-purple);font-weight:750}
-  .mobileNavItem.active:after{content:"";position:absolute;left:12px;right:12px;bottom:0;height:3px;border-radius:3px;background:var(--ro-purple)}
-  .mobileNavItem em{display:inline-grid;place-items:center;margin-left:6px;min-width:28px;height:26px;padding:0 7px;border-radius:13px;background:#f0ebff;color:#6849df;font-style:normal;font-size:11px}
-  .topbarCopy{display:none!important}
-  .topActions{display:none!important}
-  .content>.goalCard,.content>.stats,.content>.insightBar,.content>.agentCard,.content>.sectionHead,.content>.cards,.content>.twoCol,.content>.pageTitle,.content>.search,.content>.filterBar,.content>.opportunityControls,.content>.table,.content>.followControls,.content>.followList,.content>.completedFollowups,.content>.outreachHero,.content>.outreachGrid,.content>.emptyHome,.content>.howItWorks{width:calc(100% - 32px);max-width:none;margin-left:16px;margin-right:16px}
-  .content>.goalCard{margin-top:24px}
-  .goalCard{padding:20px!important;border-radius:18px!important}
-  .goalProgress{width:100%!important;margin-top:18px}
-  .stats{grid-template-columns:1fr 1fr!important;gap:10px!important}
-  .stat{min-height:100px!important;padding:16px!important;border-radius:16px!important}
-  .statIcon{width:42px!important;height:42px!important;border-radius:13px!important}
-  .stat strong{font-size:24px!important}
-  .stat span{font-size:11px!important}
-  .insightBar{padding:16px!important}
-  .agentCard{padding:18px!important}
-  .agentInput{display:flex;flex-direction:column;gap:8px}
-  .agentInput input,.agentInput button{width:100%;min-height:44px}
-  .cards{grid-template-columns:1fr!important}
-  .twoCol{grid-template-columns:1fr!important}
-  .personCard{min-height:0!important}
-  .table{overflow-x:auto!important}
-  .tr{min-width:760px}
-  .outreachHero{padding:20px!important}
-  .outreachGrid{grid-template-columns:1fr!important}
-  .followControls{flex-wrap:wrap!important}
-  .pageTitle{padding-top:24px}
-}
-
-/* Very small phones */
-@media (max-width:380px){
-  .topbar{padding:0 12px!important}
-  .headerBrandLogo{width:40px;height:40px}
-  .headerBrand b{font-size:22px}
-  .headerBrand span{font-size:6.5px}
-  .mobileNav{width:calc(100vw - 24px)}
-  .mobileNavItem{padding:0 11px;font-size:13px}
-  .content>.goalCard,.content>.stats,.content>.insightBar,.content>.agentCard,.content>.sectionHead,.content>.cards,.content>.twoCol,.content>.pageTitle,.content>.search,.content>.filterBar,.content>.opportunityControls,.content>.table,.content>.followControls,.content>.followList,.content>.completedFollowups,.content>.outreachHero,.content>.outreachGrid,.content>.emptyHome,.content>.howItWorks{width:calc(100% - 24px);margin-left:12px;margin-right:12px}
-  .stats{grid-template-columns:1fr!important}
-}
-
-/* Reference home composition */
-.referenceHomeHero{width:min(100% - 176px,1870px);margin:0 auto;padding-top:145px;padding-bottom:62px}
-.referenceEyebrow{display:block;font-size:20px;line-height:1;font-weight:600;letter-spacing:.18em;color:#78849a}
-.referenceHomeHero h2{margin:39px 0 20px;color:#17213b;font-size:72px;line-height:1.08;letter-spacing:-.055em;font-weight:800}
-.referenceHomeHero p{margin:0;color:#718096;font-size:29px;line-height:1.35;letter-spacing:-.015em}
-.referenceStats{width:min(100% - 176px,1870px);margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:30px}
-.referenceStat{min-width:0;min-height:150px;padding:28px 28px;border:1px solid #e6e7f0;border-radius:24px;background:#fff;display:flex;align-items:center;gap:24px;text-align:left;color:#17213b;box-shadow:0 7px 22px rgba(36,43,76,.035);cursor:pointer;transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}
-.referenceStat:hover{transform:translateY(-2px);box-shadow:0 14px 32px rgba(36,43,76,.08);border-color:#d9d9e7}
-.referenceStatIcon{width:70px;height:70px;flex:0 0 70px;border-radius:22px;display:grid;place-items:center}
-.referenceStatPurple .referenceStatIcon{background:#f0eaff;color:#7658e8}
-.referenceStatMint .referenceStatIcon{background:#e8faf3;color:#49bd94}
-.referenceStatYellow .referenceStatIcon{background:#fff6df;color:#e9ad16}
-.referenceStat>div:nth-child(2){display:flex;flex-direction:column;gap:8px;min-width:0;flex:1}
-.referenceStat span{font-size:21px;color:#718096;line-height:1.15}
-.referenceStat strong{font-size:38px;line-height:1;font-weight:750;color:#17213b}
-.referenceStat>svg{color:#a2a8b7;flex:0 0 auto}
-.referenceBelow{width:min(100% - 176px,1870px);margin:62px auto 0}
-.referenceBelowHead{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:20px}
-.referenceBelowHead h3{margin:10px 0 0;font-size:28px;letter-spacing:-.035em}
-
-@media(max-width:1100px){
- .referenceHomeHero,.referenceStats,.referenceBelow{width:min(100% - 64px,1280px)}
- .referenceHomeHero{padding-top:80px;padding-bottom:40px}
- .referenceHomeHero h2{font-size:54px}
- .referenceHomeHero p{font-size:22px}
- .referenceStats{gap:16px}
- .referenceStat{padding:20px;gap:16px}
- .referenceStatIcon{width:58px;height:58px;flex-basis:58px;border-radius:18px}
- .referenceStat span{font-size:17px}
- .referenceStat strong{font-size:30px}
-}
-@media(max-width:760px){
- .referenceHomeHero{width:calc(100% - 32px);margin:0 16px;padding-top:48px;padding-bottom:34px}
- .referenceEyebrow{font-size:12px;letter-spacing:.17em}
- .referenceHomeHero h2{margin:23px 0 14px;font-size:40px;line-height:1.1;letter-spacing:-.05em}
- .referenceHomeHero p{font-size:18px;line-height:1.4}
- .referenceStats{width:calc(100% - 32px);margin:0 16px;grid-template-columns:1fr;gap:12px}
- .referenceStat{min-height:108px;padding:18px;border-radius:18px;gap:15px}
- .referenceStatIcon{width:48px;height:48px;flex-basis:48px;border-radius:15px}
- .referenceStatIcon svg{width:22px;height:22px}
- .referenceStat span{font-size:15px}
- .referenceStat strong{font-size:27px}
- .referenceStat>svg{width:18px;height:18px}
- .referenceBelow{width:calc(100% - 32px);margin:40px 16px 0}
- .referenceBelowHead{align-items:flex-start;gap:12px}
- .referenceBelowHead h3{font-size:22px}
- .referenceBelowHead .textBtn{white-space:nowrap}
+  .referenceHeader .mobileNavItem.active{color:#694fe0;font-weight:700}
+  .referenceHeader .mobileNavItem.active::after{content:"";position:absolute;left:10px;right:10px;bottom:0;height:3px;border-radius:3px 3px 0 0;background:#7357e8}
+  .referenceHeader .mobileNavItem em{display:inline-grid;place-items:center;min-width:27px;height:24px;margin-left:5px;padding:0 7px;border-radius:13px;background:#f0eaff;color:#694fe0;font-size:10px;font-style:normal;font-weight:700}
+  .referenceHeader + .toast{margin:12px 16px 0}
+  .app>.content>section,
+  .app>.content>.goalCard,
+  .app>.content>.stats,
+  .app>.content>.insightBar,
+  .app>.content>.agentCard,
+  .app>.content>.sectionHead,
+  .app>.content>.cards,
+  .app>.content>.twoCol,
+  .app>.content>.pageTitle,
+  .app>.content>.search,
+  .app>.content>.filterBar,
+  .app>.content>.opportunityControls,
+  .app>.content>.table,
+  .app>.content>.followControls,
+  .app>.content>.followList,
+  .app>.content>.completedFollowups,
+  .app>.content>.outreachHero,
+  .app>.content>.outreachGrid,
+  .app>.content>.emptyHome,
+  .app>.content>.howItWorks{width:calc(100% - 32px);max-width:none;margin-left:16px;margin-right:16px}
+  .app>.content>.goalCard{margin-top:22px}
+  .app>.content>.stats{grid-template-columns:1fr 1fr}
+  .app>.content>.cards{grid-template-columns:1fr}
+  .app>.content>.twoCol{grid-template-columns:1fr}
+  .app>.content>.outreachGrid{grid-template-columns:1fr}
+  .app>.content>.table{overflow-x:auto}
+  .app>.content>.table .tr{min-width:760px}
 }
 @media(max-width:380px){
- .referenceHomeHero{width:calc(100% - 24px);margin:0 12px;padding-top:38px}
- .referenceHomeHero h2{font-size:34px}
- .referenceHomeHero p{font-size:16px}
- .referenceStats,.referenceBelow{width:calc(100% - 24px);margin-left:12px;margin-right:12px}
+  .referenceHeader{padding:0 12px}
+  .referenceHeader .headerBrandLogo{width:36px;height:36px}
+  .referenceHeader .headerBrand b{font-size:20px}
+  .referenceHeader .mobileNavItem{padding:0 10px;font-size:12px}
+  .app>.content>section,
+  .app>.content>.goalCard,
+  .app>.content>.stats,
+  .app>.content>.insightBar,
+  .app>.content>.agentCard,
+  .app>.content>.sectionHead,
+  .app>.content>.cards,
+  .app>.content>.twoCol,
+  .app>.content>.pageTitle,
+  .app>.content>.search,
+  .app>.content>.filterBar,
+  .app>.content>.opportunityControls,
+  .app>.content>.table,
+  .app>.content>.followControls,
+  .app>.content>.followList,
+  .app>.content>.completedFollowups,
+  .app>.content>.outreachHero,
+  .app>.content>.outreachGrid,
+  .app>.content>.emptyHome,
+  .app>.content>.howItWorks{width:calc(100% - 24px);margin-left:12px;margin-right:12px}
+  .app>.content>.stats{grid-template-columns:1fr}
 }
 
-/* Logo asset is white-on-transparent; tint it for the light header. */
-.headerBrandLogo{filter:brightness(0) saturate(100%) invert(16%) sepia(19%) saturate(1162%) hue-rotate(181deg) brightness(91%) contrast(91%)}
+/* Final guardrails: no navy in the primary UI, while preserving every existing component. */
+@media(min-width:761px){
+  .app>.content>.topbar.referenceHeader{color:#27334b}
+  .app>.content .goalCard{background:linear-gradient(135deg,#f5f1ff 0%,#f9f7ff 58%,#eef6ff 100%)!important;color:#25223a!important;border-color:#e3ddf4!important}
+  .app>.content .goalCard p,
+  .app>.content .goalCard p b,
+  .app>.content .goalProgress span,
+  .app>.content .goalProgress small{color:#6f6a82!important}
+  .app>.content .progress{background:#e8e3f2!important}
+  .app>.content .progress i{background:linear-gradient(90deg,#7357e8,#9a84f3)!important}
+  .app>.content .heroVisual{background:linear-gradient(145deg,#f2edff,#f8f6ff 65%,#edf7f5)!important;color:#25223a!important;border-color:#e2dcf2!important;box-shadow:0 14px 36px rgba(83,64,150,.10)!important}
+  .app>.content .visualReason{background:#fff!important;color:#514c63!important;border-color:#e7e2f0!important}
+  .app>.content .visualButton{background:#7357e8!important;color:#fff!important}
+  .app>.content .toast{background:#7357e8!important}
+}
