@@ -2147,3 +2147,47 @@ html,body{background:var(--ro-bg);color:var(--ro-ink)}
   background:#ffffff !important;
   border-color:#e3e0ed !important;
 }
+
+/* FINAL LIGHT SIDEBAR OVERRIDE */
+.sidebar,
+.sidebar nav,
+.sidebar aside{
+  background:#ffffff !important;
+  color:#171715 !important;
+}
+.sidebar{
+  border-right:1px solid #e7e7e1 !important;
+  box-shadow:none !important;
+}
+.sidebar .brand b{
+  color:#171715 !important;
+}
+.sidebar .brand span{
+  color:#777771 !important;
+}
+.sidebar .brandLogo{
+  filter:brightness(0) !important;
+}
+.sidebar .nav{
+  background:transparent !important;
+  color:#555550 !important;
+}
+.sidebar .nav:hover{
+  background:#f4f4f0 !important;
+  color:#171715 !important;
+}
+.sidebar .nav.active{
+  background:#f0f0eb !important;
+  color:#171715 !important;
+  box-shadow:inset 2px 0 0 #171715 !important;
+}
+.sidebar .nav svg{
+  color:inherit !important;
+}
+.sidebar .nav em{
+  background:#eef1f5 !important;
+  color:#374151 !important;
+}
+.sidebarAccountRow{
+  margin-top:auto !important;
+}
