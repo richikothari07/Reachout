@@ -2165,3 +2165,41 @@ html,body{background:var(--ro-bg);color:var(--ro-ink)}
   .accountEmail { display:none !important; }
   .accountAvatar { width:24px; height:24px; }
 }
+
+/* ReachOut clean website navigation: no heavy sidebar, no icon-filled tab bar */
+@media (min-width: 761px){
+  .app{display:block!important;min-height:100vh;background:var(--ro-bg,#faf9ff)!important}
+  .sidebar{display:none!important}
+  .content{margin-left:0!important;width:100%!important;min-height:100vh;background:var(--ro-bg,#faf9ff)!important}
+  .topbar{margin:0!important;padding:0 48px!important;background:rgba(255,255,255,.92)!important;border-bottom:1px solid var(--ro-border,#e7e3ef)!important;position:sticky!important;top:0!important;z-index:20!important;backdrop-filter:blur(14px)!important}
+  .siteHeaderRow{min-height:76px;display:grid;grid-template-columns:minmax(190px,1fr) auto minmax(190px,1fr);align-items:center;gap:28px;max-width:1440px;margin:0 auto}
+  .brandTop{display:flex!important;align-items:center;gap:11px!important;min-width:0}
+  .brandTop .brandLogo{width:36px!important;height:36px!important;object-fit:contain}
+  .brandTop b{display:block!important;font-size:17px!important;letter-spacing:-.03em!important;color:var(--ro-ink,#25223a)!important}
+  .brandTop span{display:block!important;margin-top:2px!important;font-size:7px!important;letter-spacing:.16em!important;color:var(--ro-muted,#746f86)!important}
+  .mainTabs{display:flex!important;align-items:center!important;justify-content:center!important;gap:30px!important;height:76px!important;white-space:nowrap!important}
+  .mainTab{position:relative!important;height:76px!important;padding:0 2px!important;border:0!important;border-radius:0!important;background:transparent!important;color:#737080!important;font-size:13px!important;font-weight:600!important;display:flex!important;align-items:center!important;gap:7px!important;box-shadow:none!important}
+  .mainTab:hover{color:var(--ro-ink,#25223a)!important;background:transparent!important}
+  .mainTab.active{color:#5a43d6!important;background:transparent!important}
+  .mainTab.active:after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;border-radius:2px;background:#694fe5}
+  .mainTab em{font-style:normal;font-size:9px!important;line-height:20px!important;min-width:20px!important;height:20px!important;padding:0 6px!important;border-radius:999px!important;background:#eee9ff!important;color:#5b45d4!important;text-align:center}
+  .topbarRight{justify-content:flex-end!important;align-items:center!important;min-width:0}
+  .pageIntro{max-width:1440px;margin:0 auto;padding:34px 0 0}
+  .pageIntro h1{margin:0!important}
+  .pageIntro p{margin-top:8px!important}
+  .content > .toast,.content > .dataError,.content > .agentCard,.content > .pageTitle,.content > .search,.content > .opportunityControls,.content > .table,.content > .outreachHero,.content > .outreachGrid,.content > .followControls,.content > .followList,.content > .completedFollowups,.content > .emptyHome,.content > .howItWorks{max-width:1440px;margin-left:auto!important;margin-right:auto!important}
+}
+@media (max-width: 760px){
+  .sidebar{display:none!important}
+  .content{margin-left:0!important;width:100%!important}
+  .topbar{padding:0 16px!important}
+  .siteHeaderRow{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:64px}
+  .brandTop .brandLogo{width:32px!important;height:32px!important}
+  .brandTop b{font-size:15px!important}
+  .brandTop span{display:none!important}
+  .mainTabs{display:flex!important;gap:18px!important;overflow-x:auto!important;justify-content:flex-start!important;height:56px!important;border-top:1px solid var(--ro-border,#e7e3ef)!important}
+  .mainTab{height:56px!important;font-size:12px!important;flex:0 0 auto!important}
+  .mainTab.active:after{bottom:0!important}
+  .topActions{display:none!important}
+  .pageIntro{padding:22px 0 0}
+}
