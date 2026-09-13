@@ -3015,3 +3015,61 @@ body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,
   .stat,.insightBar,.personCard,.actionList,.explainCard,.heroCard,.outreachHero,.queueList,.sidePlan{background:#fff!important;border-color:var(--rp-line)!important}
   .agentCard{background:linear-gradient(135deg,#F1F2FF 0%,#F8F9FF 100%)!important;border-color:#E0E2FA!important}
 }
+
+/* FINAL OUTREACH CONTRAST FIX
+   Keep the light/lilac card, but force readable text with explicit colors. */
+.outreachHero{
+  color:#25223a !important;
+}
+.outreachHero .sectionEyebrow,
+.outreachHero > div:first-child .sectionEyebrow{
+  color:#6b6280 !important;
+}
+.outreachHero h2,
+.outreachHero > div:first-child h2{
+  color:#25223a !important;
+  opacity:1 !important;
+  text-shadow:none !important;
+}
+.outreachHero p,
+.outreachHero > div:first-child p{
+  color:#68758f !important;
+  opacity:1 !important;
+}
+.outreachHero .queueProgress strong{
+  color:#4f46b5 !important;
+}
+.outreachHero .queueProgress span{
+  color:#7d7890 !important;
+}
+.outreachHero .queueProgress .progress{
+  background:#e5e2f2 !important;
+}
+.outreachHero .queueProgress .progress i{
+  background:#5b5de6 !important;
+}
+
+/* Message actions: keep the label on the row itself, without a colored square background. */
+.quickAction,
+.quickAction:hover,
+.quickAction:focus-visible {
+  background: transparent !important;
+  border: 0 !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  color: #5145c6 !important;
+  padding: 5px 0 !important;
+}
+.quickAction:hover {
+  color: #4035aa !important;
+}
+.quickAction .quickCheck {
+  background: #fff !important;
+  border: 1px solid #cfd5e2 !important;
+  color: #5145c6 !important;
+}
+.quickAction:hover .quickCheck {
+  background: #fff !important;
+  border-color: #5145c6 !important;
+  color: #5145c6 !important;
+}
