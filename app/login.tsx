@@ -174,6 +174,36 @@ export default function Login({ onAuthed }: { onAuthed: () => void }) {
           <p className="authHint">You’ll receive a secure link if the email is registered.</p>
         )}
       </div>
+
+      <section className="authStory" aria-label="ReachOut network overview">
+        <div className="authStoryTop">
+          <span>Build</span><i>•</i><span>Nurture</span><i>•</i><span>Move forward</span>
+        </div>
+
+        <div className="networkScene" aria-hidden="true">
+          <div className="orbit orbitOne"></div>
+          <div className="orbit orbitTwo"></div>
+          <span className="orbitDot dotOne"></span>
+          <span className="orbitDot dotTwo"></span>
+          <span className="orbitDot dotThree"></span>
+
+          <div className="networkPerson personOne"><span>AG</span><b>New role</b></div>
+          <div className="networkPerson personTwo"><span>RK</span><b>Shared interest</b></div>
+          <div className="networkPerson personThree"><span>SP</span><b>Hiring signal</b></div>
+          <div className="networkPerson personFour"><span>NM</span><b>Worth a conversation</b></div>
+
+          <div className="authStoryHeadline">
+            <strong>The right conversations<br />create new <em>opportunities.</em></strong>
+            <span></span>
+          </div>
+        </div>
+
+        <div className="authStoryFeatures">
+          <div><span className="storyIcon storyPeople">●●</span><section><b>People</b><small>From your network</small></section></div>
+          <div><span className="storyIcon storySignal">↗</span><section><b>Signals</b><small>That matter</small></section></div>
+          <div><span className="storyIcon storyProgress">➤</span><section><b>Progress</b><small>One conversation at a time</small></section></div>
+        </div>
+      </section>
     </main>
   )
 }
