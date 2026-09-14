@@ -118,8 +118,55 @@ export default function Home(){
  }
  useEffect(()=>()=>{recognitionRef.current?.stop();if(typeof window!=='undefined'&&'speechSynthesis' in window)window.speechSynthesis.cancel()},[])
 
- useEffect(()=>{let mounted=true; supabaseBrowser.auth.getSession().then(({data})=>{if(!mounted)return;const session=data.session;if(session){setSignedIn(true);setUserId(session.user.id);setAccountEmail(session.user.email||'');setAccountName(accountDisplayName(session.user))}setAuthReady(true)});const {data:{subscription}}=supabaseBrowser.auth.onAuthStateChange((_event,session)=>{if(!mounted)return;if(session){setSignedIn(true);setUserId(session.user.id);setAccountEmail(session.user.email||'');setAccountName(accountDisplayName(session.user));setStateLoaded(false)}else{setSignedIn(false);setUserId('');setAccountEmail('');setAccountName('Richi');setStateLoaded(false)}});return()=>{mounted=false;subscription.unsubscribe()}},[])
- const apiFetch=async(input:string,init:RequestInit={})=>{const {data}=await supabaseBrowser.auth.getSession();const token=data.session?.access_token;if(!token)throw new Error('Please sign in again.');const headers=new Headers(init.headers||{});headers.set('Authorization',`Bearer ${token}`);return fetch(input,{...init,headers})}
+ useEffect(()=>{
+  let mounted=true
+  supabaseBrowser.auth.getSession().then(({data})=>{
+   if(!mounted)return
+   const session=data.session
+   if(session){setSignedIn(true);setUserId(session.user.id);setAccountEmail(session.user.email||'');setAccountName(accountDisplayName(session.user))}
+   setAuthReady(true)
+  })
+  const {data:{subscription}}=supabaseBrowser.auth.onAuthStateChange((event,session)=>{
+   if(!mounted)return
+   if(session){
+    setSignedIn(true);setUserId(session.user.id);setAccountEmail(session.user.email||'');setAccountName(accountDisplayName(session.user))
+    // TOKEN_REFRESHED is a normal background refresh. Do not reload the app state for it.
+    if(event==='SIGNED_IN'||event==='INITIAL_SESSION')setStateLoaded(false)
+   }else if(event==='SIGNED_OUT'){
+    setSignedIn(false);setUserId('');setAccountEmail('');setAccountName('Richi');setStateLoaded(false)
+   }
+  })
+  return()=>{mounted=false;subscription.unsubscribe()}
+ },[])
+ // Mobile Safari can pause background timers. Refresh the Supabase session when the
+ // page becomes active again instead of letting an expired access token look like a logout.
+ useEffect(()=>{
+  if(!signedIn||typeof window==='undefined')return
+  const refresh=async()=>{try{await supabaseBrowser.auth.refreshSession()}catch{}}
+  const onVisible=()=>{if(document.visibilityState==='visible')void refresh()}
+  window.addEventListener('focus',onVisible)
+  document.addEventListener('visibilitychange',onVisible)
+  return()=>{window.removeEventListener('focus',onVisible);document.removeEventListener('visibilitychange',onVisible)}
+ },[signedIn])
+ const apiFetch=async(input:string,init:RequestInit={})=>{
+  const makeRequest=async(token:string)=>{const headers=new Headers(init.headers||{});headers.set('Authorization',`Bearer ${token}`);return fetch(input,{...init,headers})}
+  let {data}=await supabaseBrowser.auth.getSession()
+  if(!data.session){
+   const refreshed=await supabaseBrowser.auth.refreshSession()
+   data=refreshed.data
+  }
+  let token=data.session?.access_token
+  if(!token)throw new Error('Please sign in again.')
+  let response=await makeRequest(token)
+  // Retry once with a freshly rotated access token. This prevents transient 401s
+  // (especially common after waking a mobile Safari tab) from appearing as logout.
+  if(response.status===401){
+   const refreshed=await supabaseBrowser.auth.refreshSession()
+   token=refreshed.data.session?.access_token||''
+   if(token)response=await makeRequest(token)
+  }
+  return response
+ }
  const loadState=async()=>{try{const r=await apiFetch('/api/state',{cache:'no-store'});const d=await r.json();if(!r.ok)throw new Error(d.error||'Could not load your account.');const x=d.state||{};if(x.owner_name)setOwnerName(x.owner_name); else if(x.profile?.name)setOwnerName(x.profile.name);if(x.target)setTarget(x.target);if(x.keywords!==undefined)setKeywords(x.keywords);if(x.goal)setGoal(x.goal);if(x.goal_target)setGoalTarget(Number(x.goal_target));if(x.conversations!==undefined)setConversations(Number(x.conversations));if(x.profile&&Object.keys(x.profile).length)setProfile(x.profile);if(Array.isArray(x.contacted))setContacted(x.contacted);if(Array.isArray(x.followed_up))setFollowedUp(x.followed_up);if(!d.exists)setOnboarding(true);setStateLoaded(true)}catch(e){flash(e instanceof Error?e.message:'Could not load account.');setStateLoaded(true)}}
  useEffect(()=>{if(!signedIn)return;loadState()},[signedIn])
  const flash=(s:string)=>{setNotice(s);window.setTimeout(()=>setNotice(''),3500)}
