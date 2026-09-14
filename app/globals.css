@@ -3167,95 +3167,46 @@ html, body, .app, .content, .sidebar {
   }
 }
 
-
-/* =========================================================
-   HOME HERO — screenshot-aligned visual treatment
-   ========================================================= */
-@media (min-width: 901px){
-  .topbar{
-    position:relative;
-    min-height:122px;
-    margin-bottom:26px !important;
-    align-items:flex-start !important;
-  }
-  .topbar > div:first-child{position:relative;z-index:2}
-  .topbar h1{
-    font-size:42px !important;
-    line-height:1.02 !important;
-    letter-spacing:-.06em !important;
-    margin-top:4px !important;
-    margin-bottom:9px !important;
-    max-width:720px !important;
-  }
-  .topbar p{
-    font-size:15px !important;
-    line-height:1.45 !important;
-    max-width:760px !important;
-  }
-  .homeGreeting{
-    font-size:10px !important;
-    letter-spacing:.15em !important;
-    margin-bottom:8px !important;
-    color:#64718a !important;
-  }
-  .homeAccent{color:#155EEF !important}
-  .topbarRight{position:relative;z-index:3;align-self:flex-start;margin-top:22px}
-  .topActions .refresh,.topActions .primary{
-    min-height:44px !important;
-    padding:11px 16px !important;
-    border-radius:11px !important;
-    font-size:12px !important;
-  }
-  .topbar::after{
-    content:"";
-    position:absolute;
-    right:178px;
-    top:12px;
-    width:185px;
-    height:82px;
-    pointer-events:none;
-    opacity:.9;
-    background:
-      radial-gradient(circle at 82% 74%, #FFF84D 0 3px, transparent 4px),
-      radial-gradient(circle at 89% 57%, #FFF84D 0 3px, transparent 4px),
-      radial-gradient(circle at 75% 52%, #FFF84D 0 3px, transparent 4px);
-  }
-  .topbarRight::before{
-    content:"Build\A meaningful\A connections";
-    white-space:pre;
-    position:absolute;
-    right:188px;
-    top:0;
-    width:120px;
-    color:#17224A;
-    font-size:11px;
-    line-height:1.05;
-    font-weight:650;
-    font-style:italic;
-    transform:rotate(-8deg);
-    pointer-events:none;
-  }
-  .topbarRight::after{
-    content:"➜";
-    position:absolute;
-    right:156px;
-    top:46px;
-    color:#17224A;
-    font-size:28px;
-    transform:rotate(8deg);
-    pointer-events:none;
-  }
-}
-@media (max-width: 900px){
-  .topbar h1{
-    font-size:clamp(30px,9vw,38px) !important;
-    line-height:1.04 !important;
-    letter-spacing:-.055em !important;
-  }
-  .topbar p{font-size:13px !important;line-height:1.5 !important}
-  .homeGreeting{font-size:9px !important;margin-bottom:7px !important}
-  .homeAccent{color:#155EEF !important}
+/* CSS/HTML-only playful decorations: no static decorative images. */
+.topbar{position:relative;overflow:visible!important}
+.homeHeroDecor{position:absolute;right:205px;top:9px;width:210px;height:92px;color:#172554;pointer-events:none;z-index:1}
+.homeHeroDecor span{position:absolute;left:4px;top:1px;font-family:"Comic Sans MS","Segoe Print",cursive;font-size:12px;line-height:1.02;font-weight:700;font-style:italic;transform:rotate(-4deg)}
+.homeHeroDecor svg{position:absolute;left:68px;top:18px;width:96px;height:64px}
+.homeHeroDecor i,.homeHeroDecor b{position:absolute;display:block;width:9px;height:9px;border-radius:50%;background:#F5E94A}
+.homeHeroDecor i{left:130px;top:49px}
+.homeHeroDecor b{left:154px;top:67px;width:7px;height:7px}
+.homeHeroDecor + div{position:relative;z-index:2}
+.agentCard{position:relative;overflow:hidden!important}
+.agentDecor{position:absolute;right:28px;top:18px;width:310px;height:118px;pointer-events:none;z-index:0}
+.agentDecor svg{position:absolute;left:0;top:0;width:150px;height:92px;color:#193b8f}
+.agentNoteCard{position:absolute;right:2px;top:4px;width:142px;min-height:88px;padding:14px 16px;background:#D7FF5A;border-radius:10px;box-shadow:0 8px 18px rgba(35,46,57,.10);font-family:"Comic Sans MS","Segoe Print",cursive;font-size:16px;line-height:1.05;font-weight:700;color:#0E1730;transform:rotate(-7deg);display:flex;align-items:center;justify-content:center;text-align:center}
+.agentDecor span,.agentDecor i{position:absolute;display:block;width:10px;height:10px;border-radius:50%;background:#D7FF5A}
+.agentDecor span{right:21px;top:0}
+.agentDecor i{right:3px;top:31px;width:7px;height:7px}
+.agentTop,.agentInput,.agentChips,.agentReply,.agentActions,.agentNote{position:relative;z-index:1}
+@media(max-width:900px){
+  .homeHeroDecor,.agentDecor{display:none!important}
 }
 
-/* Never show the old centered loading/marketing treatment on Home. */
-.homeLoadState{display:none !important}
+
+/* FINAL HOME VISUAL CLEANUP
+   Keep the dashboard visible during data fetch; avoid the old loading/marketing flash. */
+.homeLoadState{display:none!important}
+.topbar{overflow:visible!important}
+.homeHeroDecor{right:330px!important;top:16px!important;width:180px!important;height:82px!important}
+.homeHeroDecor span{font-size:11px!important;line-height:1.03!important}
+.homeHeroDecor svg{left:60px!important;top:18px!important;width:88px!important;height:58px!important}
+.homeHeroDecor i{left:122px!important;top:47px!important}
+.homeHeroDecor b{left:146px!important;top:64px!important}
+
+/* Keep the AI decoration anchored to the card and out of the status pill/input. */
+.agentCard{position:relative!important;overflow:hidden!important}
+.agentDecor{right:36px!important;top:42px!important;width:300px!important;height:118px!important;z-index:0!important}
+.agentDecor svg{left:0!important;top:0!important;width:140px!important;height:86px!important}
+.agentNoteCard{right:4px!important;top:10px!important;width:132px!important;min-height:82px!important;padding:12px 14px!important;font-size:15px!important;line-height:1.06!important;transform:rotate(-6deg)!important;z-index:0!important}
+.agentTop{position:relative!important;z-index:2!important}
+.agentPulse{position:relative!important;z-index:3!important}
+.agentInput,.agentChips,.agentReply,.agentActions,.agentNote{position:relative!important;z-index:2!important}
+@media(max-width:900px){
+  .homeHeroDecor,.agentDecor{display:none!important}
+}
