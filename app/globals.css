@@ -3689,3 +3689,120 @@ html, body, .app, .content, .sidebar {
   .sidebar .accountMenuEmail{font-size:10px !important;padding:4px 8px 10px !important}
   .sidebar .accountMenu button{font-size:10px !important;padding:10px 8px !important;min-height:38px !important}
 }
+
+/* FINAL MOBILE UX FIX — prevent card content from escaping the viewport */
+@media (max-width:760px){
+  html,body{overflow-x:hidden!important;width:100%!important;}
+  .app,.content{min-width:0!important;max-width:100%!important;width:100%!important;}
+  .content > *{min-width:0!important;max-width:100%!important;}
+
+  /* Cleaner mobile navigation: all four destinations stay fully readable. */
+  .sidebar{
+    width:100%!important;
+    padding:0 10px!important;
+    height:62px!important;
+    min-height:62px!important;
+  }
+  .sidebar nav{
+    margin:0 5px 0 0!important;
+    gap:3px!important;
+    overflow:visible!important;
+  }
+  .sidebar .nav{
+    flex:1 1 0!important;
+    height:40px!important;
+    min-width:0!important;
+    padding:0 3px!important;
+    border-radius:11px!important;
+    font-size:10px!important;
+    font-weight:680!important;
+    letter-spacing:-.025em!important;
+  }
+  .sidebar .nav span{
+    max-width:100%!important;
+    overflow:visible!important;
+    text-overflow:clip!important;
+    white-space:nowrap!important;
+    line-height:1!important;
+  }
+  .sidebar .nav.active{
+    background:#ece9ff!important;
+    color:#5944d0!important;
+    box-shadow:inset 0 0 0 1px #e2dcfa!important;
+  }
+  .sidebar .nav.active::after{
+    left:25%!important;
+    right:25%!important;
+    bottom:1px!important;
+    height:2px!important;
+  }
+  .sidebar .nav em{
+    top:-2px!important;
+    right:1px!important;
+    min-width:17px!important;
+    height:17px!important;
+    padding:0 4px!important;
+    font-size:7px!important;
+  }
+  .sidebar .sidebarAccountRow{margin-left:1px!important;}
+  .sidebar .accountButton{
+    width:38px!important;
+    height:38px!important;
+    min-width:38px!important;
+  }
+  .sidebar .accountAvatar{width:30px!important;height:30px!important;font-size:14px!important;}
+
+  /* Outreach cards must always fit the content column. */
+  .outreachHeroAction,
+  .outreachTabs,
+  .outreachActionHeader,
+  .outreachCards,
+  .outreachCard{width:100%!important;min-width:0!important;max-width:100%!important;}
+  .outreachCard{overflow:hidden!important;}
+  .outreachCardTop{min-width:0!important;align-items:flex-start!important;}
+  .outreachIdentity{min-width:0!important;overflow:hidden!important;}
+  .outreachIdentity b,.outreachIdentity span{
+    max-width:100%!important;
+  }
+  .outreachStatus{flex:none!important;max-width:64px!important;overflow:hidden!important;text-overflow:ellipsis!important;}
+  .outreachWhy{min-width:0!important;overflow:hidden!important;}
+  .outreachWhy p{overflow-wrap:anywhere!important;}
+  .outreachMove{
+    display:flex!important;
+    flex-direction:column!important;
+    align-items:flex-start!important;
+    justify-content:flex-start!important;
+    gap:8px!important;
+    min-width:0!important;
+  }
+  .outreachMove > div{min-width:0!important;width:100%!important;}
+  .outreachMove b{white-space:normal!important;overflow-wrap:anywhere!important;}
+  .outreachGoal{
+    display:block!important;
+    width:auto!important;
+    max-width:100%!important;
+    white-space:normal!important;
+    overflow-wrap:anywhere!important;
+  }
+  .outreachCardFooter{
+    min-width:0!important;
+    flex-wrap:wrap!important;
+    align-items:center!important;
+  }
+  .outreachCardFooter .outreachOpen{min-width:0!important;}
+  .outreachCardFooter .quickAction,.outreachCardFooter .completedUndo{
+    max-width:100%!important;
+    min-width:0!important;
+  }
+
+  /* Keep the floating voice control from sitting over the primary card action. */
+  .voiceFab{right:12px!important;bottom:12px!important;width:50px!important;height:50px!important;}
+}
+
+@media(max-width:380px){
+  .sidebar{padding-left:7px!important;padding-right:7px!important;}
+  .sidebar nav{margin-right:3px!important;gap:1px!important;}
+  .sidebar .nav{font-size:9px!important;padding:0 2px!important;}
+  .sidebar .accountButton{width:35px!important;height:35px!important;min-width:35px!important;}
+  .sidebar .accountAvatar{width:27px!important;height:27px!important;}
+}
