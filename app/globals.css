@@ -3210,3 +3210,119 @@ html, body, .app, .content, .sidebar {
 @media(max-width:900px){
   .homeHeroDecor,.agentDecor{display:none!important}
 }
+
+/* FINAL REQUESTED FIXES — header, completed placement, voice state, mobile header */
+/* The AI agent card must contain no decorative marketing note/graphic. */
+.agentDecor,
+.agentNoteCard { display:none !important; }
+
+/* Completed results appear immediately under the controls, before the active list/table. */
+.opportunityCompleted,
+.completedFollowups { margin-top:14px !important; margin-bottom:22px !important; }
+
+/* Make the microphone state visibly change as soon as it is pressed. */
+.voiceFab {
+  transition: background .18s ease, box-shadow .18s ease, transform .18s ease !important;
+}
+.voiceFab.listening {
+  background: linear-gradient(135deg,#2DB77A,#43C99A) !important;
+  border-color:#2DB77A !important;
+  color:#fff !important;
+  box-shadow:0 0 0 8px rgba(45,183,122,.16),0 12px 28px rgba(45,183,122,.24) !important;
+}
+.voiceFabState { display:none !important; }
+.voiceFab.listening .voiceFabState { display:none !important; }
+.voiceOrb.active {
+  background:#EAF8F2 !important;
+  color:#2DB77A !important;
+  box-shadow:0 0 0 4px rgba(45,183,122,.10) !important;
+}
+
+/* Mobile header: keep the greeting/title/subtitle readable and prevent controls from colliding. */
+@media (max-width:760px){
+  .content { padding-left:14px !important; padding-right:14px !important; }
+  .topbar {
+    display:block !important;
+    width:100% !important;
+    margin-bottom:22px !important;
+    position:relative !important;
+  }
+  .topbar > div:first-child {
+    min-width:0 !important;
+    width:100% !important;
+    padding-right:0 !important;
+  }
+  .topbar h1 {
+    font-size:clamp(27px,8vw,34px) !important;
+    line-height:1.06 !important;
+    letter-spacing:-.055em !important;
+    margin:7px 0 8px !important;
+    max-width:100% !important;
+  }
+  .topbar p {
+    font-size:12px !important;
+    line-height:1.5 !important;
+    max-width:100% !important;
+    margin:0 !important;
+  }
+  .topbarRight {
+    display:flex !important;
+    justify-content:flex-end !important;
+    width:100% !important;
+    margin-top:12px !important;
+  }
+  .topActions {
+    display:flex !important;
+    width:100% !important;
+    justify-content:flex-end !important;
+    gap:7px !important;
+  }
+  .topActions .refresh { display:none !important; }
+  .topActions .primary {
+    min-height:40px !important;
+    padding:9px 13px !important;
+    font-size:10px !important;
+  }
+
+  .agentCard {
+    width:100% !important;
+    margin:16px 0 26px !important;
+    padding:17px !important;
+    border-radius:16px !important;
+    overflow:visible !important;
+  }
+  .agentTop h2 {
+    font-size:21px !important;
+    line-height:1.08 !important;
+    margin:4px 0 7px !important;
+  }
+  .agentTop p {
+    font-size:11px !important;
+    line-height:1.5 !important;
+    max-width:100% !important;
+  }
+  .agentInput {
+    display:grid !important;
+    grid-template-columns:1fr !important;
+    gap:8px !important;
+    margin-top:15px !important;
+  }
+  .agentInput input { min-width:0 !important; width:100% !important; }
+  .agentInput .primary { width:100% !important; }
+  .agentChips { margin-top:9px !important; }
+
+  .voiceFab {
+    width:54px !important;
+    height:54px !important;
+    right:14px !important;
+    bottom:calc(14px + env(safe-area-inset-bottom)) !important;
+  }
+  .voicePanel {
+    left:12px !important;
+    right:12px !important;
+    bottom:calc(78px + env(safe-area-inset-bottom)) !important;
+    width:auto !important;
+    max-width:none !important;
+    z-index:999 !important;
+  }
+}
