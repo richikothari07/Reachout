@@ -1,4 +1,4 @@
-export type Connection = { first_name:string; last_name:string; linkedin_url:string; company:string; position:string; connected_on:string; education?:string }
+export type Connection = { first_name:string; last_name:string; linkedin_url:string; email:string; company:string; position:string; connected_on:string; education?:string }
 export type MessageStats = { contact_url:string; contact_name:string; outgoing_count:number; incoming_count:number; last_outgoing:string|null; last_incoming:string|null }
 export type RankedPerson = Connection & { score:number; reasons:string[]; action:'Reach out'|'Follow up'|'Keep warm'; lastOutgoing?:string|null; lastIncoming?:string|null; outgoingCount:number; incomingCount:number; roleMatch:boolean; keywordMatches:string[]; profileFit:boolean; iitMatch?:boolean; reputedStartupMatch?:boolean }
 
