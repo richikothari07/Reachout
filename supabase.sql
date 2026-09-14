@@ -89,26 +89,3 @@ create table if not exists public.user_state (
   updated_at timestamptz not null default now()
 );
 create index if not exists user_state_updated_idx on public.user_state(updated_at desc);
-
--- Live web intelligence. Additive table; existing data and tabs are untouched.
-create table if not exists public.live_signals (
-  id uuid primary key default gen_random_uuid(),
-  user_id uuid not null,
-  connection_id uuid not null references public.connections(id) on delete cascade,
-  linkedin_url text not null default '',
-  first_name text not null default '',
-  last_name text not null default '',
-  company text not null default '',
-  position text not null default '',
-  signals jsonb not null default '[]'::jsonb,
-  score integer not null default 0,
-  summary text not null default '',
-  sources jsonb not null default '[]'::jsonb,
-  source_count integer not null default 0,
-  last_checked_at timestamptz not null default now(),
-  created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now(),
-  unique(user_id, connection_id)
-);
-create index if not exists live_signals_user_score_idx on public.live_signals(user_id, score desc);
-create index if not exists live_signals_checked_idx on public.live_signals(user_id, last_checked_at desc);
