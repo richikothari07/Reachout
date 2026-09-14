@@ -27,6 +27,13 @@ function accountDisplayName(user:any, fallback='Richi'){
  return fallback
 }
 
+let refreshPromise: Promise<any> | null = null
+async function refreshSessionSafe(){
+  if(refreshPromise)return refreshPromise
+  refreshPromise=supabaseBrowser.auth.refreshSession().finally(()=>{refreshPromise=null})
+  return refreshPromise
+}
+
 export default function Home(){
  const [connections,setConnections]=useState<Connection[]>([]),[messages,setMessages]=useState<Message[]>([]),[files,setFiles]=useState<FileItem[]>([]),[ranked,setRanked]=useState<Ranked[]>([])
  const [connectionCount,setConnectionCount]=useState(0),[messageCount,setMessageCount]=useState(0)
@@ -138,21 +145,11 @@ export default function Home(){
   })
   return()=>{mounted=false;subscription.unsubscribe()}
  },[])
- // Mobile Safari can pause background timers. Refresh the Supabase session when the
- // page becomes active again instead of letting an expired access token look like a logout.
- useEffect(()=>{
-  if(!signedIn||typeof window==='undefined')return
-  const refresh=async()=>{try{await supabaseBrowser.auth.refreshSession()}catch{}}
-  const onVisible=()=>{if(document.visibilityState==='visible')void refresh()}
-  window.addEventListener('focus',onVisible)
-  document.addEventListener('visibilitychange',onVisible)
-  return()=>{window.removeEventListener('focus',onVisible);document.removeEventListener('visibilitychange',onVisible)}
- },[signedIn])
  const apiFetch=async(input:string,init:RequestInit={})=>{
   const makeRequest=async(token:string)=>{const headers=new Headers(init.headers||{});headers.set('Authorization',`Bearer ${token}`);return fetch(input,{...init,headers})}
   let {data}=await supabaseBrowser.auth.getSession()
   if(!data.session){
-   const refreshed=await supabaseBrowser.auth.refreshSession()
+   const refreshed=await refreshSessionSafe()
    data=refreshed.data
   }
   let token=data.session?.access_token
@@ -161,7 +158,7 @@ export default function Home(){
   // Retry once with a freshly rotated access token. This prevents transient 401s
   // (especially common after waking a mobile Safari tab) from appearing as logout.
   if(response.status===401){
-   const refreshed=await supabaseBrowser.auth.refreshSession()
+   const refreshed=await refreshSessionSafe()
    token=refreshed.data.session?.access_token||''
    if(token)response=await makeRequest(token)
   }
@@ -251,7 +248,7 @@ export default function Home(){
    <div className="brand"><img className="brandLogo" src="/reachout-logo.png" alt="ReachOut"/><div><b>ReachOut</b><span>OUTREACH INTELLIGENCE</span></div></div>
    <div className="sideGoal"><span>YOUR GOAL</span><b>{goal}</b><div className="goalMini"><i style={{width:`${goalPct}%`}}/></div><small>{conversations} / {goalTarget} conversations</small></div>
    <nav>{([['Home',Sparkles],['Opportunities',Flame],['Outreach',Zap],['Follow-ups',Clock3]] as const).map(([x,Icon])=><button key={x} className={tab===x?'nav active':'nav'} onClick={()=>setTab(x as any)}><Icon size={17}/><span>{x==='Follow-ups'?'Follow ups':x}</span>{x==='Follow-ups'&&followups.length>0&&<em>{followups.length}</em>}</button>)}</nav>
-   <div className="sidebarAccountRow"><div className="accountMenuWrap sidebarAccount" ref={accountMenuRef}><button className="accountButton" onClick={()=>setAccountMenuOpen(v=>!v)} aria-expanded={accountMenuOpen} aria-label="Account"><span className="accountAvatar" aria-hidden="true">{(accountName||'R').trim().charAt(0).toUpperCase()}</span></button>{accountMenuOpen&&<div className="accountMenu"><div className="accountMenuLabel">SIGNED IN AS</div><div className="accountMenuEmail">{accountEmail||'Your account'}</div><button onClick={()=>{setAccountMenuOpen(false);setSetupOpen(true)}}><Settings2 size={14}/> Goal & data</button><button className="accountLogout" onClick={async()=>{setAccountMenuOpen(false);await supabaseBrowser.auth.signOut()}}><X size={14}/> Log out</button></div>}</div></div>
+   <div className="sidebarAccountRow"><div className="accountMenuWrap sidebarAccount" ref={accountMenuRef}><button className="accountButton" onClick={()=>setAccountMenuOpen(v=>!v)} aria-expanded={accountMenuOpen} aria-label="Account"><span className="accountAvatar" aria-hidden="true">{(accountName||'R').trim().charAt(0).toUpperCase()}</span></button>{accountMenuOpen&&<div className="accountMenu"><div className="accountMenuLabel">SIGNED IN AS</div><div className="accountMenuEmail">{accountEmail||'Your account'}</div><button onClick={()=>{setAccountMenuOpen(false);setSetupOpen(true)}}><Settings2 size={14}/> Goal & data</button><button className="accountLogout" onClick={async()=>{setAccountMenuOpen(false);await supabaseBrowser.auth.signOut({scope:'local'})}}><X size={14}/> Log out</button></div>}</div></div>
   </aside>
   <section className="content">
    <header className="topbar"><div>{tab==='Home'&&greeting&&<span className="homeGreeting">{greeting.toUpperCase()} <span aria-hidden="true">👋</span></span>}<h1>{tab==='Home'?<>Who should you <em className="homeAccent">reach out</em> to?</>:tab}</h1><p>{tab==='Home'?`I found a few people worth your attention. Here’s why and what you can do next.`:tab==='Opportunities'?'People who stand out because of your goals, your network, and what is happening around them.':tab==='Outreach'?'Here are the people I think you should say hi to first.':'A few conversations that could use a little nudge.'}</p></div><div className="topbarRight">{tab==='Home'&&<div className="topActions"><button className="refresh" onClick={()=>loadDashboard(3)} disabled={loading}><RefreshCw size={15} className={loading?'spin':''}/>{loading?'Refreshing':'Refresh'}</button><button className="primary" onClick={()=>setSetupOpen(true)}><Target size={15}/> Edit goal</button></div>}</div></header>
@@ -296,66 +293,64 @@ function PersonCard({p,onClick,onComplete}:{p:Ranked;onClick:()=>void;onComplete
 
 function OutreachView({queue,allPeople,contacted,setSelected,markContacted,toggleFollowedUp,goal}:{queue:Ranked[];allPeople:Ranked[];contacted:string[];setSelected:any;markContacted:(p:Ranked)=>void;toggleFollowedUp:(p:Ranked)=>void;goal:string}){
   const [view,setView]=useState<'Active'|'Completed'>('Active');
-  const {active,completed}=useMemo(()=>{
-    const active=allPeople.filter(p=>{
-      const key=p.linkedin_url||`${p.first_name}-${p.last_name}`;
-      const noConversation=p.outgoingCount===0&&p.incomingCount===0;
-      const relevant=!!(p.roleMatch||p.keywordMatches.length||p.profileFit);
-      return noConversation&&relevant&&!contacted.includes(key);
-    });
-    const completed=allPeople.filter(p=>contacted.includes(p.linkedin_url||`${p.first_name}-${p.last_name}`));
-    return {active,completed};
-  },[allPeople,contacted]);
+  const completed=useMemo(()=>allPeople.filter(p=>contacted.includes(p.linkedin_url||`${p.first_name}-${p.last_name}`)),[allPeople,contacted]);
+  const active=useMemo(()=>queue.filter(p=>!contacted.includes(p.linkedin_url||`${p.first_name}-${p.last_name}`)),[queue,contacted]);
   const total=active.length+completed.length;
   const done=completed.length;
-  const visible=view==='Completed'?completed:queue.filter(p=>!contacted.includes(p.linkedin_url||`${p.first_name}-${p.last_name}`));
+  const visible=view==='Completed'?completed:active;
   return <>
-    <div className="outreachHero">
+    <div className="outreachHero outreachHeroAction">
       <div>
-        <span className="sectionEyebrow">FIRST OUTREACH</span>
-        <h2>Who is ready for a first message?</h2>
-        <p>These people fit your goal and look like a natural first conversation.</p>
+        <span className="sectionEyebrow">OUTREACH</span>
+        <h2>Turn the right people into conversations.</h2>
+        <p>Your action list is here. Open a person, use the context, then mark the outreach complete.</p>
       </div>
       <div className="queueProgress">
-        <strong>{done}/{total}</strong>
-        <span>queue actions completed</span>
+        <span>OUTREACH PROGRESS</span>
+        <strong>{done}<small> / {total}</small></strong>
         <div className="progress"><i style={{width:`${total?Math.round(done/total*100):0}%`}}/></div>
+        <em>{done===total&&total>0?'All outreach is complete':'actions completed'}</em>
       </div>
     </div>
 
     <div className="outreachTabs" role="tablist" aria-label="Outreach status">
       <button type="button" role="tab" aria-selected={view==='Active'} className={view==='Active'?'active':''} onClick={()=>setView('Active')}>
-        To reach out <span>{active.length}</span>
+        <span className="tabDot activeDot"/> To reach out <b>{active.length}</b>
       </button>
       <button type="button" role="tab" aria-selected={view==='Completed'} className={view==='Completed'?'active':''} onClick={()=>setView('Completed')}>
-        Completed <span>{completed.length}</span>
+        <span className="tabDot completeDot"/> Completed <b>{completed.length}</b>
       </button>
     </div>
 
-    <div className="outreachGrid"><section>
-      <div className="sectionHead compact">
-        <div>
-          <span className="sectionEyebrow">{view==='Completed'?'COMPLETED':'TODAY'}</span>
-          <h2>{view==='Completed'?'People you have reached out to':'Your next best actions'}</h2>
-        </div>
-        <span className="queueCount">{visible.length} {view==='Completed'?'completed':'actions'}</span>
+    <div className="outreachActionHeader">
+      <div>
+        <span className="sectionEyebrow">{view==='Completed'?'OUTREACH HISTORY':'YOUR ACTION LIST'}</span>
+        <h2>{view==='Completed'?'People you have already contacted':'Who should you message first?'}</h2>
+        <p>{view==='Completed'?'A record of the people you have marked as reached out.':'Prioritized people with no conversation yet, ready for a first message.'}</p>
       </div>
+      <span className="queueCount">{visible.length} {view==='Completed'?'completed':'to reach out'}</span>
+    </div>
 
-      {visible.length?<div className="queueList">{visible.map((p,i)=>{
+    {visible.length?<div className={`outreachCards ${view==='Completed'?'completedCards':''}`}>
+      {visible.map((p,i)=>{
         const key=p.linkedin_url||`${p.first_name}-${p.last_name}`;
-        const isDone=contacted.includes(key);
-        return <div className={`queueItem ${isDone?'done':''}`} key={`${key}-${i}`}>
-          <div className="queueNumber">{isDone?<Check size={13}/>:i+1}</div>
-          <div className="avatar">{initials(p)}</div>
-          <div className="queueMain" onClick={()=>setSelected(p)}>
-            <div><b>{p.first_name} {p.last_name}</b><span>{p.position||'Role not listed'}{p.company?` · ${p.company}`:''}</span></div>
-            <p><strong>{view==='Completed'?'Completed':'Message'}</strong> · {p.reasons[0]||'A good match for your goal'}</p>
+        const action=p.action==='Follow up'?'Follow up':'Reach out';
+        return <article className="outreachCard" key={`outreach-${key}-${i}`}>
+          <div className="outreachCardTop">
+            <div className="outreachPriority">{view==='Completed'?<Check size={14}/>:String(i+1).padStart(2,'0')}</div>
+            <div className="avatar">{initials(p)}</div>
+            <div className="outreachIdentity"><b>{p.first_name} {p.last_name}</b><span>{p.position||'Role not listed'}{p.company?` · ${p.company}`:''}</span></div>
+            <span className={`outreachStatus ${view==='Completed'?'complete':''}`}>{view==='Completed'?'Contacted':'Ready'}</span>
           </div>
-          <button className="queueOpen" onClick={()=>setSelected(p)}>Open <ChevronRight size={14}/></button>
-          {view==='Completed'?<button type="button" className="completedUndo" onClick={()=>markContacted(p)} title="Move back to your outreach queue">Undo</button>:<QuickAction p={p} onComplete={()=>markContacted(p)}/>}
-        </div>
-      })}</div>:<Empty title={view==='Completed'?'No completed outreach yet':'You’re all caught up 🫡'} text={view==='Completed'?'People you mark as contacted will appear here.':'Bring in your LinkedIn data and I’ll find your next conversation.'}/>}
-    </section></div>
+          <div className="outreachWhy"><span>WHY NOW</span><p>{p.reasons[0]||'A strong fit for your current goal.'}</p></div>
+          <div className="outreachMove"><div><span>NEXT MOVE</span><b>{action==='Follow up'?'Nudge them':'Send a first message'}</b></div><span className="outreachGoal">{goal}</span></div>
+          <div className="outreachCardFooter">
+            <button type="button" className="outreachOpen" onClick={()=>setSelected(p)}>View context <ChevronRight size={14}/></button>
+            {view==='Completed'?<button type="button" className="completedUndo" onClick={()=>markContacted(p)}>Move back</button>:<QuickAction p={p} onComplete={()=>markContacted(p)}/>} 
+          </div>
+        </article>
+      })}
+    </div>:<Empty title={view==='Completed'?'No completed outreach yet':'You’re all caught up 🫡'} text={view==='Completed'?'People you mark as contacted will appear here.':'Bring in your LinkedIn data and I’ll find your next conversation.'}/>} 
   </>
 }
 function VoiceBot({open,listening,transcript,reply,onToggle,onClose}:{open:boolean;listening:boolean;transcript:string;reply:string;onToggle:()=>void;onClose:()=>void}){return <>{open&&<div className="voicePanel"><div className={`voiceOrb ${listening?'active':''}`}><Mic size={22}/></div><div className="voiceCopy"><b>{listening?'Listening…':'ReachOut Voice'}</b><span className="voiceHelp">Try a short command:</span><div className="voiceExamples"><span>“Show my nudges”</span><span>“Who should I say hi to?”</span><span>“Draft a message for Aditi”</span></div>{transcript&&<div className="voiceTranscript"><small>You said</small><p>“{transcript}”</p></div>}{reply&&<small className="voiceReply"><Volume2 size={11}/> {reply}</small>}</div><button className="voiceClose" onClick={onClose}><X size={14}/></button></div>}<button type="button" className={`voiceFab ${listening?'listening':''}`} onClick={onToggle} aria-label={listening?'Stop listening':'Start voice input'} aria-pressed={listening}>{listening?<Mic size={20} strokeWidth={2.4}/>:<MicOff size={20} strokeWidth={2.2}/>}<span className="voiceFabState">{listening?'Listening':'Mic'}</span></button></>}
