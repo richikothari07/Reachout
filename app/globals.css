@@ -3326,3 +3326,289 @@ html, body, .app, .content, .sidebar {
     z-index:999 !important;
   }
 }
+
+/* OUTREACH STATUS TABS + LIVE COMPLETION */
+.outreachTabs{
+  display:flex;
+  gap:5px;
+  align-items:center;
+  margin:0 0 14px;
+  padding:4px;
+  width:max-content;
+  max-width:100%;
+  background:#f1f1ec;
+  border:1px solid #e3e3dc;
+  border-radius:10px;
+}
+.outreachTabs button{
+  border:0;
+  background:transparent;
+  color:#777770;
+  border-radius:7px;
+  padding:8px 11px;
+  font-size:9px;
+  font-weight:750;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+}
+.outreachTabs button span{
+  min-width:18px;
+  height:18px;
+  padding:0 5px;
+  border-radius:10px;
+  display:inline-grid;
+  place-items:center;
+  background:#e4e4de;
+  color:#777770;
+  font-size:8px;
+}
+.outreachTabs button.active{
+  background:#fff;
+  color:#242420;
+  box-shadow:0 2px 7px #0000000b;
+}
+.outreachTabs button.active span{
+  background:#242420;
+  color:#fff;
+}
+.completedUndo{
+  border:1px solid #deded7;
+  background:#fff;
+  color:#66665f;
+  border-radius:7px;
+  padding:7px 9px;
+  font-size:8px;
+  white-space:nowrap;
+}
+.completedUndo:hover{background:#f7f7f3}
+.queueItem.done .queueMain p strong{color:#2d9a68}
+
+@media(max-width:760px){
+  .outreachTabs{width:100%;}
+  .outreachTabs button{flex:1;justify-content:center;}
+  .completedUndo{padding:7px 8px;}
+}
+
+/* FINAL MOBILE HEADER POLISH
+   Keep the existing navigation/content intact, but make the mobile header feel like a
+   polished product header: compact nav, consistent alignment, calmer title hierarchy. */
+@media (max-width:760px){
+  /* Fixed top navigation */
+  .sidebar{
+    height:62px !important;
+    min-height:62px !important;
+    padding:0 12px !important;
+    display:flex !important;
+    align-items:center !important;
+    background:rgba(247,245,255,.97) !important;
+    border-bottom:1px solid #e5e1ee !important;
+    box-shadow:0 2px 12px rgba(45,35,90,.045) !important;
+    backdrop-filter:blur(14px) !important;
+    -webkit-backdrop-filter:blur(14px) !important;
+  }
+
+  .sidebar nav{
+    flex:1 1 auto !important;
+    width:auto !important;
+    min-width:0 !important;
+    height:100% !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:space-between !important;
+    gap:2px !important;
+    margin:0 8px 0 0 !important;
+  }
+
+  .sidebar .nav{
+    position:relative !important;
+    flex:1 1 0 !important;
+    min-width:0 !important;
+    max-width:none !important;
+    height:38px !important;
+    padding:0 5px !important;
+    border-radius:10px !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    gap:0 !important;
+    color:#777286 !important;
+    background:transparent !important;
+    font-size:11px !important;
+    font-weight:650 !important;
+    letter-spacing:-.01em !important;
+    white-space:nowrap !important;
+    box-shadow:none !important;
+    transform:none !important;
+  }
+
+  .sidebar .nav span{
+    display:block !important;
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+    max-width:100% !important;
+  }
+
+  .sidebar .nav svg{display:none !important}
+
+  .sidebar .nav:hover{
+    background:#f0edf9 !important;
+    color:#5146a7 !important;
+  }
+
+  .sidebar .nav.active{
+    background:#ebe7ff !important;
+    color:#5944d0 !important;
+    box-shadow:none !important;
+    font-weight:750 !important;
+  }
+
+  .sidebar .nav.active::after{
+    content:"" !important;
+    position:absolute !important;
+    left:22% !important;
+    right:22% !important;
+    bottom:2px !important;
+    height:2px !important;
+    border-radius:999px !important;
+    background:#6246e5 !important;
+  }
+
+  .sidebar .nav em{
+    position:absolute !important;
+    top:-3px !important;
+    right:7px !important;
+    min-width:18px !important;
+    height:18px !important;
+    padding:0 5px !important;
+    margin:0 !important;
+    display:grid !important;
+    place-items:center !important;
+    border-radius:999px !important;
+    background:#fff !important;
+    color:#6246e5 !important;
+    border:1px solid #ddd7f4 !important;
+    box-shadow:0 2px 7px rgba(71,54,132,.10) !important;
+    font-size:8px !important;
+    line-height:1 !important;
+    font-weight:800 !important;
+  }
+
+  .sidebar .sidebarAccountRow{
+    flex:0 0 auto !important;
+    display:flex !important;
+    align-items:center !important;
+    margin:0 !important;
+    padding:0 !important;
+  }
+
+  .sidebar .accountButton{
+    width:36px !important;
+    height:36px !important;
+    min-width:36px !important;
+    border-radius:50% !important;
+    display:grid !important;
+    place-items:center !important;
+    background:#fff !important;
+    border:1px solid #e1ddec !important;
+    color:#252238 !important;
+    box-shadow:0 2px 8px rgba(43,35,82,.055) !important;
+  }
+
+  .sidebar .accountAvatar{
+    width:30px !important;
+    height:30px !important;
+    font-size:15px !important;
+    font-weight:750 !important;
+    background:#f1edff !important;
+    color:#5944d0 !important;
+  }
+
+  /* Main page header */
+  .content{
+    padding:84px 20px 82px !important;
+  }
+
+  .topbar{
+    display:flex !important;
+    flex-direction:column !important;
+    align-items:stretch !important;
+    width:100% !important;
+    margin:0 0 24px !important;
+    padding:0 !important;
+    gap:0 !important;
+  }
+
+  .topbar > div:first-child{
+    width:100% !important;
+    min-width:0 !important;
+  }
+
+  .homeGreeting{
+    display:block !important;
+    margin:0 0 9px !important;
+    font-size:10px !important;
+    line-height:1.2 !important;
+    letter-spacing:.16em !important;
+    font-weight:800 !important;
+    color:#77728a !important;
+  }
+
+  .topbar h1{
+    margin:0 0 9px !important;
+    max-width:355px !important;
+    font-size:31px !important;
+    line-height:1.08 !important;
+    letter-spacing:-.052em !important;
+    font-weight:760 !important;
+    color:#20202a !important;
+  }
+
+  .topbar p{
+    max-width:355px !important;
+    margin:0 !important;
+    font-size:12px !important;
+    line-height:1.55 !important;
+    color:#777487 !important;
+  }
+
+  .topbarRight{
+    width:100% !important;
+    display:flex !important;
+    justify-content:flex-start !important;
+    align-items:center !important;
+    margin:15px 0 0 !important;
+  }
+
+  .topActions{
+    width:auto !important;
+    display:flex !important;
+    justify-content:flex-start !important;
+    align-items:center !important;
+    gap:7px !important;
+  }
+
+  .topActions .refresh{display:none !important}
+
+  .topActions .primary{
+    width:auto !important;
+    min-height:38px !important;
+    height:38px !important;
+    padding:8px 13px !important;
+    border-radius:10px !important;
+    font-size:10px !important;
+    font-weight:700 !important;
+    box-shadow:0 5px 13px rgba(98,70,229,.16) !important;
+  }
+}
+
+@media(max-width:380px){
+  .sidebar{padding:0 9px !important}
+  .sidebar nav{margin-right:5px !important}
+  .sidebar .nav{font-size:10px !important}
+  .sidebar .nav em{right:2px !important}
+  .sidebar .accountButton{width:34px !important;height:34px !important;min-width:34px !important}
+  .sidebar .accountAvatar{width:28px !important;height:28px !important}
+  .content{padding-left:16px !important;padding-right:16px !important}
+  .topbar h1{font-size:29px !important}
+}
