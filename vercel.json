@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/live-intelligence",
+      "schedule": "0 */6 * * *"
+    }
+  ]
+}
