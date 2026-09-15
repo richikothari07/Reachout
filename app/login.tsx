@@ -84,8 +84,6 @@ export default function Login({ onAuthed }: { onAuthed: () => void }) {
     <main className="authPage">
       <div className="authCard">
         <img src="/reachout-logo.png" className="authLogo" alt="ReachOut" />
-        <span className="authEyebrow">OUTREACH INTELLIGENCE</span>
-
         <h1>
           {mode === 'login'
             ? 'Welcome back.'
@@ -111,6 +109,12 @@ export default function Login({ onAuthed }: { onAuthed: () => void }) {
               placeholder="you@example.com"
             />
           </label>
+
+          {mode === 'login' && (
+            <button className="forgotPassword forgotInline" type="button" onClick={() => switchMode('reset')}>
+              Forgot password?
+            </button>
+          )}
 
           {mode !== 'reset' && (
             <label>
@@ -152,12 +156,6 @@ export default function Login({ onAuthed }: { onAuthed: () => void }) {
           </div>
         )}
 
-        {mode === 'login' && (
-          <button className="forgotPassword" type="button" onClick={() => switchMode('reset')}>
-            Forgot password?
-          </button>
-        )}
-
         <button
           className="authSwitch"
           type="button"
@@ -167,7 +165,7 @@ export default function Login({ onAuthed }: { onAuthed: () => void }) {
             ? 'Already have an account? Sign in'
             : mode === 'reset'
               ? 'Back to sign in'
-              : 'New to ReachOut? Create your account'}
+              : "Don't have an account? Sign up"}
         </button>
 
         {mode === 'reset' && (
@@ -181,27 +179,60 @@ export default function Login({ onAuthed }: { onAuthed: () => void }) {
         </div>
 
         <div className="networkScene" aria-hidden="true">
+          <div className="networkGlow glowOne"></div>
+          <div className="networkGlow glowTwo"></div>
           <div className="orbit orbitOne"></div>
           <div className="orbit orbitTwo"></div>
+          <div className="orbit orbitThree"></div>
+
           <span className="orbitDot dotOne"></span>
           <span className="orbitDot dotTwo"></span>
           <span className="orbitDot dotThree"></span>
+          <span className="orbitDot dotFour"></span>
+          <span className="orbitDot dotFive"></span>
 
-          <div className="networkPerson personOne"><span>AG</span><b>New role</b></div>
-          <div className="networkPerson personTwo"><span>RK</span><b>Shared interest</b></div>
-          <div className="networkPerson personThree"><span>SP</span><b>Hiring signal</b></div>
-          <div className="networkPerson personFour"><span>NM</span><b>Worth a conversation</b></div>
+          <div className="networkNode nodeOne">
+            <span className="nodeIcon"><span className="nodeHead"></span><span className="nodeBody"></span></span>
+            <b>New role</b>
+          </div>
+          <div className="networkNode nodeTwo">
+            <span className="nodeIcon signalIcon"><span></span><span></span><span></span></span>
+            <b>Hiring signal</b>
+          </div>
+          <div className="networkNode nodeThree">
+            <span className="nodeIcon buildingIcon"><span></span><span></span><span></span><span></span></span>
+            <b>Recently raised funding</b>
+          </div>
+          <div className="networkNode nodeFour">
+            <span className="nodeIcon peopleIcon"><span></span><span></span></span>
+            <b>Shared interest</b>
+          </div>
+          <div className="networkNode nodeFive">
+            <span className="nodeIcon chatIcon"><span></span></span>
+            <b>Worth a conversation</b>
+          </div>
 
           <div className="authStoryHeadline">
+            <span className="headlineKicker">YOUR NETWORK, IN MOTION</span>
             <strong>The right conversations<br />create new <em>opportunities.</em></strong>
-            <span></span>
+            <p>Insights from your network. Real signals from the web. Powered by AI.</p>
+            <span className="headlineUnderline"></span>
+          </div>
+
+          <div className="storyNote noteOne">
+            <span className="noteArrow">↗</span>
+            <span>Turn your network<br />into opportunities</span>
+          </div>
+          <div className="storyNote noteTwo">
+            <span>Live signals</span>
+            <i></i>
           </div>
         </div>
 
         <div className="authStoryFeatures">
-          <div><span className="storyIcon storyPeople">●●</span><section><b>People</b><small>From your network</small></section></div>
-          <div><span className="storyIcon storySignal">↗</span><section><b>Signals</b><small>That matter</small></section></div>
-          <div><span className="storyIcon storyProgress">➤</span><section><b>Progress</b><small>One conversation at a time</small></section></div>
+          <div><span className="storyIcon storyPeople"><span></span><span></span><span></span></span><section><b>People</b><small>From your network</small></section></div>
+          <div><span className="storyIcon storySignal"><span></span><span></span><span></span></span><section><b>Signals</b><small>That matter now</small></section></div>
+          <div><span className="storyIcon storyProgress"><span>↗</span></span><section><b>Progress</b><small>One conversation at a time</small></section></div>
         </div>
       </section>
     </main>
