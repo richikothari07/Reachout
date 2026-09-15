@@ -43,9 +43,19 @@ export async function POST(req: Request) {
     const usable = (connections || []).filter((c: any) => String(c.company || '').trim()).slice(0, limit)
     if (!usable.length) return NextResponse.json({ updated: 0, signals: [] })
 
+    // IMPORTANT: keep free-tier usage low.
+    // Analyze the whole batch in ONE Gemini request instead of one request per person.
+    const analyzed = await researchPeopleBatch(usable)
     const results: any[] = []
+
     for (const person of usable) {
-      const result = await researchPerson(person)
+      const result = analyzed.get(String(person.id)) || {
+        signals: [],
+        score: 0,
+        summary: `No strong recent public signal found for ${person.company || 'this contact'}.`,
+        sources: [],
+      }
+
       const row = {
         user_id: userId,
         connection_id: person.id,
@@ -61,11 +71,13 @@ export async function POST(req: Request) {
         source_count: result.sources.length,
         sources: result.sources,
       }
+
       const { data: saved, error: saveError } = await supabase
         .from('live_signals')
         .upsert(row, { onConflict: 'user_id,connection_id' })
         .select('id,connection_id,linkedin_url,first_name,last_name,company,position,signals,score,summary,last_checked_at,source_count,sources')
         .single()
+
       if (saveError) throw new Error(saveError.message)
       results.push(saved)
     }
@@ -76,67 +88,90 @@ export async function POST(req: Request) {
   }
 }
 
-async function researchPerson(person: any) {
+async function researchPeopleBatch(people: any[]) {
   const apiKey = process.env.GEMINI_API_KEY
   if (!apiKey) throw new Error('Live web intelligence is not configured yet. Add GEMINI_API_KEY in Vercel.')
 
-  const name = `${person.first_name || ''} ${person.last_name || ''}`.trim()
-  const company = String(person.company || '').trim()
-  const position = String(person.position || '').trim()
+  // Fetch public news for all contacts first. This does not consume Gemini quota.
+  const sourceByPerson = new Map<string, NewsItem[]>()
+  const allNews: { personId: string; name: string; company: string; items: NewsItem[] }[] = []
 
-  // Free-tier approach:
-  // Gemini 3.6 Flash itself is available on Google's free tier, but Google
-  // Search grounding is not available there. Instead, fetch current public
-  // headlines through Google News RSS (no API key / paid search quota), then
-  // give those sources to Gemini to analyze. This keeps the feature live
-  // without requiring paid Gemini Search grounding.
-  const rssQueries = [
-    `${name} ${company}`,
-    `${company} funding OR hiring OR launch OR expansion`,
-  ].filter(Boolean)
+  for (const person of people) {
+    const name = `${person.first_name || ''} ${person.last_name || ''}`.trim()
+    const company = String(person.company || '').trim()
+    const queries = [
+      `${name} ${company}`,
+      `${company} funding OR hiring OR launch OR expansion`,
+    ].filter(Boolean)
 
-  const rssItems = await fetchGoogleNewsRss(rssQueries)
-  const sourceContext = rssItems.length
-    ? rssItems.map((item, i) =>
-        `${i + 1}. ${item.title}\nPublisher: ${item.publisher || 'Unknown'}\nDate: ${item.pubDate || 'Unknown'}\nURL: ${item.link}`
-      ).join('\n\n')
-    : 'No current Google News results were found.'
+    const items = await fetchGoogleNewsRss(queries)
+    sourceByPerson.set(String(person.id), items)
+    allNews.push({
+      personId: String(person.id),
+      name,
+      company,
+      items,
+    })
+  }
+
+  const input = allNews.map((p, index) => {
+    const sources = p.items.length
+      ? p.items.map((item, i) =>
+          `  ${i + 1}. ${item.title}\n     Publisher: ${item.publisher || 'Unknown'}\n     Date: ${item.pubDate || 'Unknown'}\n     URL: ${item.link}`
+        ).join('\n')
+      : '  No current public news results.'
+
+    const person = people[index]
+    return `CONTACT ${index + 1}
+ID: ${p.personId}
+Person: ${p.name}
+Current listed role: ${String(person.position || 'unknown')}
+Company: ${p.company}
+LinkedIn URL: ${person.linkedin_url || 'not provided'}
+Sources:
+${sources}`
+  }).join('\n\n')
 
   const prompt = `You are the live intelligence engine for a professional networking product.
-Use ONLY the current public sources supplied below. Do not invent facts and do not claim
-you searched the web beyond these sources.
 
-Person: ${name}
-Current listed role: ${position || 'unknown'}
-Company: ${company}
-LinkedIn URL if available: ${person.linkedin_url || 'not provided'}
+Analyze ALL contacts below in ONE pass using ONLY the supplied current public news sources.
+Do not invent facts. Do not claim you searched the web beyond these sources.
 
-Find useful, recent signals that could explain why this person may be worth reaching out to now.
-Prioritize:
-1. Recent job or leadership change for the person.
+For each contact, identify useful recent signals that could explain why they may be worth
+reaching out to now. Prioritize:
+1. Recent job or leadership change.
 2. Company hiring, especially product, recruiting, growth, or roles related to the user's target.
-3. Recent funding, acquisition, expansion, major launch, or growth.
-4. Relevant company or person news.
-5. A strong professional connection signal visible from the supplied sources.
+3. Funding, acquisition, expansion, major launch, or growth.
+4. Relevant company/person news.
+5. Other strong professional connection signals visible in the supplied sources.
 
-Only include a signal when the supplied source supports it. Prefer recent items.
-If nothing useful is supported, return an empty signals array and say so briefly.
+Only include signals supported by a supplied source. If there is no useful signal, return
+an empty signals array and a short explanation.
 
-CURRENT PUBLIC SOURCES:
-${sourceContext}
-
-Return JSON only with this shape:
+Return JSON ONLY:
 {
-  "score": number from 0 to 100,
-  "summary": "one sentence explaining the strongest reason now",
-  "signals": [
-    {"type":"hiring|funding|role_change|launch|growth|news|other","label":"short label","detail":"short factual detail","date":"YYYY-MM-DD or empty","strength":"high|medium|low"}
+  "results": [
+    {
+      "id": "contact ID",
+      "score": 0,
+      "summary": "one sentence",
+      "signals": [
+        {
+          "type":"hiring|funding|role_change|launch|growth|news|other",
+          "label":"short label",
+          "detail":"short factual detail",
+          "date":"YYYY-MM-DD or empty",
+          "strength":"high|medium|low"
+        }
+      ]
+    }
   ]
-}`
+}
 
-  // Gemini 3.6 Flash remains on the free standard API tier. We use the
-  // Interactions API as recommended, but deliberately omit Google Search
-  // grounding because that tool requires paid-tier access for Gemini 3.x.
+CONTACTS:
+${input}`
+
+  // ONE Gemini request for the whole refresh.
   const response = await fetch('https://generativelanguage.googleapis.com/v1beta/interactions', {
     method: 'POST',
     headers: {
@@ -152,7 +187,10 @@ Return JSON only with this shape:
   })
 
   const data = await response.json()
-  if (!response.ok) throw new Error(data?.error?.message || 'Gemini analysis failed.')
+  if (!response.ok) {
+    const message = data?.error?.message || 'Gemini analysis failed.'
+    throw new Error(message)
+  }
 
   const outputSteps = Array.isArray(data?.steps)
     ? data.steps.filter((step: any) => step?.type === 'model_output')
@@ -170,34 +208,35 @@ Return JSON only with this shape:
     try { parsed = match ? JSON.parse(match[0]) : {} } catch { parsed = {} }
   }
 
-  const sources = rssItems.slice(0, 8).map(item => ({
-    title: item.title,
-    url: item.link,
-  }))
+  const resultMap = new Map<string, any>()
+  const results = Array.isArray(parsed?.results) ? parsed.results : []
 
-  const signals = Array.isArray(parsed.signals)
-    ? parsed.signals.slice(0, 6).map((s: any) => ({
-        type: String(s.type || 'other'),
-        label: String(s.label || 'Recent signal'),
-        detail: String(s.detail || ''),
-        date: String(s.date || ''),
-        strength: String(s.strength || 'medium'),
-      })).filter((s: any) => s.detail)
-    : []
+  for (const person of people) {
+    const id = String(person.id)
+    const raw = results.find((x: any) => String(x?.id) === id) || {}
+    const sourceItems = sourceByPerson.get(id) || []
+    const signals = Array.isArray(raw.signals)
+      ? raw.signals.slice(0, 6).map((s: any) => ({
+          type: String(s.type || 'other'),
+          label: String(s.label || 'Recent signal'),
+          detail: String(s.detail || ''),
+          date: String(s.date || ''),
+          strength: String(s.strength || 'medium'),
+        })).filter((s: any) => s.detail)
+      : []
 
-  return {
-    score: Math.min(100, Math.max(
-      0,
-      Number(parsed.score) ||
-      Math.min(55 + signals.length * 8 + (sources.length ? 5 : 0), 90)
-    )),
-    summary: String(
-      parsed.summary ||
-      (signals[0]?.detail ? signals[0].detail : `No strong recent public signal found for ${company}.`)
-    ),
-    signals,
-    sources,
+    resultMap.set(id, {
+      score: Math.min(100, Math.max(0, Number(raw.score) || Math.min(55 + signals.length * 8 + (sourceItems.length ? 5 : 0), 90))),
+      summary: String(raw.summary || (signals[0]?.detail || `No strong recent public signal found for ${person.company || 'this contact'}.`)),
+      signals,
+      sources: sourceItems.slice(0, 8).map(item => ({
+        title: item.title,
+        url: item.link,
+      })),
+    })
   }
+
+  return resultMap
 }
 
 type NewsItem = {
