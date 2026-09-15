@@ -1,0 +1,449 @@
+'use client'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
+import Papa from 'papaparse'
+import { supabaseBrowser } from '@/lib/supabase-browser'
+import Login from './login'
+import { ArrowRight, ArrowUpRight, BarChart3, Check, CheckCircle2, ChevronDown, ChevronRight, Clock3, ExternalLink, Flame, MessageSquare, MoreHorizontal, RefreshCw, Search, Settings2, Sparkles, Mail, Target, Trash2, UploadCloud, UserRound, Users, WandSparkles, X, Zap, Mic, MicOff, Volume2 } from 'lucide-react'
+
+type Connection={first_name:string;last_name:string;linkedin_url:string;email:string;company:string;position:string;connected_on:string;education?:string}
+type Message={from:string;sender:string;to:string;recipient:string;date:string;content:string;folder:string}
+type Ranked=Connection & {score:number;reasons:string[];action:'Reach out'|'Follow up'|'Keep warm';lastOutgoing?:string|null;lastIncoming?:string|null;outgoingCount:number;incomingCount:number;roleMatch:boolean;keywordMatches:string[];profileFit:boolean;iitMatch?:boolean;reputedStartupMatch?:boolean}
+type FileItem={id:string;name:string;type:'connections'|'messages'|'education'|null;rows:number;status:'ready'|'error'|'processing';error?:string}
+type ProfileContext={name:string;headline:string;summary:string;industry:string;positions:string[];positionDescriptions:string[];skills:string[]}
+
+const roleHints=['Product Manager','Product Designer','Software Engineer','Growth Manager','Investment Analyst']
+function norm(s=''){return s.toLowerCase().replace(/[^a-z0-9+ ]/g,' ').replace(/\s+/g,' ').trim()}
+function dateMs(s:string|null|undefined){if(!s)return 0;const d=Date.parse(s.replace(' UTC','Z'));return Number.isFinite(d)?d:0}
+function daysAgo(s:string|null|undefined){const d=dateMs(s);return d?Math.max(0,Math.floor((Date.now()-d)/86400000)):9999}
+function isSelf(m:Message,owner:string){return norm(m.from)===norm(owner)||norm(m.sender)===norm(owner)}
+function matchesPerson(m:Message,c:Ranked){const url=norm(c.linkedin_url);const full=norm(`${c.first_name} ${c.last_name}`);const fields=[m.sender,m.recipient,m.from,m.to].map(norm);return (!!url&&fields.some(v=>v===url||v.includes(url)||url.includes(v)))||fields.some(v=>v===full||v.includes(full)||full.includes(v))}
+function initials(p:Connection){return `${(p.first_name?.[0]||'').toUpperCase()}${(p.last_name?.[0]||'').toUpperCase()}`||'?'}
+function accountDisplayName(user:any, fallback='Richi'){
+ const meta=user?.user_metadata||{}
+ const raw=String(meta.full_name||meta.name||meta.preferred_username||'').trim()
+ if(raw)return raw.split(/\s+/)[0]
+ const email=String(user?.email||'').trim()
+ if(email){const local=email.split('@')[0].replace(/[._-]+/g,' ').trim();if(local){return local.split(/\s+/)[0].replace(/[^a-zA-Z]/g,'')||fallback}}
+ return fallback
+}
+
+let refreshPromise: Promise<any> | null = null
+async function refreshSessionSafe(){
+  if(refreshPromise)return refreshPromise
+  refreshPromise=supabaseBrowser.auth.refreshSession().finally(()=>{refreshPromise=null})
+  return refreshPromise
+}
+
+export default function Home(){
+ const [connections,setConnections]=useState<Connection[]>([]),[messages,setMessages]=useState<Message[]>([]),[files,setFiles]=useState<FileItem[]>([]),[ranked,setRanked]=useState<Ranked[]>([])
+ const [connectionCount,setConnectionCount]=useState(0),[messageCount,setMessageCount]=useState(0)
+ const [ownerName,setOwnerName]=useState('Richi Kothari'),[target,setTarget]=useState('Product Manager'),[keywords,setKeywords]=useState(''),[goal,setGoal]=useState('Land a Product role'),[goalTarget,setGoalTarget]=useState(10),[conversations,setConversations]=useState(0)
+ const [profile,setProfile]=useState<ProfileContext|null>(null),[profileFiles,setProfileFiles]=useState<{name:string;status:'ready'|'error';error?:string}[]>([])
+ const [tab,setTab]=useState<'Home'|'Opportunities'|'Outreach'|'Follow-ups'>('Home'),[query,setQuery]=useState(''),[selected,setSelected]=useState<Ranked|null>(null)
+ const [filter,setFilter]=useState<'All'|'High signal'|'Not contacted'>('All'),[showFilters,setShowFilters]=useState(false)
+ const [companyFilter,setCompanyFilter]=useState(''),[roleFilter,setRoleFilter]=useState(''),[connectedFilter,setConnectedFilter]=useState<'Anytime'|'30'|'90'|'180'|'365'|'older'>('Anytime'),[emailFilter,setEmailFilter]=useState<'All'|'Has email'|'No email'>('All')
+ const [notice,setNotice]=useState(''),[days,setDays]=useState(7),[drag,setDrag]=useState(false),[loading,setLoading]=useState(false),[dataError,setDataError]=useState(''),[setupOpen,setSetupOpen]=useState(false),[onboarding,setOnboarding]=useState(false)
+ const [userId,setUserId]=useState(''),[contacted,setContacted]=useState<string[]>([]),[followedUp,setFollowedUp]=useState<string[]>([]),[showCompletedFollowups,setShowCompletedFollowups]=useState(false)
+ const [authReady,setAuthReady]=useState(false),[signedIn,setSignedIn]=useState(false),[accountEmail,setAccountEmail]=useState(''),[accountName,setAccountName]=useState('Richi'),[stateLoaded,setStateLoaded]=useState(false),[dashboardReady,setDashboardReady]=useState(false),[showCompletedOpportunities,setShowCompletedOpportunities]=useState(false),[accountMenuOpen,setAccountMenuOpen]=useState(false),[greeting,setGreeting]=useState('')
+ const inputRef=useRef<HTMLInputElement>(null)
+ const accountMenuRef=useRef<HTMLDivElement>(null)
+ const [voiceOpen,setVoiceOpen]=useState(false),[voiceListening,setVoiceListening]=useState(false),[voiceTranscript,setVoiceTranscript]=useState(''),[voiceReply,setVoiceReply]=useState(''),[voiceGenerate,setVoiceGenerate]=useState(false)
+ const [agentOpen,setAgentOpen]=useState(false),[agentCommand,setAgentCommand]=useState(''),[agentBusy,setAgentBusy]=useState(false),[agentReply,setAgentReply]=useState(''),[agentActions,setAgentActions]=useState<any[]>([]),[agentError,setAgentError]=useState('')
+ const recognitionRef=useRef<any>(null)
+ const voiceBusyRef=useRef(false)
+ useEffect(()=>{
+  const updateGreeting=()=>{const hour=new Date().getHours();setGreeting(hour<12?'Good morning':hour<17?'Good afternoon':'Good evening')}
+  updateGreeting()
+  const timer=window.setInterval(updateGreeting,60000)
+  return()=>window.clearInterval(timer)
+ },[])
+ useEffect(()=>{
+  if(!accountMenuOpen)return
+  const onPointerDown=(e:PointerEvent)=>{
+   const el=accountMenuRef.current
+   if(el && !el.contains(e.target as Node))setAccountMenuOpen(false)
+  }
+  document.addEventListener('pointerdown',onPointerDown)
+  return()=>document.removeEventListener('pointerdown',onPointerDown)
+ },[accountMenuOpen])
+ const speak=(text:string)=>{setVoiceReply(text); if(typeof window!=='undefined'&&'speechSynthesis' in window){window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.rate=.98;window.speechSynthesis.speak(u)}}
+ const findPerson=(name:string)=>{const q=norm(name);return ranked.find(p=>norm(`${p.first_name} ${p.last_name}`)===q)||ranked.find(p=>norm(`${p.first_name} ${p.last_name}`).includes(q))||ranked.find(p=>q.includes(norm(p.first_name))&&norm(p.first_name))}
+ const runVoiceCommand=async(command:string)=>{
+  const text=command.trim(); if(!text||voiceBusyRef.current)return; voiceBusyRef.current=true; setVoiceTranscript(text)
+  try{
+   const lower=norm(text)
+   if(/^(go to|open|show) (home|dashboard)$/.test(lower)){setTab('Home');speak('Opening your home dashboard.');return}
+   if(/who (should|do) i (follow.?up|follow up) with (next|now)?|who('s| is) next to follow up|what follow.?up should i do next|who should i contact next/.test(lower)){
+    const nextFollowup=[...followups].sort((a,b)=>{const overdue=(p:Ranked)=>daysAgo(p.lastOutgoing)-days; return (overdue(b)*2+b.score)-(overdue(a)*2+a.score)})[0]
+    if(nextFollowup){setTab('Follow-ups');setSelected(nextFollowup);setVoiceGenerate(true);speak(`${nextFollowup.first_name} ${nextFollowup.last_name} is your next follow-up. I opened the conversation and I’m preparing a nudge based on your previous messages.`)}
+    else if(ranked.some(p=>p.lastOutgoing&&p.outgoingCount>0&&!p.lastIncoming)){
+      const waiting=[...ranked].filter(p=>p.lastOutgoing&&p.outgoingCount>0&&!p.lastIncoming).sort((a,b)=>daysAgo(b.lastOutgoing)-daysAgo(a.lastOutgoing))[0]
+      if(waiting){setTab('Follow-ups');setSelected(waiting);setVoiceGenerate(true);speak(`${waiting.first_name} ${waiting.last_name} is the closest nudge opportunity. I opened their conversation and I’m preparing a contextual follow-up.`)}
+      else speak('There are no outstanding conversations to nudge right now.')
+    } else speak('There are no outstanding conversations to nudge right now.')
+    return
+   }
+   if(/(follow.?ups|follow ups)/.test(lower)&&/(show|open|go to|take me)/.test(lower)){setTab('Follow-ups');speak(`You have ${followups.length} nudges due.`);return}
+   if(/(opportunit|people|contacts)/.test(lower)&&/(show|open|go to|take me)/.test(lower)){setTab('Opportunities');speak(`You have ${ranked.length} people in your network.`);return}
+   if(/(outreach|messages)/.test(lower)&&/(show|open|go to|take me)/.test(lower)){setTab('Outreach');speak('Opening outreach.');return}
+   if(/(import|upload).*(linkedin|data|csv)/.test(lower)){setSetupOpen(true);speak('Opening your LinkedIn import.');return}
+   const openPerson=lower.match(/(?:open|reach out to|contact) (.+?)(?: on linkedin)?$/)
+   if(openPerson){const person=findPerson(openPerson[1]);if(person){setSelected(person);if(/reach out|contact/.test(lower))setVoiceGenerate(true);if(person.linkedin_url&&/reach out|linkedin|contact/.test(lower)){window.open(person.linkedin_url,'_blank','noopener,noreferrer')}speak(/reach out|contact/.test(lower)?`Opening ${person.first_name}'s profile and preparing your message.`:`Opening ${person.first_name}'s profile.`)}else speak(`I couldn't find ${openPerson[1]} in your network.`);return}
+   const local=lower.match(/(?:mark|tick|complete) (?:reach out|outreach) (?:for |to )?(.+)/)||lower.match(/(?:mark|tick|complete) (?:contacted) (?:for |to )?(.+)/)
+   if(local){const person=findPerson(local[1].replace(/(as complete|complete)$/,''));if(person){markContacted(person);speak(`Marked reach out complete for ${person.first_name}.`)}else speak(`I couldn't find ${local[1]} in your network.`);return}
+   const fu=lower.match(/(?:mark|tick|complete) follow.?up (?:for |to )?(.+)/)
+   if(fu){const person=findPerson(fu[1].replace(/(as complete|complete)$/,''));if(person){toggleFollowedUp(person);speak(`Marked follow-up complete for ${person.first_name}.`)}else speak(`I couldn't find ${fu[1]} in your network.`);return}
+   const followPerson=lower.match(/(?:follow up with|follow up on) (.+)/)?.[1]
+   if(followPerson){const person=findPerson(followPerson);if(person){setSelected(person);setVoiceGenerate(true);speak(`Opening ${person.first_name}'s conversation and preparing a nudge.`)}else speak(`I couldn't find ${followPerson} in your network.`);return}
+   const personName=lower.match(/(?:generate|write|draft|create) (?:a )?(?:message|outreach|follow.?up) (?:for|to|with) (.+)/)?.[1]
+   if(personName){const person=findPerson(personName);if(person){setSelected(person);setVoiceGenerate(true);speak(`Opening ${person.first_name}'s outreach and preparing a message.`)}else speak(`I couldn't find ${personName} in your network.`);return}
+   const voicePeople=[...ranked].slice(0,30).map(p=>({name:`${p.first_name} ${p.last_name}`,company:p.company,position:p.position,action:p.action,lastOutgoing:p.lastOutgoing,lastIncoming:p.lastIncoming,outgoingCount:p.outgoingCount,incomingCount:p.incomingCount,reasons:p.reasons.slice(0,2)}))
+   const voiceFollowups=[...followups].slice(0,15).map(p=>({name:`${p.first_name} ${p.last_name}`,company:p.company,position:p.position,linkedin_url:p.linkedin_url,lastOutgoing:p.lastOutgoing,lastIncoming:p.lastIncoming,outgoingCount:p.outgoingCount,incomingCount:p.incomingCount,reasons:p.reasons.slice(0,2)}))
+   const recentContext=messages.filter(m=>voiceFollowups.some(p=>matchesPerson(m, {first_name:p.name.split(' ')[0],last_name:p.name.split(' ').slice(1).join(' '),linkedin_url:p.linkedin_url,email:'',company:p.company,position:p.position,connected_on:''} as Ranked))).slice(-10).map(m=>({from:m.from,sender:m.sender,to:m.to,recipient:m.recipient,date:m.date,content:m.content.slice(0,220)}))
+   const r=await apiFetch('/api/voice',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({command:text,people:voicePeople,followups:voiceFollowups,followupCount:followups.length,recentContext})})
+   const d=await r.json().catch(()=>({})); if(!r.ok)throw new Error(d.error||'Voice command failed.')
+   const action=d.action; if(action==='navigate'){setTab(d.tab);speak(d.reply||'Done.');} else if(action==='select'){const person=findPerson(d.person||'');if(person){setSelected(person);speak(d.reply||`Opening ${person.first_name}.`)}else speak('I could not find that person.')} else if(action==='generate'){const person=findPerson(d.person||'');if(person){setSelected(person);setVoiceGenerate(true);speak(d.reply||`Preparing a personalized message for ${person.first_name}.`)}else speak('I could not find that person.')} else if(action==='contact'){const person=findPerson(d.person||'');if(person){markContacted(person);speak(d.reply||`Marked reach out complete for ${person.first_name}.`)}else speak('I could not find that person.')} else if(action==='followup'){const person=findPerson(d.person||'');if(person){toggleFollowedUp(person);speak(d.reply||`Marked follow-up complete for ${person.first_name}.`)}else speak('I could not find that person.')} else if(action==='search'){setTab('Opportunities');setQuery(d.query||'');speak(d.reply||`Searching for ${d.query||'that'}.`)} else if(action==='import'){setSetupOpen(true);speak(d.reply||'Opening import.')} else speak(d.reply||'I can help you navigate ReachOut, find people, mark outreach complete, and manage follow-ups.')
+  }catch(e){speak(e instanceof Error?e.message:'I could not complete that request.')}finally{voiceBusyRef.current=false}
+ }
+ const runAgent=async(command=agentCommand)=>{
+  const text=(command||'Create my best outreach plan').trim()
+  setAgentBusy(true);setAgentError('');setAgentReply('');setAgentActions([]);setAgentOpen(true)
+  try{
+   const peopleForAgent=ranked.slice(0,25).map(p=>({name:`${p.first_name} ${p.last_name}`,company:p.company,position:p.position,linkedin_url:p.linkedin_url,score:p.score,reasons:p.reasons.slice(0,4),action:p.action,lastOutgoing:p.lastOutgoing,lastIncoming:p.lastIncoming,outgoingCount:p.outgoingCount,incomingCount:p.incomingCount}))
+   const fups=followups.slice(0,10).map(p=>({name:`${p.first_name} ${p.last_name}`,company:p.company,position:p.position,linkedin_url:p.linkedin_url,score:p.score,reasons:p.reasons.slice(0,4),lastOutgoing:p.lastOutgoing}))
+   const r=await apiFetch('/api/agent',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({command:text,target,ownerName,profile,people:peopleForAgent,followups:fups})})
+   const d=await r.json().catch(()=>({}))
+   if(!r.ok)throw new Error(d.error||'Could not run the outreach agent.')
+   setAgentReply(String(d.reply||''))
+   setAgentActions(Array.isArray(d.actions)?d.actions:[])
+  }catch(e){setAgentError(e instanceof Error?e.message:'Could not run the outreach agent.')}
+  finally{setAgentBusy(false)}
+ }
+ const toggleVoice=()=>{
+  if(typeof window==='undefined')return; const SR=(window as any).SpeechRecognition||(window as any).webkitSpeechRecognition; if(!SR){setVoiceOpen(true);speak('Voice input is not supported in this browser. Try Chrome or Edge.');return}
+  if(voiceListening){
+   recognitionRef.current?.stop();
+   setVoiceListening(false);
+   setVoiceOpen(false);
+   setVoiceTranscript('');
+   setVoiceReply('');
+   return
+  }
+  setVoiceOpen(true);setVoiceListening(true);setVoiceReply('Listening…');setVoiceTranscript('');const rec=new SR();recognitionRef.current=rec;rec.lang='en-IN';rec.continuous=false;rec.interimResults=true;rec.onstart=()=>{setVoiceListening(true);setVoiceReply('Listening…');setVoiceTranscript('')};rec.onresult=(e:any)=>{let final='';let interim='';for(let i=e.resultIndex;i<e.results.length;i++){const t=e.results[i][0]?.transcript||'';if(e.results[i].isFinal)final+=t;else interim+=t}if(interim)setVoiceTranscript(interim);if(final){setVoiceTranscript(final);void runVoiceCommand(final)}};rec.onerror=()=>{setVoiceListening(false);speak('I could not hear that. Please try again.')};rec.onend=()=>setVoiceListening(false);try{rec.start()}catch{setVoiceListening(false);speak('I could not start the microphone. Please try again.')}
+ }
+ useEffect(()=>()=>{recognitionRef.current?.stop();if(typeof window!=='undefined'&&'speechSynthesis' in window)window.speechSynthesis.cancel()},[])
+
+ useEffect(()=>{
+  let mounted=true
+  supabaseBrowser.auth.getSession().then(({data})=>{
+   if(!mounted)return
+   const session=data.session
+   if(session){setSignedIn(true);setUserId(session.user.id);setAccountEmail(session.user.email||'');setAccountName(accountDisplayName(session.user))}
+   setAuthReady(true)
+  })
+  const {data:{subscription}}=supabaseBrowser.auth.onAuthStateChange((event,session)=>{
+   if(!mounted)return
+   if(session){
+    setSignedIn(true);setUserId(session.user.id);setAccountEmail(session.user.email||'');setAccountName(accountDisplayName(session.user))
+    // TOKEN_REFRESHED is a normal background refresh. Do not reload the app state for it.
+    if(event==='SIGNED_IN'||event==='INITIAL_SESSION')setStateLoaded(false)
+   }else if(event==='SIGNED_OUT'){
+    setSignedIn(false);setUserId('');setAccountEmail('');setAccountName('Richi');setStateLoaded(false)
+   }
+  })
+  return()=>{mounted=false;subscription.unsubscribe()}
+ },[])
+ const apiFetch=async(input:string,init:RequestInit={})=>{
+  const makeRequest=async(token:string)=>{const headers=new Headers(init.headers||{});headers.set('Authorization',`Bearer ${token}`);return fetch(input,{...init,headers})}
+  let {data}=await supabaseBrowser.auth.getSession()
+  if(!data.session){
+   const refreshed=await refreshSessionSafe()
+   data=refreshed.data
+  }
+  let token=data.session?.access_token
+  if(!token)throw new Error('Please sign in again.')
+  let response=await makeRequest(token)
+  // Retry once with a freshly rotated access token. This prevents transient 401s
+  // (especially common after waking a mobile Safari tab) from appearing as logout.
+  if(response.status===401){
+   const refreshed=await refreshSessionSafe()
+   token=refreshed.data.session?.access_token||''
+   if(token)response=await makeRequest(token)
+  }
+  return response
+ }
+ const loadState=async()=>{try{const r=await apiFetch('/api/state',{cache:'no-store'});const d=await r.json();if(!r.ok)throw new Error(d.error||'Could not load your account.');const x=d.state||{};if(x.owner_name)setOwnerName(x.owner_name); else if(x.profile?.name)setOwnerName(x.profile.name);if(x.target)setTarget(x.target);if(x.keywords!==undefined)setKeywords(x.keywords);if(x.goal)setGoal(x.goal);if(x.goal_target)setGoalTarget(Number(x.goal_target));if(x.conversations!==undefined)setConversations(Number(x.conversations));if(x.profile&&Object.keys(x.profile).length)setProfile(x.profile);if(Array.isArray(x.contacted))setContacted(x.contacted);if(Array.isArray(x.followed_up))setFollowedUp(x.followed_up);if(!d.exists)setOnboarding(true);setStateLoaded(true)}catch(e){flash(e instanceof Error?e.message:'Could not load account.');setStateLoaded(true)}}
+ useEffect(()=>{if(!signedIn)return;loadState()},[signedIn])
+ const flash=(s:string)=>{setNotice(s);window.setTimeout(()=>setNotice(''),3500)}
+ const loadDashboard=async(retries=2)=>{if(!userId)return;setLoading(true);setDataError('');let last='Could not load your dashboard.';try{for(let attempt=0;attempt<=retries;attempt++){try{const r=await apiFetch(`/api/dashboard?userId=${encodeURIComponent(userId)}&ownerName=${encodeURIComponent(ownerName)}&target=${encodeURIComponent(target)}&keywords=${encodeURIComponent(keywords)}&days=${days}&profile=${encodeURIComponent(JSON.stringify(profile||{}))}`,{cache:'no-store'});const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.error||`Dashboard request failed (${r.status})`);setConnectionCount(Number(d.connectionsCount||0));setMessageCount(Number(d.messagesCount||0));setRanked(Array.isArray(d.people)?d.people:[]);setConnections((d.people||[]).map((p:any)=>({first_name:p.first_name||'',last_name:p.last_name||'',linkedin_url:p.linkedin_url||'',email:p.email||'',company:p.company||'',position:p.position||'',connected_on:p.connected_on||''})));setFiles((d.imports||[]).map((x:any)=>({id:x.id,name:x.file_name,type:x.file_type,rows:Number(x.row_count||0),status:x.status==='error'?'error':'ready',error:x.error||undefined})));return}catch(e){last=e instanceof Error?e.message:String(e);if(attempt<retries)await new Promise(r=>setTimeout(r,700*(attempt+1)))}}throw new Error(last)}catch(e){const msg=e instanceof Error?e.message:last;setDataError(msg);flash(msg)}finally{setLoading(false);setDashboardReady(true)}}
+ const importFiles=async(fileList:FileList|File[])=>{const incoming=Array.from(fileList).filter(f=>/\.csv$/i.test(f.name));if(!incoming.length){flash('Please select LinkedIn CSV files.');return}setDataError('');let imported=0;for(const file of incoming){const localId=`${file.name}-${file.size}-${file.lastModified}`;setFiles(prev=>prev.some(x=>x.id===localId)?prev:[...prev,{id:localId,name:file.name,type:null,rows:0,status:'processing'}]);try{const form=new FormData();form.append('userId',userId);form.append('file',file);let result:any;const direct=await apiFetch('/api/import/upload',{method:'POST',body:form});if(direct.ok)result=await direct.json();else if(direct.status===413){const sign=await apiFetch('/api/uploads/sign',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({userId,fileName:file.name})});const signed=await sign.json().catch(()=>({}));if(!sign.ok)throw new Error(signed.error||'Could not prepare the upload.');const up=await fetch(signed.signedUrl,{method:'PUT',headers:{'Content-Type':file.type||'text/csv'},body:file});if(!up.ok)throw new Error(`Storage upload failed (${up.status}).`);const proc=await apiFetch('/api/import/process',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({userId,path:signed.path,fileName:file.name})});result=await proc.json().catch(()=>({}));if(!proc.ok)throw new Error(result.error||'Could not process the uploaded file.')}else{const d=await direct.json().catch(()=>({}));throw new Error(d.error||`Could not import ${file.name}.`)}setFiles(prev=>prev.map(x=>x.id===localId?{...x,type:result.type,rows:Number(result.rows||0),status:'ready',error:undefined}:x));imported++;flash(`${file.name}: ${Number(result.rows||0).toLocaleString()} rows imported`)}catch(e){const msg=e instanceof Error?e.message:'Import failed.';setFiles(prev=>prev.map(x=>x.id===localId?{...x,status:'error',error:msg}:x));flash(msg)}}if(imported){await loadDashboard(4);if(!onboarding){setOnboarding(false);setSetupOpen(false);setTab('Home')}}}
+ const removeFile=async(id:string)=>{try{const r=await apiFetch('/api/import/delete',{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify({userId,importId:id})});const d=await r.json();if(!r.ok)throw new Error(d.error||'Could not remove import.');await loadDashboard();flash('Import removed.')}catch(e){flash(e instanceof Error?e.message:'Could not remove import.')}}
+ const clearAll=async()=>{if(!confirm('Remove all imported LinkedIn data from ReachOut?'))return;try{const r=await apiFetch('/api/reset',{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify({userId})});const d=await r.json();if(!r.ok)throw new Error(d.error);setConnections([]);setMessages([]);setRanked([]);setMessageCount(0);setConnectionCount(0);setFiles([]);setOnboarding(true);flash('Imported data cleared.')}catch(e){flash(e instanceof Error?e.message:'Could not clear data.')}}
+ useEffect(()=>{if(!selected||!userId)return;apiFetch(`/api/people/messages?userId=${encodeURIComponent(userId)}&linkedinUrl=${encodeURIComponent(selected.linkedin_url||'')}`,{cache:'no-store'}).then(r=>r.ok?r.json():Promise.reject(new Error())).then(d=>setMessages(d.messages||[])).catch(()=>setMessages([]))},[selected,userId])
+ useEffect(()=>{if(!userId||!signedIn)return;loadDashboard()},[userId,ownerName,target,keywords,days,profile,signedIn])
+ useEffect(()=>{if(!userId||!signedIn||!stateLoaded)return;const t=window.setTimeout(()=>{apiFetch('/api/state',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({owner_name:ownerName,target,keywords,goal,goal_target:goalTarget,conversations,profile,contacted,followed_up:followedUp})}).catch(()=>{})},500);return()=>window.clearTimeout(t)},[userId,signedIn,ownerName,target,keywords,goal,goalTarget,conversations,profile,contacted,followedUp])
+
+ const importProfileFiles=async(fileList:FileList|File[])=>{
+  const incoming=Array.from(fileList).filter(f=>/\.csv$/i.test(f.name));
+  if(!incoming.length){flash('Please select Profile.csv, Positions.csv or Skills.csv.');return}
+  const next={...(profile||{name:'',headline:'',summary:'',industry:'',positions:[],positionDescriptions:[],skills:[]})};
+  for(const file of incoming){
+   try{
+    const text=await file.text();
+    const name=file.name.toLowerCase();
+    const parsed=Papa.parse<Record<string,string>>(text,{header:true,skipEmptyLines:true,transformHeader:h=>h.replace(/^\uFEFF/,'').trim()});
+    const rows=parsed.data||[];
+    if(name.includes('profile')){
+      const r=rows[0]||{}; next.name=`${r['First Name']||''} ${r['Last Name']||''}`.trim(); next.headline=r['Headline']||''; next.summary=r['Summary']||''; next.industry=r['Industry']||'';
+    }else if(name.includes('position')){
+      next.positions=rows.map(r=>r['Title']||'').filter(Boolean); next.positionDescriptions=rows.map(r=>r['Description']||'').filter(Boolean);
+    }else if(name.includes('skill')){
+      next.skills=rows.map(r=>r['Name']||'').filter(Boolean);
+    }else { throw new Error('Use Profile.csv, Positions.csv or Skills.csv.'); }
+    setProfileFiles(prev=>[...prev.filter(x=>x.name!==file.name),{name:file.name,status:'ready'}]);
+   }catch(e){setProfileFiles(prev=>[...prev.filter(x=>x.name!==file.name),{name:file.name,status:'error',error:e instanceof Error?e.message:'Could not read file.'}])}
+  }
+  setProfile(next); setOwnerName(next.name||ownerName); flash('Your profile is ready. ReachOut will use it to improve matching.');
+ }
+ const clearProfile=()=>{setProfile(null);setProfileFiles([]);flash('Profile data removed.');}
+ const saveGoal=()=>{setOnboarding(false);setSetupOpen(false);flash('Your goal is set. ReachOut will prioritize around it.')}
+ const followups=ranked.filter(x=>{const key=x.linkedin_url||`${x.first_name}-${x.last_name}`;const waiting=!!x.lastOutgoing&&x.outgoingCount>0&&(!x.lastIncoming||dateMs(x.lastOutgoing)>dateMs(x.lastIncoming));return waiting&&daysAgo(x.lastOutgoing)>=days&&!followedUp.includes(key)&&!contacted.includes(key)})
+ // Keep the three relationship queues mutually exclusive: Opportunities = new strong possibilities,
+ // Outreach = new people who fit the goal but don't have a strong opportunity signal,
+ // Follow-ups = existing conversations waiting for a response.
+ const opportunityPeople=useMemo(()=>ranked.filter(x=>{const key=x.linkedin_url||`${x.first_name}-${x.last_name}`;const noConversation=x.outgoingCount===0&&x.incomingCount===0;const opportunitySignal=!!(x.reputedStartupMatch||x.iitMatch||/founder|co-founder|ceo|cpo|cto|vp |vice president|head of|director|partner|owner|recruit|talent|hiring/i.test(x.position||''));return noConversation&&opportunitySignal&&!contacted.includes(key)&&!followedUp.includes(key)}),[ranked,contacted,followedUp])
+ const opportunityKeys=useMemo(()=>new Set(opportunityPeople.map(x=>x.linkedin_url||`${x.first_name}-${x.last_name}`)),[opportunityPeople])
+ const outreachPeople=useMemo(()=>ranked.filter(x=>{const key=x.linkedin_url||`${x.first_name}-${x.last_name}`;const noConversation=x.outgoingCount===0&&x.incomingCount===0;const relevant=!!(x.roleMatch||x.keywordMatches.length||x.profileFit);return noConversation&&relevant&&!opportunityKeys.has(key)&&!contacted.includes(key)&&!followedUp.includes(key)}).slice(0,18),[ranked,opportunityKeys,contacted,followedUp])
+ const recommended=outreachPeople.slice(0,6)
+ const queue=useMemo(()=>[...opportunityPeople,...outreachPeople].filter((p,i,a)=>a.findIndex(x=>(x.linkedin_url||`${x.first_name}-${x.last_name}`)===(p.linkedin_url||`${p.first_name}-${p.last_name}`))===i).slice(0,12),[opportunityPeople,outreachPeople])
+ const activeRanked=ranked.filter(p=>{const key=p.linkedin_url||`${p.first_name}-${p.last_name}`;return !contacted.includes(key)&&!followedUp.includes(key)})
+ const completedPeople=ranked.filter(p=>{const key=p.linkedin_url||`${p.first_name}-${p.last_name}`;return contacted.includes(key)||followedUp.includes(key)})
+ const people=opportunityPeople.filter(c=>{
+  const q=`${c.first_name} ${c.last_name} ${c.company} ${c.position}`.toLowerCase().includes(query.toLowerCase())
+  const f=filter==='All'||(filter==='Not contacted'?(c.outgoingCount===0&&c.incomingCount===0):filter==='High signal')
+  const companyOk=!companyFilter||norm(c.company).includes(norm(companyFilter))
+  const roleOk=!roleFilter||norm(c.position).includes(norm(roleFilter))
+  const emailOk=emailFilter==='All'||(emailFilter==='Has email'?!!String(c.email||'').trim():!String(c.email||'').trim())
+  const connectedAt=dateMs(c.connected_on)
+  const ageDays=connectedAt?Math.max(0,Math.floor((Date.now()-connectedAt)/86400000)):999999
+  const connectedOk=connectedFilter==='Anytime'||(connectedFilter==='30'?ageDays<=30:connectedFilter==='90'?ageDays<=90:connectedFilter==='180'?ageDays<=180:connectedFilter==='365'?ageDays<=365:ageDays>365)
+  return q&&f&&companyOk&&roleOk&&emailOk&&connectedOk
+ })
+ const highPriority=activeRanked.filter(x=>x.score>=75).length
+ const hiringSignals=activeRanked.filter(x=>/founder|co-founder|ceo|cpo|vp|head of|director|recruit|talent|hiring/i.test(x.position||'')).length
+ const hasData=connectionCount>0||messageCount>0
+ const goalPct=Math.min(100,Math.round((conversations/Math.max(goalTarget,1))*100))
+ const persistActionState=async(nextContacted:string[],nextFollowedUp:string[])=>{
+  try{
+   const r=await apiFetch('/api/state',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({contacted:nextContacted,followed_up:nextFollowedUp})});
+   const d=await r.json().catch(()=>({}));
+   if(!r.ok)throw new Error(d.error||'Could not save action status.');
+   return true
+  }catch(e){flash(e instanceof Error?e.message:'Could not save action status.');return false}
+ }
+ const markContacted=(p:Ranked)=>{
+  const key=p.linkedin_url||`${p.first_name}-${p.last_name}`;
+  const isContacted=contacted.includes(key);
+  const next=isContacted?contacted.filter(x=>x!==key):[...contacted,key];
+  setContacted(next);
+  void persistActionState(next,followedUp).then(ok=>{if(!ok)setContacted(contacted)});
+  flash(isContacted?'Back in the queue 👀':'Nice. Conversation started ✨');
+ }
+ const toggleFollowedUp=(p:Ranked)=>{
+  const key=p.linkedin_url||`${p.first_name}-${p.last_name}`;
+  const isFollowedUp=followedUp.includes(key);
+  const next=isFollowedUp?followedUp.filter(x=>x!==key):[...followedUp,key];
+  setFollowedUp(next);
+  void persistActionState(contacted,next).then(ok=>{if(!ok)setFollowedUp(followedUp)});
+  flash(isFollowedUp?'Nudge restored to your queue.':'Nudge sent to your completed list ✨');
+ }
+
+ if(!authReady)return <main className="authPage"><div className="authCard"><img src="/reachout-logo.png" className="authLogo"/><p>Loading ReachOut…</p></div></main>
+ if(!signedIn)return <Login onAuthed={()=>setSignedIn(true)}/>
+
+ return <main className="app" onDragOver={e=>{e.preventDefault();setDrag(true)}} onDragLeave={()=>setDrag(false)} onDrop={e=>{e.preventDefault();setDrag(false);importFiles(e.dataTransfer.files)}}>
+  <aside className="sidebar">
+   <div className="brand"><img className="brandLogo" src="/reachout-logo.png" alt="ReachOut"/><div><b>ReachOut</b><span>OUTREACH INTELLIGENCE</span></div></div>
+   <div className="sideGoal"><span>YOUR GOAL</span><b>{goal}</b><div className="goalMini"><i style={{width:`${goalPct}%`}}/></div><small>{conversations} / {goalTarget} conversations</small></div>
+   <nav>{([['Home',Sparkles],['Opportunities',Flame],['Outreach',Zap],['Follow-ups',Clock3]] as const).map(([x,Icon])=><button key={x} className={tab===x?'nav active':'nav'} onClick={()=>setTab(x as any)}><Icon size={17}/><span>{x==='Follow-ups'?'Follow ups':x}</span>{x==='Follow-ups'&&followups.length>0&&<em>{followups.length}</em>}</button>)}</nav>
+   <div className="sidebarAccountRow"><div className="accountMenuWrap sidebarAccount" ref={accountMenuRef}><button className="accountButton" onClick={()=>setAccountMenuOpen(v=>!v)} aria-expanded={accountMenuOpen} aria-label="Account"><span className="accountAvatar" aria-hidden="true">{(accountName||'R').trim().charAt(0).toUpperCase()}</span></button>{accountMenuOpen&&<div className="accountMenu"><div className="accountMenuLabel">SIGNED IN AS</div><div className="accountMenuEmail">{accountEmail||'Your account'}</div><button onClick={()=>{setAccountMenuOpen(false);setSetupOpen(true)}}><Settings2 size={14}/> Goal & data</button><button className="accountLogout" onClick={async()=>{setAccountMenuOpen(false);await supabaseBrowser.auth.signOut({scope:'local'})}}><X size={14}/> Log out</button></div>}</div></div>
+  </aside>
+  <section className="content">
+   <header className="topbar"><div>{tab==='Home'&&greeting&&<span className="homeGreeting">{greeting.toUpperCase()} <span aria-hidden="true">👋</span></span>}<h1>{tab==='Home'?<>Who should you <em className="homeAccent">reach out</em> to?</>:tab}</h1><p>{tab==='Home'?`I found a few people worth your attention. Here’s why and what you can do next.`:tab==='Opportunities'?'People who stand out because of your goals, your network, and what is happening around them.':tab==='Outreach'?'Here are the people I think you should say hi to first.':'A few conversations that could use a little nudge.'}</p></div><div className="topbarRight">{tab==='Home'&&<div className="topActions"><button className="refresh" onClick={()=>loadDashboard(3)} disabled={loading}><RefreshCw size={15} className={loading?'spin':''}/>{loading?'Refreshing':'Refresh'}</button><button className="primary" onClick={()=>setSetupOpen(true)}><Target size={15}/> Edit goal</button></div>}</div></header>
+   {notice&&<div className="toast"><Check size={15}/>{notice}</div>}
+   {dataError&&<div className="dataError"><AlertCircleIcon/><div><b>ReachOut couldn't refresh the dashboard.</b><span>{dataError}</span></div><button onClick={()=>loadDashboard(4)}>Retry</button></div>}
+
+   {tab==='Home'&&<HomeView dashboardReady={dashboardReady} hasData={hasData} target={target} connectionCount={connectionCount} messageCount={messageCount} highPriority={highPriority} hiringSignals={hiringSignals} followups={followups} recommended={recommended} goal={goal} goalTarget={goalTarget} conversations={conversations} goalPct={goalPct} setTab={setTab} setSelected={setSelected} openImport={()=>setSetupOpen(true)} loading={loading} markContacted={markContacted} toggleFollowedUp={toggleFollowedUp} agentOpen={agentOpen} setAgentOpen={setAgentOpen} agentCommand={agentCommand} setAgentCommand={setAgentCommand} agentBusy={agentBusy} agentReply={agentReply} agentActions={agentActions} agentError={agentError} runAgent={(c?:string)=>runAgent(c)} findPerson={findPerson} setVoiceGenerate={setVoiceGenerate}/>} 
+   {tab==='Opportunities'&&<><PageTitle eyebrow="PEOPLE TO WATCH" title="Who looks interesting right now?" sub="People with a reason to be on your radar, such as a new role, hiring activity, a relevant company, or a strong connection."/><div className="search"><Search size={16}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search people, companies, or roles…"/><button onClick={()=>setShowFilters(!showFilters)}><Settings2 size={14}/> Filters{[companyFilter,roleFilter,connectedFilter!=='Anytime'?connectedFilter:'',emailFilter!=='All'?emailFilter:''].filter(Boolean).length>0&&<span className="filterActiveCount">{[companyFilter,roleFilter,connectedFilter!=='Anytime'?connectedFilter:'',emailFilter!=='All'?emailFilter:''].filter(Boolean).length}</span>}</button></div>{showFilters&&<div className="opportunityFilterPanel"><div className="filterField"><label>COMPANY</label><input value={companyFilter} onChange={e=>setCompanyFilter(e.target.value)} placeholder="Search companies…"/></div><div className="filterField"><label>ROLE</label><input value={roleFilter} onChange={e=>setRoleFilter(e.target.value)} placeholder="Search roles…"/></div><div className="filterField"><label>CONNECTED</label><select value={connectedFilter} onChange={e=>setConnectedFilter(e.target.value as typeof connectedFilter)}><option value="Anytime">Any time</option><option value="30">Last 30 days</option><option value="90">Last 90 days</option><option value="180">Last 6 months</option><option value="365">Last year</option><option value="older">More than 1 year ago</option></select></div><div className="filterField"><label>EMAIL</label><select value={emailFilter} onChange={e=>setEmailFilter(e.target.value as typeof emailFilter)}><option>All</option><option>Has email</option><option>No email</option></select></div><div className="filterPanelFooter"><button className="clearFilters" onClick={()=>{setCompanyFilter('');setRoleFilter('');setConnectedFilter('Anytime');setEmailFilter('All');setFilter('All')}}>Clear all</button><span>{people.length} matching</span></div></div>}<div className="opportunityControls"><button className="secondary" onClick={()=>setShowCompletedOpportunities(v=>!v)}>{showCompletedOpportunities?'Hide completed':'Show completed'}{completedPeople.length>0&&<span className="controlCount">{completedPeople.length}</span>}</button></div>{showCompletedOpportunities&&<div className="completedFollowups opportunityCompleted"><div className="sectionHead compact"><div><span className="sectionEyebrow">COMPLETED</span><h2>Already reached</h2></div><span className="muted">{completedPeople.length} completed</span></div>{completedPeople.filter(p=>`${p.first_name} ${p.last_name} ${p.company} ${p.position}`.toLowerCase().includes(query.toLowerCase())).slice(0,250).map(p=>{const key=p.linkedin_url||`${p.first_name}-${p.last_name}`;const statuses=[contacted.includes(key)?'Contacted':'',followedUp.includes(key)?'Followed up':''].filter(Boolean).join(' · ');return <div className="followRow completedRow" key={`opp-done-${key}`}><button className="followMain" onClick={()=>setSelected(p)}><div className="avatar">{initials(p)}</div><div className="followInfo"><b>{p.first_name} {p.last_name}</b><span>{p.position||'Role not listed'}{p.company?` · ${p.company}`:''}</span></div><span className="completedLabel"><Check size={13}/> {statuses}</span></button><button className="followDone" onClick={()=>{if(contacted.includes(key))markContacted(p);else toggleFollowedUp(p)}} title="Unmark completed"><Check size={15}/></button></div>})}{!completedPeople.length&&<Empty title="No completed people yet" text="People you mark contacted or followed up will appear here."/>}</div>}<div className="table"><div className="tr th"><span>PERSON</span><span>COMPANY</span><span>OPPORTUNITY SIGNAL</span><span>NEXT ACTION</span><span></span></div>{people.slice(0,250).map(p=><div className="tr row" key={`${p.linkedin_url}-${p.first_name}`} onClick={()=>setSelected(p)} role="button" tabIndex={0} onKeyDown={e=>{if(e.key==='Enter'||e.key===' ')setSelected(p)}}><span className="personCell"><div className="avatar">{initials(p)}</div><span><b>{p.first_name} {p.last_name}</b><small>{p.position||'Role not listed'}</small></span></span><span>{p.company||'Company not listed'}</span><span className="whyCell">{p.reasons[0]||'A good match for your goal'}</span><span><i className="action reach">Explore</i></span><QuickAction p={p} onComplete={()=>markContacted(p)}/></div>)}</div>{!people.length&&<Empty title="Nothing here yet 👀" text="Try another person, company, or role. There may be a better match nearby."/>}</>}
+   {tab==='Outreach'&&<OutreachView queue={outreachPeople} allPeople={ranked} contacted={contacted} setSelected={setSelected} markContacted={markContacted} toggleFollowedUp={toggleFollowedUp} goal={goal}/>} 
+
+   {tab==='Follow-ups'&&<><PageTitle eyebrow="CONVERSATIONS TO NUDGE" title="Who could use a little nudge?" sub="These are conversations that are waiting for a reply."/><div className="followControls"><span>Nudge after</span><select value={days} onChange={e=>setDays(Number(e.target.value))}><option value={5}>5 days</option><option value={7}>7 days</option><option value={10}>10 days</option><option value={14}>14 days</option><option value={21}>21 days</option></select><span className="muted">{followups.length} due</span><button className="secondary" onClick={()=>setShowCompletedFollowups(v=>!v)}>{showCompletedFollowups?'Hide completed':'Show completed'}</button></div>{showCompletedFollowups&&<div className="completedFollowups"><div className="sectionHead compact"><div><span className="sectionEyebrow">COMPLETED</span><h2>Followed up</h2></div><span className="muted">{ranked.filter(p=>followedUp.includes(p.linkedin_url||`${p.first_name}-${p.last_name}`)).length} completed</span></div>{ranked.filter(p=>followedUp.includes(p.linkedin_url||`${p.first_name}-${p.last_name}`)).map(p=><div className="followRow completedRow" key={`done-${p.linkedin_url}-${p.first_name}`}><button className="followMain" onClick={()=>setSelected(p)}><div className="avatar">{initials(p)}</div><div className="followInfo"><b>{p.first_name} {p.last_name}</b><span>{p.position||'Role not listed'}{p.company?` · ${p.company}`:''}</span></div><span className="completedLabel"><Check size={13}/> Nudged</span></button><button className="followDone" onClick={()=>toggleFollowedUp(p)} title="Unmark nudge"><Check size={15}/></button></div>)}{!ranked.some(p=>followedUp.includes(p.linkedin_url||`${p.first_name}-${p.last_name}`))&&<Empty title="No completed nudges yet" text="People you mark as nudged will appear here."/>}</div>}{followups.length?<div className="followList">{followups.map(p=><div className="followRow" key={`${p.linkedin_url}-${p.first_name}`}><button className="followMain" onClick={()=>setSelected(p)}><div className="avatar">{initials(p)}</div><div className="followInfo"><b>{p.first_name} {p.last_name}</b><span>{p.position||'Role not listed'}{p.company?` · ${p.company}`:''}</span><small>Last message {daysAgo(p.lastOutgoing!)} days ago</small></div><div className="followReason"><b>{p.reasons.find(r=>r.includes('days ago'))||'No reply since your last message.'}</b><span>What I’d do next: nudge them</span></div><ChevronRight size={16}/></button><button className="followDone" onClick={()=>toggleFollowedUp(p)} title="Mark as nudged"><Check size={15}/></button></div>)}</div>:<Empty title="You’re all caught up 🫡" text={`No unanswered messages older than ${days} days. You’re all clear for now.`} icon={<CheckCircle2 size={20}/>}/>} </>}
+  </section>
+  {drag&&<div className="dropOverlay"><div><UploadCloud size={30}/><b>Drop your LinkedIn exports</b><span>Connections.csv and messages.csv</span></div></div>}
+  <VoiceBot open={voiceOpen} listening={voiceListening} transcript={voiceTranscript} reply={voiceReply} onToggle={toggleVoice} onClose={()=>{recognitionRef.current?.stop();setVoiceListening(false);setVoiceOpen(false);setVoiceTranscript('');setVoiceReply('')}}/>
+ {setupOpen&&<SetupModal ownerName={ownerName} setOwnerName={setOwnerName} target={target} setTarget={setTarget} keywords={keywords} setKeywords={setKeywords} goal={goal} setGoal={setGoal} goalTarget={goalTarget} setGoalTarget={setGoalTarget} files={files} importFiles={importFiles} inputRef={inputRef} removeFile={removeFile} clearAll={clearAll} close={()=>setSetupOpen(false)} save={saveGoal} profileFiles={profileFiles} importProfileFiles={importProfileFiles} clearProfile={clearProfile}/>} 
+  {onboarding&&<SetupModal ownerName={ownerName} setOwnerName={setOwnerName} target={target} setTarget={setTarget} keywords={keywords} setKeywords={setKeywords} goal={goal} setGoal={setGoal} goalTarget={goalTarget} setGoalTarget={setGoalTarget} files={files} importFiles={importFiles} inputRef={inputRef} removeFile={removeFile} clearAll={clearAll} close={()=>setOnboarding(false)} save={saveGoal} profileFiles={profileFiles} importProfileFiles={importProfileFiles} clearProfile={clearProfile} onboarding/>}
+  {selected&&<Drawer selected={selected} ownerName={ownerName} target={target} profile={profile} messages={messages} close={()=>{setSelected(null);setVoiceGenerate(false)}} markContacted={markContacted} contacted={contacted} followedUp={followedUp} toggleFollowedUp={toggleFollowedUp} apiFetch={apiFetch} autoGenerate={voiceGenerate}/>} 
+  {!hasData&&!onboarding&&!setupOpen&&<button className="floatingImport" onClick={()=>setSetupOpen(true)}><UploadCloud size={16}/> Import LinkedIn data</button>}
+ </main>
+}
+
+function AlertCircleIcon(){return <div className="alertIcon"><span>!</span></div>}
+function PageTitle({eyebrow,title,sub}:{eyebrow:string;title:string;sub:string}){return <div className="pageTitle"><div><span className="sectionEyebrow">{eyebrow}</span><h2>{title}</h2><p>{sub}</p></div></div>}
+function Empty({title,text,icon=<Sparkles size={20}/>}:{title:string;text:string;icon?:React.ReactNode}){return <div className="emptyPage"><div className="emptyIcon">{icon}</div><h3>{title}</h3><p>{text}</p></div>}
+function Stat({icon,value,label}:{icon:React.ReactNode;value:string|number;label:string}){return <div className="stat"><div className="statIcon">{icon}</div><div><strong>{value}</strong><span>{label}</span></div></div>}
+
+function HomeView({dashboardReady,hasData,target,connectionCount,messageCount,highPriority,hiringSignals,followups,recommended,goal,goalTarget,conversations,goalPct,setTab,setSelected,openImport,loading,markContacted,toggleFollowedUp,agentOpen,setAgentOpen,agentCommand,setAgentCommand,agentBusy,agentReply,agentActions,agentError,runAgent,findPerson,setVoiceGenerate}:{dashboardReady:boolean;hasData:boolean;target:string;connectionCount:number;messageCount:number;highPriority:number;hiringSignals:number;followups:Ranked[];recommended:Ranked[];goal:string;goalTarget:number;conversations:number;goalPct:number;setTab:any;setSelected:any;openImport:()=>void;loading:boolean;markContacted:(p:Ranked)=>void;toggleFollowedUp:(p:Ranked)=>void;agentOpen:boolean;setAgentOpen:(v:boolean)=>void;agentCommand:string;setAgentCommand:(v:string)=>void;agentBusy:boolean;agentReply:string;agentActions:any[];agentError:string;runAgent:(c?:string)=>void;findPerson:(name:string)=>Ranked|undefined;setVoiceGenerate:(v:boolean)=>void}){
+ // Never show the onboarding/marketing panel during the initial dashboard fetch.
+ if(false && !hasData)return <section className="emptyHome"><div className="heroCard"><div className="heroCopy"><span className="sectionEyebrow">START WITH YOUR GOAL</span><h2>Your network is full of possibilities. <em>ReachOut finds the right ones.</em></h2><p>Import your LinkedIn connections and messages. We'll turn thousands of people into a focused list of who to contact, why now, and what to say.</p><div className="heroActions"><button className="primary big" onClick={openImport}><UploadCloud size={16}/> Import LinkedIn data</button><span><Check size={13}/> Private by default</span></div></div><div className="heroVisual"><div className="visualTop"><span>YOUR NEXT ACTION</span><MoreHorizontal size={14}/></div><div className="visualPerson"><div className="avatar large">AK</div><div><b>Aditi Sharma</b><span>Product Lead · Fintech</span></div></div><div className="visualReason"><Flame size={14}/> Strong fit, hiring signal, and a warm connection</div><div className="visualButton">Reach out <ArrowRight size={14}/></div></div></div><div className="howItWorks"><div><span>01</span><b>Import</b><small>Bring your LinkedIn export.</small></div><ArrowRight/><div><span>02</span><b>Prioritize</b><small>Find the people who matter.</small></div><ArrowRight/><div><span>03</span><b>Act</b><small>Say hi, follow up, keep going.</small></div></div></section>
+ return <>
+  <div className="goalCard"><div><span className="sectionEyebrow">YOUR ACTIVE GOAL</span><h2>{goal}</h2><p>Target role: <b>{target}</b></p></div><div className="goalProgress"><div><strong>{conversations}</strong><span>/ {goalTarget} conversations</span></div><div className="progress"><i style={{width:`${goalPct}%`}}/></div><small>{goalPct>=100?'Goal reached. Nice work.':`${goalTarget-conversations} more meaningful conversations to go.`}</small></div></div>
+  <div className="stats"><Stat icon={<Users/>} value={connectionCount.toLocaleString()} label="People analyzed"/><Stat icon={<Flame/>} value={highPriority} label="Priority matches"/><Stat icon={<Zap/>} value={hiringSignals} label="Opportunity signals"/><Stat icon={<Clock3/>} value={followups.length} label="Nudges due"/></div>
+  <div className="insightBar"><div><span className="sectionEyebrow">YOUR FOCUS</span><b>{target}</b><span>{connectionCount.toLocaleString()} people · {messageCount.toLocaleString()} messages analyzed</span></div><div className="signalList"><span>Role fit</span><span>Hiring signal</span><span>Relationship</span></div></div><section className="agentCard"><div className="agentTop"><div><span className="sectionEyebrow">YOUR AI AGENT</span><h2>What should we do next?</h2><p>I’ll find the right people, explain why they stand out, and help you figure out what to say.</p></div></div><div className="agentInput"><input value={agentCommand} onChange={e=>setAgentCommand(e.target.value)} onKeyDown={e=>{if(e.key==='Enter'&&!agentBusy)runAgent()}} placeholder="e.g. Find 5 fintech people I should meet this week"/><button className="primary" onClick={()=>runAgent()} disabled={agentBusy}><WandSparkles size={15}/>{agentBusy?'On it…':'Let’s do it'}</button></div><div className="agentChips">{['Build my outreach plan','Find hiring managers','Find people to follow up with'].map(x=><button key={x} onClick={()=>{setAgentCommand(x);runAgent(x)}} disabled={agentBusy}>{x}</button>)}</div>{agentError&&<div className="aiError">{agentError}</div>}{agentReply&&<div className="agentReply"><Sparkles size={14}/><span>{agentReply}</span></div>}{agentActions.length>0&&<div className="agentActions">{agentActions.map((a:any,i)=><button className="agentAction" key={`${a.name}-${i}`} onClick={()=>{const p=findPerson(String(a.name||''));if(p){setSelected(p);setVoiceGenerate(a.action==='draft'||a.action==='followup')}}}><span className="agentPriority">{a.priority||i+1}</span><span className="agentActionMain"><b>{a.name}</b><small>{a.reason}</small></span><i>{a.action}</i><ChevronRight size={15}/></button>)}</div>}<small className="agentNote">I’ll prepare drafts and open LinkedIn for you. You stay in control before anything gets sent.</small></section>
+  <div className="sectionHead"><div><span className="sectionEyebrow">PEOPLE WHO CAUGHT MY EYE</span><h2>3 people caught my eye.</h2><p>Here’s who I’d talk to if I were you. I’ll show you why.</p></div><button className="textBtn" onClick={()=>setTab('Opportunities')}>View all <ChevronRight size={14}/></button></div>
+  {recommended.length?<div className="cards">{recommended.slice(0,3).map(p=><PersonCard key={`${p.linkedin_url}-${p.first_name}`} p={p} onClick={()=>setSelected(p)} onComplete={()=>p.action==='Follow up'?toggleFollowedUp(p):markContacted(p)}/>)}</div>:<Empty title="Nothing here yet 👀" text="Try a different goal or bring in more LinkedIn data and I’ll find some."/>}
+  <div className="twoCol"><section><div className="sectionHead compact"><div><span className="sectionEyebrow">TODAY</span><h2>What should happen today</h2></div><button className="textBtn" onClick={()=>setTab('Outreach')}>Open queue <ChevronRight size={14}/></button></div><div className="actionList"><ActionRow icon={<Flame/>} title="Message" sub={`${recommended.length} people have strong opportunity signals`} onClick={()=>setTab('Outreach')}/><ActionRow icon={<Clock3/>} title="Follow up" sub={`${followups.length} conversations are waiting`} onClick={()=>setTab('Follow-ups')}/></div></section></div>
+ </>
+}
+function ActionRow({icon,title,sub,onClick}:{icon:React.ReactNode;title:string;sub:string;onClick:()=>void}){return <button className="actionRow" onClick={onClick}><div className="actionIcon">{icon}</div><div><b>{title}</b><span>{sub}</span></div><ChevronRight size={16}/></button>}
+function QuickAction({p,onComplete}:{p:Ranked;onComplete:()=>void}){const label=p.action==='Follow up'?'Follow up':'Reach out';return <button className="quickAction" onClick={e=>{e.stopPropagation();onComplete()}} title={`Mark ${label.toLowerCase()} complete`} aria-label={`Mark ${label.toLowerCase()} complete`}><span>{label==='Follow up'?'Nudge them →':'Message →'}</span><span className="quickCheck"><Check size={13}/></span></button>}
+function PersonCard({p,onClick,onComplete}:{p:Ranked;onClick:()=>void;onComplete:()=>void}){return <div className="personCard" onClick={onClick} role="button" tabIndex={0} onKeyDown={e=>{if(e.key==='Enter'||e.key===' ')onClick()}}><div className="cardTop"><div className="avatar">{initials(p)}</div><div className="identity"><b>{p.first_name} {p.last_name}</b><span>{p.position||'Role not listed'}</span><small>{p.company||'Company not listed'}</small></div></div><div className="whyTag"><Flame size={13}/><span>{p.reasons[0]||'Strong match for your goal'}</span></div><div className="reasonList">{p.reasons.slice(1,3).map(r=><span key={r}>✓ {r}</span>)}</div><div className="cardAction"><span>{p.action==='Reach out'?'Message':p.action}</span><QuickAction p={p} onComplete={onComplete}/></div></div>}
+
+function OutreachView({queue,allPeople,contacted,setSelected,markContacted,toggleFollowedUp,goal}:{queue:Ranked[];allPeople:Ranked[];contacted:string[];setSelected:any;markContacted:(p:Ranked)=>void;toggleFollowedUp:(p:Ranked)=>void;goal:string}){
+  const [view,setView]=useState<'Active'|'Completed'>('Active');
+  const completed=useMemo(()=>allPeople.filter(p=>contacted.includes(p.linkedin_url||`${p.first_name}-${p.last_name}`)),[allPeople,contacted]);
+  const active=useMemo(()=>queue.filter(p=>!contacted.includes(p.linkedin_url||`${p.first_name}-${p.last_name}`)),[queue,contacted]);
+  const total=active.length+completed.length;
+  const done=completed.length;
+  const visible=view==='Completed'?completed:active;
+  return <>
+    <div className="outreachHero outreachHeroAction">
+      <div>
+        <span className="sectionEyebrow">OUTREACH</span>
+        <h2>Turn the right people into conversations.</h2>
+        <p>Your action list is here. Open a person, use the context, then mark the outreach complete.</p>
+      </div>
+      <div className="queueProgress">
+        <span>OUTREACH PROGRESS</span>
+        <strong>{done}<small> / {total}</small></strong>
+        <div className="progress"><i style={{width:`${total?Math.round(done/total*100):0}%`}}/></div>
+        <em>{done===total&&total>0?'All outreach is complete':'actions completed'}</em>
+      </div>
+    </div>
+
+    <div className="outreachTabs" role="tablist" aria-label="Outreach status">
+      <button type="button" role="tab" aria-selected={view==='Active'} className={view==='Active'?'active':''} onClick={()=>setView('Active')}>
+        <span className="tabDot activeDot"/> To reach out <b>{active.length}</b>
+      </button>
+      <button type="button" role="tab" aria-selected={view==='Completed'} className={view==='Completed'?'active':''} onClick={()=>setView('Completed')}>
+        <span className="tabDot completeDot"/> Completed <b>{completed.length}</b>
+      </button>
+    </div>
+
+    <div className="outreachActionHeader">
+      <div>
+        <span className="sectionEyebrow">{view==='Completed'?'OUTREACH HISTORY':'YOUR ACTION LIST'}</span>
+        <h2>{view==='Completed'?'People you have already contacted':'Who should you message first?'}</h2>
+        <p>{view==='Completed'?'A record of the people you have marked as reached out.':'Prioritized people with no conversation yet, ready for a first message.'}</p>
+      </div>
+      <span className="queueCount">{visible.length} {view==='Completed'?'completed':'to reach out'}</span>
+    </div>
+
+    {visible.length?<div className={`outreachCards ${view==='Completed'?'completedCards':''}`}>
+      {visible.map((p,i)=>{
+        const key=p.linkedin_url||`${p.first_name}-${p.last_name}`;
+        const action=p.action==='Follow up'?'Follow up':'Reach out';
+        return <article className="outreachCard" key={`outreach-${key}-${i}`}>
+          <div className="outreachCardTop">
+            <div className="outreachPriority">{view==='Completed'?<Check size={14}/>:String(i+1).padStart(2,'0')}</div>
+            <div className="avatar">{initials(p)}</div>
+            <div className="outreachIdentity"><b>{p.first_name} {p.last_name}</b><span>{p.position||'Role not listed'}{p.company?` · ${p.company}`:''}</span></div>
+            <span className={`outreachStatus ${view==='Completed'?'complete':''}`}>{view==='Completed'?'Contacted':'Ready'}</span>
+          </div>
+          <div className="outreachWhy"><span>WHY NOW</span><p>{p.reasons[0]||'A strong fit for your current goal.'}</p></div>
+          <div className="outreachMove"><div><span>NEXT MOVE</span><b>{action==='Follow up'?'Nudge them':'Send a first message'}</b></div><span className="outreachGoal">{goal}</span></div>
+          <div className="outreachCardFooter">
+            <button type="button" className="outreachOpen" onClick={()=>setSelected(p)}>View context <ChevronRight size={14}/></button>
+            {view==='Completed'?<button type="button" className="completedUndo" onClick={()=>markContacted(p)}>Move back</button>:<QuickAction p={p} onComplete={()=>markContacted(p)}/>} 
+          </div>
+        </article>
+      })}
+    </div>:<Empty title={view==='Completed'?'No completed outreach yet':'You’re all caught up 🫡'} text={view==='Completed'?'People you mark as contacted will appear here.':'Bring in your LinkedIn data and I’ll find your next conversation.'}/>} 
+  </>
+}
+function VoiceBot({open,listening,transcript,reply,onToggle,onClose}:{open:boolean;listening:boolean;transcript:string;reply:string;onToggle:()=>void;onClose:()=>void}){return <>{open&&<div className="voicePanel"><div className={`voiceOrb ${listening?'active':''}`}><Mic size={22}/></div><div className="voiceCopy"><b>{listening?'Listening…':'ReachOut Voice'}</b><span className="voiceHelp">Try a short command:</span><div className="voiceExamples"><span>“Show my nudges”</span><span>“Who should I say hi to?”</span><span>“Draft a message for Aditi”</span></div>{transcript&&<div className="voiceTranscript"><small>You said</small><p>“{transcript}”</p></div>}{reply&&<small className="voiceReply"><Volume2 size={11}/> {reply}</small>}</div><button className="voiceClose" onClick={onClose}><X size={14}/></button></div>}<button type="button" className={`voiceFab ${listening?'listening':''}`} onClick={onToggle} aria-label={listening?'Stop listening':'Start voice input'} aria-pressed={listening}>{listening?<Mic size={20} strokeWidth={2.4}/>:<MicOff size={20} strokeWidth={2.2}/>}<span className="voiceFabState">{listening?'Listening':'Mic'}</span></button></>}
+
+function SetupModal({ownerName,setOwnerName,target,setTarget,keywords,setKeywords,goal,setGoal,goalTarget,setGoalTarget,files,importFiles,inputRef,removeFile,clearAll,close,save,profileFiles,importProfileFiles,clearProfile,onboarding=false}:{ownerName:string;setOwnerName:any;target:string;setTarget:any;keywords:string;setKeywords:any;goal:string;setGoal:any;goalTarget:number;setGoalTarget:any;files:FileItem[];importFiles:(f:FileList|File[])=>void;inputRef:any;removeFile:(id:string)=>void;clearAll:()=>void;close:()=>void;save:()=>void;profileFiles:{name:string;status:'ready'|'error';error?:string}[];importProfileFiles:(f:FileList|File[])=>void;clearProfile:()=>void;onboarding?:boolean}){
+ const [guideStep,setGuideStep]=useState(0)
+ const [onboardingStep,setOnboardingStep]=useState(0)
+ const guide=[
+  {title:'Settings → Data & Privacy',text:'On LinkedIn, click Me → Settings & Privacy → Data & Privacy.',ui:<><div className="guideBrowserTop"><span></span><span></span><span></span></div><div className="guideMenu"><b>LinkedIn</b><span>Click your profile photo (Me)</span><span className="guideHighlight">Settings & Privacy <ChevronRight size={12}/><i className="guideCursor" aria-hidden="true">⌁</i></span><span className="guideHighlight">Data & Privacy <Check size={12}/></span></div></>},
+  {title:'Download your data',text:'In Data & Privacy, click Download your data. This works only on desktop.',ui:<><div className="guideBrowserTop"><span></span><span></span><span></span></div><div className="guidePanel"><span>Data & Privacy</span><b>Download your data</b><small>Get a copy of your LinkedIn data.</small><div className="guideButton">Download <ArrowRight size={11}/><i className="guideCursor guideCursorButton" aria-hidden="true">⌁</i></div></div></>},
+  {title:'Get your download within 24 hours',text:'LinkedIn will email you a download link within 24 hours. Download the ZIP, unzip it, and upload Connections.csv and messages.csv to ReachOut.',ui:<><div className="guideUpload"><Mail size={22}/><b>LinkedIn email → Download ZIP</b><span>Usually arrives within 24 hours</span><i className="guideMailPulse" aria-hidden="true"></i></div></>}
+ ]
+ const stepNames=['Get your data','Upload it','Your goal']
+ const ready=files.some(f=>f.status==='ready')
+ return <div className="modalOverlay"><div className={`setupModal ${onboarding?'onboardingModalClean':''}`}>
+  <button className="modalClose" onClick={close}><X size={18}/></button>
+  {onboarding ? <>
+   <div className="cleanOnboardingHeader"><div><div className="onboardingKicker">WELCOME TO REACHOUT</div><h2>Let’s find your people 👀</h2><p className="modalSub">Give me your LinkedIn data and I’ll find who’s worth talking to, why now, and what to say.</p></div><div className="cleanStepCount">{onboardingStep+1} / 3</div></div>
+   <div className="cleanStepBar">{stepNames.map((name,i)=><React.Fragment key={name}><div className={`cleanStep ${i===onboardingStep?'current':''} ${i<onboardingStep?'complete':''}`}><span>{i<onboardingStep?<Check size={11}/>:i+1}</span><b>{name}</b></div>{i<stepNames.length-1&&<i className={i<onboardingStep?'done':''}/>}</React.Fragment>)}</div>
+   {onboardingStep===0 && <div className="cleanOnboardingStep">
+    <div className="onboardingPayoff"><span>WHAT YOU’LL GET</span><div><b>👀 People worth knowing</b><b>💬 Conversations worth starting</b><b>🔄 People worth nudging</b></div></div>
+    <div className="onboardingNotice desktopOnlyNotice"><div className="onboardingNoticeIcon"><ExternalLink size={15}/></div><div><b>Do this on a desktop or laptop</b><span>LinkedIn’s data download option is not available on mobile, so use LinkedIn in a desktop browser.</span></div></div>
+    <div className="linkedinGuide cleanGuide"><div className="guideVisual" key={guideStep}>{guide[guideStep].ui}</div><div className="guideCopy"><div className="guideStepLabel">STEP {guideStep+1} OF {guide.length}</div><h3>{guide[guideStep].title}</h3><p>{guide[guideStep].text}</p></div></div>
+    <div className="guideDots" aria-label="LinkedIn guide progress">{guide.map((_,i)=><button key={i} className={`${i===guideStep?'active ':''}${i<guideStep?'complete':''}`} aria-label={`Show step ${i+1}`} onClick={()=>setGuideStep(i)}>{i<guideStep?<Check size={7}/>:null}</button>)}</div>
+   </div>}
+   {onboardingStep===1 && <div className="cleanOnboardingStep">
+    <div className="cleanUploadIntro"><div className="onboardingSpark"><UploadCloud size={16}/></div><div><h3>Got your LinkedIn ZIP?</h3><p>Unzip it first, then upload <b>Connections.csv</b> and <b>messages.csv</b>.</p></div></div>
+    <div className="onboardingUpload cleanUpload"><div className="uploadReadyIcon"><UploadCloud size={16}/></div><div><span className="sectionEyebrow">UPLOAD YOUR DATA</span><b>Drop your LinkedIn CSVs here</b><small>We’ll detect and process the files automatically.</small></div><input ref={inputRef} type="file" accept=".csv,text/csv" multiple hidden onChange={e=>importFiles(e.target.files||[])}/><button className="primary" onClick={()=>inputRef.current?.click()}><UploadCloud size={15}/> Choose files</button></div>
+    {files.length>0&&<div className="modalFiles">{files.map(f=><div className="modalFile" key={f.id}><div className={`fileStatus ${f.status}`}>{f.status==='processing'?<RefreshCw size={12} className="spin"/>:f.status==='ready'?<Check size={12}/>:<X size={12}/>}</div><div><b>{f.name}</b><span>{f.status==='ready'?`${f.rows.toLocaleString()} rows imported`:f.status==='processing'?'Processing your file…':f.error}</span></div>{f.status!=='processing'&&<button onClick={()=>removeFile(f.id)}><Trash2 size={14}/></button>}</div>)}</div>}
+    <div className="cleanInfo"><CheckCircle2 size={15}/><span>Your data stays in your ReachOut workspace and can be cleared anytime.</span></div>
+   </div>}
+   {onboardingStep===2 && <div className="cleanOnboardingStep">
+    <div className="cleanUploadIntro"><div className="onboardingSpark"><Target size={16}/></div><div><h3>Tell us what you’re looking for.</h3><p>This helps ReachOut rank the people who matter most.</p></div></div>
+    <div className="modalFields cleanFields"><label><span>Target role</span><input value={target} onChange={e=>setTarget(e.target.value)} placeholder="Product Manager"/></label><label><span>Goal keywords <em>optional</em></span><input value={keywords} onChange={e=>setKeywords(e.target.value)} placeholder="fintech, payments, investing"/></label><label><span>Your name</span><input value={ownerName} onChange={e=>setOwnerName(e.target.value)} placeholder="Your name"/></label><label><span>Conversation target</span><input type="number" min="1" max="100" value={goalTarget} onChange={e=>setGoalTarget(Math.max(1,Number(e.target.value)||1))}/></label></div>
+    <div className="profileImportBox cleanProfile"><div><span className="sectionEyebrow">OPTIONAL</span><b>Add your professional profile</b><small>Profile.csv, Positions.csv or Skills.csv can improve matching.</small></div><input id="profile-upload-onboarding" type="file" accept=".csv,text/csv" multiple hidden onChange={e=>importProfileFiles(e.target.files||[])}/><label className="secondary profileUploadBtn" htmlFor="profile-upload-onboarding"><UserRound size={14}/> Upload profile</label>{profileFiles.length>0&&<div className="profileFileList">{profileFiles.map(f=><div key={f.name}><Check size={11}/>{f.name}</div>)}</div>}</div>
+   </div>}
+   <div className="cleanOnboardingActions"><button className="secondary" onClick={()=>{if(onboardingStep===0){if(guideStep>0)setGuideStep(guideStep-1);else close()}else if(onboardingStep===1){setOnboardingStep(0);setGuideStep(2)}else setOnboardingStep(1)}}>{onboardingStep===0?(guideStep===0?'Skip for now':'Back'):'Back'}</button><button className="primary" disabled={onboardingStep===1&&!ready} onClick={()=>{if(onboardingStep===0){if(guideStep<guide.length-1)setGuideStep(guideStep+1);else setOnboardingStep(1)}else if(onboardingStep===1){setOnboardingStep(2)}else save()}}>{onboardingStep===0?(guideStep<guide.length-1?'Next':'Continue') : onboardingStep===1?(ready?'Next':'Upload files to continue'):'Build my plan'} <ArrowRight size={14}/></button></div>
+  </> : <>
+   <div className="modalEyebrow">GOAL & DATA</div><h2>Tune your outreach workspace.</h2><p className="modalSub">Set the role and keywords you want ReachOut to prioritize, then bring in your LinkedIn data.</p><div className="setupSteps"><div className="step active"><span>1</span><b>Your role</b></div><div className="step"><span>2</span><b>Your network</b></div><div className="step"><span>3</span><b>Your plan</b></div></div><div className="modalFields"><div className="fieldRow"><label><span>Target role</span><input value={target} onChange={e=>setTarget(e.target.value)} placeholder="Product Manager"/></label><label><span>Goal keywords</span><input value={keywords} onChange={e=>setKeywords(e.target.value)} placeholder="fintech, payments, investing"/></label></div><div className="keywordHint">Use a few keywords that describe the roles, industries or skills you want ReachOut to prioritize.</div><div className="fieldRow"><label><span>Conversation target</span><input type="number" min="1" max="100" value={goalTarget} onChange={e=>setGoalTarget(Math.max(1,Number(e.target.value)||1))}/></label></div><label><span>Your name</span><input value={ownerName} onChange={e=>setOwnerName(e.target.value)} placeholder="Used to identify messages you sent"/></label></div><div className="profileImportBox"><div><span className="sectionEyebrow">OPTIONAL · IMPROVES MATCHING</span><b>Bring in your professional profile</b><small>Upload Profile.csv, Positions.csv and Skills.csv. ReachOut uses only professional information to understand what fits you.</small></div><input id="profile-upload" type="file" accept=".csv,text/csv" multiple hidden onChange={e=>importProfileFiles(e.target.files||[])}/><label className="secondary profileUploadBtn" htmlFor="profile-upload"><UserRound size={14}/> Upload profile</label>{profileFiles.length>0&&<div className="profileFileList">{profileFiles.map(f=><div key={f.name}><Check size={11}/>{f.name}</div>)}<button className="dangerLink" onClick={clearProfile}>Remove profile</button></div>}</div><div className="importBox" onClick={()=>inputRef.current?.click()}><input ref={inputRef} type="file" accept=".csv,text/csv" multiple hidden onChange={e=>importFiles(e.target.files||[])}/><div className="uploadIcon"><UploadCloud size={20}/></div><div><b>Bring in your LinkedIn exports</b><span>Upload Connections.csv and messages.csv together</span><small>Automatic detection · de-duplication · secure processing</small></div><button onClick={e=>{e.stopPropagation();inputRef.current?.click()}}>Choose files</button></div>{files.length>0&&<div className="modalFiles">{files.map(f=><div className="modalFile" key={f.id}><div className={`fileStatus ${f.status}`}>{f.status==='processing'?<RefreshCw size={12} className="spin"/>:f.status==='ready'?<Check size={12}/>:<X size={12}/>}</div><div><b>{f.name}</b><span>{f.status==='ready'?`${f.rows.toLocaleString()} rows imported`:f.status==='processing'?'Processing your file…':f.error}</span></div>{f.status!=='processing'&&<button onClick={()=>removeFile(f.id)}><Trash2 size={14}/></button>}</div>)}</div>}<div className="modalFooter"><button className="secondary" onClick={close}>Cancel</button><button className="primary big" onClick={save}><Sparkles size={15}/> Build my plan <ArrowRight size={15}/></button></div><div className="privacyNote"><CheckCircle2 size={14}/> Your imported data stays tied to your ReachOut workspace. You can clear it anytime.</div>{files.length>0&&<button className="dangerLink" onClick={clearAll}>Clear all imported data</button>}</>}
+ </div></div>
+}
+
+function Drawer({selected,ownerName,target,profile,messages,close,markContacted,contacted,followedUp,toggleFollowedUp,apiFetch,autoGenerate}:{selected:Ranked;ownerName:string;target:string;profile:ProfileContext|null;messages:Message[];close:()=>void;markContacted:(p:Ranked)=>void;contacted:string[];followedUp:string[];toggleFollowedUp:(p:Ranked)=>void;apiFetch:(input:string,init?:RequestInit)=>Promise<Response>;autoGenerate?:boolean}){
+ const mine=(m:Message)=>isSelf(m,ownerName)
+ const conversation=messages.filter(m=>matchesPerson(m,selected)).sort((a,b)=>dateMs(a.date)-dateMs(b.date)).slice(-14)
+ const opener=`Hi ${selected.first_name}, I came across your work at ${selected.company||'your company'} and wanted to reach out regarding my interest in ${target}. Would love to connect and learn more about your team.`
+ const follow=`Hi ${selected.first_name}, just following up on my note from ${selected.lastOutgoing||'recently'}. Would love to connect when you have a moment.`
+ const [aiDraft,setAiDraft]=useState('')
+ const [aiLoading,setAiLoading]=useState(false)
+ const [aiError,setAiError]=useState('')
+ const key=selected.linkedin_url||`${selected.first_name}-${selected.last_name}`
+ const done=contacted.includes(key)
+ const isFollowup=selected.action==='Follow up'
+ const draft=aiDraft || (isFollowup?follow:opener)
+ const generateAI=async()=>{
+  setAiLoading(true);setAiError('')
+  try{
+   const r=await apiFetch('/api/ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({mode:isFollowup?'followup':'outreach',target,ownerName,profile,person:selected,conversation})})
+   const d=await r.json().catch(()=>({}))
+   if(!r.ok)throw new Error(d.error||'Could not generate an AI message.')
+   setAiDraft(String(d.message||''))
+  }catch(e){setAiError(e instanceof Error?e.message:'Could not generate an AI message.')}
+  finally{setAiLoading(false)}
+ }
+ useEffect(()=>{setAiDraft('');setAiError('')},[key])
+ useEffect(()=>{if(autoGenerate&&!aiDraft&&!aiLoading){void generateAI()}},[autoGenerate,key])
+ return <div className="overlay" onClick={close}><div className="drawer" onClick={e=>e.stopPropagation()}><button className="close" onClick={close}><X/></button>
+  <div className="drawerHeader"><div className="profileAvatar">{initials(selected)}</div><div><h2>{selected.first_name} {selected.last_name}</h2><div className="role">{selected.position||'Role not listed'}{selected.company?` · ${selected.company}`:''}</div></div></div>
+  <div className="profileActions">{selected.linkedin_url&&<a href={selected.linkedin_url} target="_blank" rel="noreferrer"><ExternalLink size={13}/> View LinkedIn</a>}<button onClick={()=>navigator.clipboard?.writeText(`${selected.first_name} ${selected.last_name}`)}><Check size={13}/> Copy name</button></div>
+  <div className="why"><h3>WHY I PICKED THEM 👀</h3>{selected.reasons.slice(0,4).map(r=><div key={r}><Check size={13}/> {r}</div>)}</div>
+  <div className="nextAction"><span className="sectionEyebrow">RECOMMENDED NEXT ACTION</span><b>{isFollowup?'Nudge them now':'Message'}</b><p>{isFollowup?'You have already opened the conversation. A quick follow up keeps things moving.':'This person fits your goal. A short, specific message is a good next step.'}</p></div>
+  <div className="draft"><div className="draftHead"><div><b>{isFollowup?'Here’s what I’d send':'Here’s what I’d send'}</b><span className="aiBadge"><Sparkles size={9}/> AI</span></div><button onClick={()=>navigator.clipboard?.writeText(draft)}>Copy</button></div><p>{aiLoading?'Thinking about what you’d actually say…':draft}</p></div>
+  {aiError&&<div className="aiError">{aiError}</div>}
+  <button className="aiGenerate aiFriendButton" onClick={generateAI} disabled={aiLoading}><Sparkles size={14}/>{aiLoading?'Writing…':aiDraft?'Try another version':'Help me say it'}</button>
+  <div className="drawerCtas"><button className="secondary" onClick={()=>navigator.clipboard?.writeText(draft)}><Check size={14}/> Copy message</button>{selected.linkedin_url&&<a className="primary" href={selected.linkedin_url} target="_blank" rel="noreferrer">Open LinkedIn <ExternalLink size={14}/></a>}<button className={`secondary ${followedUp.includes(key)?'completed':''}`} onClick={()=>toggleFollowedUp(selected)}>{followedUp.includes(key)?<><Check size={14}/> Nudged · Unmark</>:<>Nudge <span className="drawerTick"><Check size={12}/></span></>}</button><button className={`primary ${done?'completed':''}`} onClick={()=>markContacted(selected)}>{done?<><Check size={14}/> Contacted · Unmark</>:<>Message <span className="drawerTick"><Check size={12}/></span></>}</button></div>
+  <div className="history"><h3>Conversation history</h3>{conversation.map((m,i)=><div className={`message ${mine(m)?'mine':''}`} key={i}><small>{mine(m)?'YOU':m.from} · {m.date}</small><p>{m.content}</p></div>)}{!conversation.length&&<span className="muted">No messages found with this connection.</span>}</div>
+ </div></div>
+}

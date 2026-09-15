@@ -1,0 +1,5 @@
+import { NextResponse } from 'next/server'
+import { authenticatedUser, supabaseAdmin, ensureImportBucket } from '@/lib/supabase-server'
+import { importCsvText } from '@/lib/importer'
+export const runtime='nodejs'; export const maxDuration=60
+export async function POST(req:Request){try{const user=await authenticatedUser(req);const {path,fileName}=await req.json();if(!path||!fileName)return NextResponse.json({error:'path and fileName are required.'},{status:400});if(!String(path).startsWith(`${user.id}/`))return NextResponse.json({error:'Invalid upload path.'},{status:403});const s=supabaseAdmin();await ensureImportBucket(s);const {data,error}=await s.storage.from('reachout-imports').download(path);if(error)throw new Error(`Could not download uploaded file: ${error.message}`);const result=await importCsvText(s,user.id,String(fileName),await data.text(),String(path));return NextResponse.json({ok:true,...result})}catch(e){return NextResponse.json({error:e instanceof Error?e.message:'Could not process file.'},{status:401})}}
