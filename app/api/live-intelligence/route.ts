@@ -108,23 +108,43 @@ Return JSON only with this shape:
   ]
 }`
 
-  const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(apiKey)}`, {
+  // Use Google's current Interactions API and Gemini 3.6 Flash.
+  // The older generateContent + gemini-2.5-flash combination is no longer
+  // available to new users. Interactions is Google's recommended API for
+  // new Gemini integrations and supports Google Search grounding directly.
+  const response = await fetch('https://generativelanguage.googleapis.com/v1beta/interactions', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      'x-goog-api-key': apiKey,
+    },
     body: JSON.stringify({
-      contents: [{ role: 'user', parts: [{ text: prompt }] }],
-      tools: [{ google_search: {} }],
-      generationConfig: { responseMimeType: 'application/json', temperature: 0.2 },
+      model: 'gemini-3.6-flash',
+      input: prompt,
+      tools: [{ type: 'google_search' }],
+      store: false,
     }),
     cache: 'no-store',
   })
   const data = await response.json()
   if (!response.ok) throw new Error(data?.error?.message || 'Gemini web research failed.')
-  const text = data?.candidates?.[0]?.content?.parts?.map((p: any) => p.text || '').join('') || '{}'
-  let parsed: any = {}
-  try { parsed = JSON.parse(text) } catch { parsed = {} }
 
-  const sources = extractSources(data)
+  const outputSteps = Array.isArray(data?.steps)
+    ? data.steps.filter((step: any) => step?.type === 'model_output')
+    : []
+  const text = outputSteps
+    .flatMap((step: any) => Array.isArray(step?.content) ? step.content : [])
+    .map((part: any) => part?.text || '')
+    .join('') || '{}'
+
+  let parsed: any = {}
+  try { parsed = JSON.parse(text) } catch {
+    // Be tolerant if the model wraps the JSON in markdown despite the prompt.
+    const match = text.match(/\{[\s\S]*\}/)
+    try { parsed = match ? JSON.parse(match[0]) : {} } catch { parsed = {} }
+  }
+
+  const sources = extractInteractionSources(data)
   const signals = Array.isArray(parsed.signals) ? parsed.signals.slice(0, 6).map((s: any) => ({
     type: String(s.type || 'other'),
     label: String(s.label || 'Recent signal'),
@@ -141,12 +161,30 @@ Return JSON only with this shape:
   }
 }
 
-function extractSources(data: any) {
-  const chunks = data?.candidates?.[0]?.groundingMetadata?.groundingChunks || []
+function extractInteractionSources(data: any) {
   const seen = new Set<string>()
-  return chunks.map((chunk: any) => chunk?.web).filter(Boolean).map((web: any) => ({ title: String(web.title || 'Source'), url: String(web.uri || '') })).filter((s: any) => {
-    if (!s.url || seen.has(s.url)) return false
-    seen.add(s.url)
-    return true
-  }).slice(0, 8)
+  const sources: { title: string; url: string }[] = []
+
+  // Interactions API returns Google Search citations as annotations on model
+  // output text. Keep only unique URLs for the UI.
+  const steps = Array.isArray(data?.steps) ? data.steps : []
+  for (const step of steps) {
+    const content = Array.isArray(step?.content) ? step.content : []
+    for (const part of content) {
+      const annotations = Array.isArray(part?.annotations) ? part.annotations : []
+      for (const annotation of annotations) {
+        if (annotation?.type !== 'url_citation') continue
+        const url = String(annotation.url || '')
+        if (!url || seen.has(url)) continue
+        seen.add(url)
+        sources.push({
+          title: String(annotation.title || 'Source'),
+          url,
+        })
+        if (sources.length >= 8) return sources
+      }
+    }
+  }
+
+  return sources
 }
