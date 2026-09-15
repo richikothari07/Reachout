@@ -276,7 +276,7 @@ export default function Home(){
    {tab==='Home'&&<HomeView dashboardReady={dashboardReady} hasData={hasData} target={target} connectionCount={connectionCount} messageCount={messageCount} highPriority={highPriority} hiringSignals={hiringSignals} followups={followups} recommended={recommended} goal={goal} goalTarget={goalTarget} conversations={conversations} goalPct={goalPct} setTab={setTab} setSelected={setSelected} openImport={()=>setSetupOpen(true)} loading={loading} markContacted={markContacted} toggleFollowedUp={toggleFollowedUp} agentOpen={agentOpen} setAgentOpen={setAgentOpen} agentCommand={agentCommand} setAgentCommand={setAgentCommand} agentBusy={agentBusy} agentReply={agentReply} agentActions={agentActions} agentError={agentError} runAgent={(c?:string)=>runAgent(c)} findPerson={findPerson} setVoiceGenerate={setVoiceGenerate}/>} 
    {tab==='Opportunities'&&<><PageTitle eyebrow="PEOPLE TO WATCH" title="Who looks interesting right now?" sub="People with a reason to be on your radar, such as a new role, hiring activity, a relevant company, or a strong connection."/><div className="search"><Search size={16}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search people, companies, or roles…"/><button onClick={()=>setShowFilters(!showFilters)}><Settings2 size={14}/> Filters{[companyFilter,roleFilter,connectedFilter!=='Anytime'?connectedFilter:'',emailFilter!=='All'?emailFilter:''].filter(Boolean).length>0&&<span className="filterActiveCount">{[companyFilter,roleFilter,connectedFilter!=='Anytime'?connectedFilter:'',emailFilter!=='All'?emailFilter:''].filter(Boolean).length}</span>}</button></div>{showFilters&&<div className="opportunityFilterPanel"><div className="filterField"><label>COMPANY</label><input value={companyFilter} onChange={e=>setCompanyFilter(e.target.value)} placeholder="Search companies…"/></div><div className="filterField"><label>ROLE</label><input value={roleFilter} onChange={e=>setRoleFilter(e.target.value)} placeholder="Search roles…"/></div><div className="filterField"><label>CONNECTED</label><select value={connectedFilter} onChange={e=>setConnectedFilter(e.target.value as typeof connectedFilter)}><option value="Anytime">Any time</option><option value="30">Last 30 days</option><option value="90">Last 90 days</option><option value="180">Last 6 months</option><option value="365">Last year</option><option value="older">More than 1 year ago</option></select></div><div className="filterField"><label>EMAIL</label><select value={emailFilter} onChange={e=>setEmailFilter(e.target.value as typeof emailFilter)}><option>All</option><option>Has email</option><option>No email</option></select></div><div className="filterPanelFooter"><button className="clearFilters" onClick={()=>{setCompanyFilter('');setRoleFilter('');setConnectedFilter('Anytime');setEmailFilter('All');setFilter('All')}}>Clear all</button><span>{people.length} matching</span></div></div>}<div className="opportunityControls"><button className="secondary" onClick={()=>setShowCompletedOpportunities(v=>!v)}>{showCompletedOpportunities?'Hide completed':'Show completed'}{completedPeople.length>0&&<span className="controlCount">{completedPeople.length}</span>}</button></div>{showCompletedOpportunities&&<div className="completedFollowups opportunityCompleted"><div className="sectionHead compact"><div><span className="sectionEyebrow">COMPLETED</span><h2>Already reached</h2></div><span className="muted">{completedPeople.length} completed</span></div>{completedPeople.filter(p=>`${p.first_name} ${p.last_name} ${p.company} ${p.position}`.toLowerCase().includes(query.toLowerCase())).slice(0,250).map(p=>{const key=p.linkedin_url||`${p.first_name}-${p.last_name}`;const statuses=[contacted.includes(key)?'Contacted':'',followedUp.includes(key)?'Followed up':''].filter(Boolean).join(' · ');return <div className="followRow completedRow" key={`opp-done-${key}`}><button className="followMain" onClick={()=>setSelected(p)}><div className="avatar">{initials(p)}</div><div className="followInfo"><b>{p.first_name} {p.last_name}</b><span>{p.position||'Role not listed'}{p.company?` · ${p.company}`:''}</span></div><span className="completedLabel"><Check size={13}/> {statuses}</span></button><button className="followDone" onClick={()=>{if(contacted.includes(key))markContacted(p);else toggleFollowedUp(p)}} title="Unmark completed"><Check size={15}/></button></div>})}{!completedPeople.length&&<Empty title="No completed people yet" text="People you mark contacted or followed up will appear here."/>}</div>}<div className="table"><div className="tr th"><span>PERSON</span><span>COMPANY</span><span>OPPORTUNITY SIGNAL</span><span>NEXT ACTION</span><span></span></div>{people.slice(0,250).map(p=><div className="tr row" key={`${p.linkedin_url}-${p.first_name}`} onClick={()=>setSelected(p)} role="button" tabIndex={0} onKeyDown={e=>{if(e.key==='Enter'||e.key===' ')setSelected(p)}}><span className="personCell"><div className="avatar">{initials(p)}</div><span><b>{p.first_name} {p.last_name}</b><small>{p.position||'Role not listed'}</small></span></span><span>{p.company||'Company not listed'}</span><span className="whyCell">{p.reasons[0]||'A good match for your goal'}</span><span><i className="action reach">Explore</i></span><QuickAction p={p} onComplete={()=>markContacted(p)}/></div>)}</div>{!people.length&&<Empty title="Nothing here yet 👀" text="Try another person, company, or role. There may be a better match nearby."/>}</>}
    {tab==='Outreach'&&<OutreachView queue={outreachPeople} allPeople={ranked} contacted={contacted} setSelected={setSelected} markContacted={markContacted} toggleFollowedUp={toggleFollowedUp} goal={goal}/>} 
-   {tab==='Live Intelligence'&&<LiveIntelligenceView apiFetch={apiFetch} />}
+   {tab==='Live Intelligence'&&<LiveIntelligenceView target={target} keywords={keywords} goal={goal} connections={connections} />}
 
    {tab==='Follow-ups'&&<><PageTitle eyebrow="CONVERSATIONS TO NUDGE" title="Who could use a little nudge?" sub="These are conversations that are waiting for a reply."/><div className="followControls"><span>Nudge after</span><select value={days} onChange={e=>setDays(Number(e.target.value))}><option value={5}>5 days</option><option value={7}>7 days</option><option value={10}>10 days</option><option value={14}>14 days</option><option value={21}>21 days</option></select><span className="muted">{followups.length} due</span><button className="secondary" onClick={()=>setShowCompletedFollowups(v=>!v)}>{showCompletedFollowups?'Hide completed':'Show completed'}</button></div>{showCompletedFollowups&&<div className="completedFollowups"><div className="sectionHead compact"><div><span className="sectionEyebrow">COMPLETED</span><h2>Followed up</h2></div><span className="muted">{ranked.filter(p=>followedUp.includes(p.linkedin_url||`${p.first_name}-${p.last_name}`)).length} completed</span></div>{ranked.filter(p=>followedUp.includes(p.linkedin_url||`${p.first_name}-${p.last_name}`)).map(p=><div className="followRow completedRow" key={`done-${p.linkedin_url}-${p.first_name}`}><button className="followMain" onClick={()=>setSelected(p)}><div className="avatar">{initials(p)}</div><div className="followInfo"><b>{p.first_name} {p.last_name}</b><span>{p.position||'Role not listed'}{p.company?` · ${p.company}`:''}</span></div><span className="completedLabel"><Check size={13}/> Nudged</span></button><button className="followDone" onClick={()=>toggleFollowedUp(p)} title="Unmark nudge"><Check size={15}/></button></div>)}{!ranked.some(p=>followedUp.includes(p.linkedin_url||`${p.first_name}-${p.last_name}`))&&<Empty title="No completed nudges yet" text="People you mark as nudged will appear here."/>}</div>}{followups.length?<div className="followList">{followups.map(p=><div className="followRow" key={`${p.linkedin_url}-${p.first_name}`}><button className="followMain" onClick={()=>setSelected(p)}><div className="avatar">{initials(p)}</div><div className="followInfo"><b>{p.first_name} {p.last_name}</b><span>{p.position||'Role not listed'}{p.company?` · ${p.company}`:''}</span><small>Last message {daysAgo(p.lastOutgoing!)} days ago</small></div><div className="followReason"><b>{p.reasons.find(r=>r.includes('days ago'))||'No reply since your last message.'}</b><span>What I’d do next: nudge them</span></div><ChevronRight size={16}/></button><button className="followDone" onClick={()=>toggleFollowedUp(p)} title="Mark as nudged"><Check size={15}/></button></div>)}</div>:<Empty title="You’re all caught up 🫡" text={`No unanswered messages older than ${days} days. You’re all clear for now.`} icon={<CheckCircle2 size={20}/>}/>} </>}
   </section>
@@ -294,44 +294,63 @@ function PageTitle({eyebrow,title,sub}:{eyebrow:string;title:string;sub:string})
 function Empty({title,text,icon=<Sparkles size={20}/>}:{title:string;text:string;icon?:React.ReactNode}){return <div className="emptyPage"><div className="emptyIcon">{icon}</div><h3>{title}</h3><p>{text}</p></div>}
 function Stat({icon,value,label}:{icon:React.ReactNode;value:string|number;label:string}){return <div className="stat"><div className="statIcon">{icon}</div><div><strong>{value}</strong><span>{label}</span></div></div>}
 
-function LiveIntelligenceView({apiFetch}:{apiFetch:(input:string,init?:RequestInit)=>Promise<Response>}){
- const [rows,setRows]=useState<any[]>([])
- const [loading,setLoading]=useState(true)
- const [refreshing,setRefreshing]=useState(false)
- const [error,setError]=useState('')
- const [notice,setNotice]=useState('')
- const [query,setQuery]=useState('')
- const [expanded,setExpanded]=useState<string|null>(null)
- const load=async()=>{
-  setLoading(true);setError('')
-  try{const r=await apiFetch('/api/live-intelligence',{cache:'no-store'});const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.error||'Could not load live intelligence.');setRows(Array.isArray(d.signals)?d.signals:[])}catch(e){setError(e instanceof Error?e.message:'Could not load live intelligence.')}finally{setLoading(false)}
+function LiveIntelligenceView({target,keywords,goal,connections}:{target:string;keywords:string;goal:string;connections:Connection[]}){
+ const [searchRole,setSearchRole]=useState(target||'Product Manager')
+ const [location,setLocation]=useState('India')
+ const [degree,setDegree]=useState('2nd')
+ const [seniority,setSeniority]=useState('Manager')
+ const [company,setCompany]=useState('')
+ const [copied,setCopied]=useState('')
+ const existingCompanies=[...new Set(connections.map(c=>String(c.company||'').trim()).filter(Boolean))].slice(0,12)
+
+ const buildUrl=(extra:string)=>{
+   const parts=[searchRole, location, extra].filter(Boolean)
+   const q=encodeURIComponent(parts.join(' '))
+   return `https://www.linkedin.com/search/results/people/?keywords=${q}&origin=GLOBAL_SEARCH_HEADER`
  }
- useEffect(()=>{void load()},[])
- const refresh=async()=>{
-  setRefreshing(true);setError('');setNotice('')
-  try{const r=await apiFetch('/api/live-intelligence',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({limit:20}),cache:'no-store'});const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.error||'Could not refresh live intelligence.');setRows(Array.isArray(d.signals)?d.signals:[]);setNotice(`${Number(d.updated||0)} people researched from the live web.`)}catch(e){setError(e instanceof Error?e.message:'Could not refresh live intelligence.')}finally{setRefreshing(false)}
+ const openSearch=(key:string,extra:string)=>{
+   window.open(buildUrl(extra), '_blank', 'noopener,noreferrer')
+   setCopied(key)
+   window.setTimeout(()=>setCopied(''),1800)
  }
- const filtered=rows.filter(r=>`${r.first_name} ${r.last_name} ${r.company} ${r.position} ${r.summary}`.toLowerCase().includes(query.toLowerCase()))
- const lastChecked=rows.map(r=>Date.parse(r.last_checked_at||'')).filter(Number.isFinite).sort((a,b)=>b-a)[0]
+ const searchCards=[
+   {id:'pm',title:'Product managers in India',desc:'People currently working in Product who match your target role.',extra:''},
+   {id:'hiring',title:'PMs at hiring companies',desc:'Use LinkedIn people search, then add the company or hiring filters that matter to you.',extra:'hiring product'},
+   {id:'leaders',title:'Product leaders',desc:'Senior PMs, Product Leads and Heads of Product who can give you a team-level perspective.',extra:'product lead head'},
+   {id:'recruiters',title:'PM recruiters',desc:'Recruiters and talent partners focused on Product hiring.',extra:'product recruiter talent acquisition'},
+ ]
  return <>
   <div className="liveHero">
-   <div><span className="sectionEyebrow">LIVE NETWORK INTELLIGENCE</span><h2>Who is worth talking to <em>right now?</em></h2><p>ReachOut checks current public web information and turns it into useful reasons to reconnect. Your existing tabs are untouched.</p></div>
-   <button className="primary liveRefresh" onClick={refresh} disabled={refreshing}><RefreshCw size={15} className={refreshing?'spin':''}/>{refreshing?'Researching…':'Refresh live signals'}</button>
+   <div><span className="sectionEyebrow">PEOPLE DISCOVERY</span><h2>Who should you <em>connect with?</em></h2><p>Find new Product people outside your existing network. ReachOut uses your target role and gives you focused LinkedIn people searches instead of pretending a news headline is a networking recommendation.</p></div>
   </div>
-  <div className="liveMeta"><span><i className="liveDot"/> Web research active</span><span>{rows.length} people tracked</span>{lastChecked&&<span>Last checked {new Date(lastChecked).toLocaleString([], {day:'numeric',month:'short',hour:'numeric',minute:'2-digit'})}</span>}</div>
-  {notice&&<div className="liveNotice"><Check size={14}/>{notice}</div>}
-  {error&&<div className="dataError"><div><b>Live intelligence needs one setup step.</b><span>{error}</span></div></div>}
-  {!error&&<>
-   <div className="search liveSearch"><Search size={16}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search people or companies…"/></div>
-   {loading?<div className="liveLoading"><div className="liveSkeleton"/><div className="liveSkeleton"/><div className="liveSkeleton"/></div>:filtered.length?<div className="liveGrid">{filtered.map((r:any)=>{const key=r.id||r.connection_id;const signals=Array.isArray(r.signals)?r.signals:[];const sources=Array.isArray(r.sources)?r.sources:[];const open=expanded===key;return <article className="liveCard" key={key}>
-    <button className="liveCardMain" onClick={()=>setExpanded(open?null:key)}>
-      <div className="liveCardTop"><div className="avatar">{`${(r.first_name||'')[0]||''}${(r.last_name||'')[0]||''}`.toUpperCase()}</div><div><b>{r.first_name} {r.last_name}</b><span>{r.position||'Role not listed'}{r.company?` · ${r.company}`:''}</span></div><strong>{Number(r.score||0)}</strong></div>
-      <div className="liveWhy"><span>WHY NOW</span><b>{r.summary}</b></div>
-      <div className="signalChips">{signals.slice(0,3).map((s:any,i:number)=><span key={i}>{s.label}</span>)}{!signals.length&&<span>No strong recent signal</span>}</div>
-    </button>
-    {open&&<div className="liveExpanded">{signals.map((s:any,i:number)=><div className="liveSignal" key={i}><span className={`signalStrength ${s.strength||'medium'}`}/><div><b>{s.label}</b><p>{s.detail}</p>{s.date&&<small>{s.date}</small>}</div></div>)}{sources.length>0&&<div className="liveSources"><b>Sources</b>{sources.slice(0,5).map((s:any,i:number)=><a key={i} href={s.url} target="_blank" rel="noreferrer">{s.title||'Web source'} <ExternalLink size={11}/></a>)}</div>}</div>}
-  </article>})}</div>:<Empty title={rows.length?'No matching people':'No live signals yet'} text={rows.length?'Try another search.':'Click Refresh live signals to research people from your network.'}/>} 
-  </>}
+
+  <div className="discoverSetup">
+   <div className="discoverField"><label>Target role</label><input value={searchRole} onChange={e=>setSearchRole(e.target.value)} placeholder="Product Manager"/></div>
+   <div className="discoverField"><label>Location</label><input value={location} onChange={e=>setLocation(e.target.value)} placeholder="India"/></div>
+   <div className="discoverField"><label>Connection degree</label><select value={degree} onChange={e=>setDegree(e.target.value)}><option value="2nd">2nd-degree first</option><option value="3rd">3rd-degree+</option></select></div>
+   <div className="discoverField"><label>Seniority</label><select value={seniority} onChange={e=>setSeniority(e.target.value)}><option>Manager</option><option>Senior</option><option>Director</option><option>Any</option></select></div>
+  </div>
+
+  <div className="liveMeta"><span><i className="liveDot"/> New people only</span><span>Existing imported connections are not the recommendation pool</span></div>
+
+  <div className="discoverGrid">
+   {searchCards.map(card=><article className="discoverCard" key={card.id}>
+    <div className="discoverIcon"><Users size={17}/></div>
+    <div className="discoverBody"><h3>{card.title}</h3><p>{card.desc}</p><span className="discoverRule">{searchRole} · {location} · {degree}-degree+</span></div>
+    <button className="primary" onClick={()=>openSearch(card.id,card.extra)}>{copied===card.id?'Opened ✓':'Find people'} <ExternalLink size={14}/></button>
+   </article>)}
+  </div>
+
+  {existingCompanies.length>0&&<div className="discoverSection">
+   <div className="sectionHead compact"><div><span className="sectionEyebrow">YOUR NETWORK → NEW PEOPLE</span><h2>People at companies already in your network</h2></div></div>
+   <p className="discoverHint">These searches use companies you already have relationships with, but open LinkedIn's people search so you can discover other Product people there.</p>
+   <div className="companySearchGrid">{existingCompanies.map(c=><button key={c} className="companySearch" onClick={()=>openSearch(`company-${c}`,`"${c}"`)}><span>{c}</span><ExternalLink size={13}/></button>)}</div>
+  </div>}
+
+  <div className="discoverFooter">
+   <b>Why this changed</b>
+   <span>LinkedIn's own people search is personalized and supports filters such as connection degree, location, current company and keywords. ReachOut should use that live search for discovery rather than inventing people from news data.</span>
+  </div>
  </>
 }
 
