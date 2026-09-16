@@ -4477,3 +4477,120 @@ html, body, .app, .content, .sidebar {
   .authStoryHeadline strong{font-size:34px!important}
 }
 @media (prefers-reduced-motion:reduce){.networkNode{animation:none!important}}
+
+/* LOGIN — FINAL FOUR-SIGNAL ORBIT
+   Four equally spaced initials around an invisible ellipse.
+   Headline remains centered and independent of the moving nodes. */
+.authStory .networkScene{
+  position:relative;
+  width:min(100%,760px);
+  height:min(68vh,600px);
+  min-height:500px;
+  display:block;
+  overflow:visible;
+}
+.authStory .networkScene > .orbit{
+  opacity:0;
+  pointer-events:none;
+}
+.authStory .networkScene:before{
+  width:440px;
+  height:440px;
+  left:50%;
+  top:50%;
+}
+.authStory .authStoryHeadline{
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  width:min(88%,500px);
+  max-width:500px;
+  margin:0;
+  text-align:center;
+  z-index:5;
+  pointer-events:none;
+}
+.authStory .authStoryHeadline strong{
+  display:block;
+  font-size:clamp(34px,3.2vw,46px);
+  line-height:1.04;
+  letter-spacing:-.065em;
+}
+.authStory .networkNode{
+  position:absolute;
+  z-index:6;
+  width:92px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-start;
+  gap:8px;
+  margin:0;
+  animation:signalFloat 6s ease-in-out infinite;
+  will-change:transform;
+}
+.authStory .networkNode .nodeIcon{
+  width:58px;
+  height:58px;
+  flex:0 0 58px;
+  border:6px solid rgba(255,255,255,.82);
+  box-shadow:0 10px 26px rgba(48,40,78,.10),0 0 0 1px rgba(216,211,229,.72);
+  font-size:14px;
+  font-weight:800;
+}
+.authStory .networkNode b{
+  padding:0;
+  border:0;
+  background:transparent;
+  box-shadow:none;
+  backdrop-filter:none;
+  font-size:11px;
+  line-height:1.15;
+  font-weight:750;
+  white-space:nowrap;
+  text-align:center;
+  opacity:1;
+}
+/* Four cardinal points on the same invisible ellipse. */
+.authStory .nodeOne{
+  top:8%;
+  left:50%;
+  transform:translateX(-50%);
+  animation-delay:0s;
+}
+.authStory .nodeTwo{
+  top:50%;
+  left:5%;
+  transform:translateY(-50%);
+  animation-delay:1.5s;
+}
+.authStory .nodeThree{
+  top:50%;
+  right:5%;
+  transform:translateY(-50%);
+  animation-delay:3s;
+}
+.authStory .nodeFour{
+  bottom:8%;
+  left:50%;
+  transform:translateX(-50%);
+  animation-delay:4.5s;
+}
+.authStory .nodeOne .nodeIcon{background:#eee7ff}.authStory .nodeOne b{color:#6653b7}
+.authStory .nodeTwo .nodeIcon{background:#fff0f0}.authStory .nodeTwo b{color:#ae5364}
+.authStory .nodeThree .nodeIcon{background:#e2f8ee}.authStory .nodeThree b{color:#3d876b}
+.authStory .nodeFour .nodeIcon{background:#e8f2ff}.authStory .nodeFour b{color:#4973a4}
+@keyframes signalFloat{
+  0%,100%{margin-top:0}
+  50%{margin-top:-7px}
+}
+@media (max-width:1100px){
+  .authStory .networkScene{max-width:620px;height:500px;min-height:500px}
+  .authStory .authStoryHeadline strong{font-size:clamp(31px,3.5vw,40px)}
+  .authStory .nodeOne{top:7%}.authStory .nodeFour{bottom:7%}
+  .authStory .nodeTwo{left:3%}.authStory .nodeThree{right:3%}
+}
+@media (prefers-reduced-motion:reduce){
+  .authStory .networkNode{animation:none}
+}
