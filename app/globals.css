@@ -3891,132 +3891,10 @@ html, body, .app, .content, .sidebar {
 /* Live Intelligence tab: additive styles only. Existing tabs are unchanged. */
 .liveHero{display:flex;justify-content:space-between;gap:28px;align-items:flex-end;padding:26px 0 18px;border-bottom:1px solid #e8e6ec;margin-bottom:14px}.liveHero>div{max-width:720px}.liveHero h2{margin:5px 0 8px;font-size:31px;letter-spacing:-.035em;color:#27233a}.liveHero h2 em{font-style:normal;color:#7056d6}.liveHero p{margin:0;color:#7f7a8d;line-height:1.55;font-size:14px}.liveRefresh{white-space:nowrap}.liveMeta{display:flex;gap:18px;align-items:center;color:#8b8797;font-size:12px;margin:10px 0 18px}.liveMeta span{display:flex;align-items:center;gap:7px}.liveDot{width:7px;height:7px;border-radius:50%;background:#57b88a;box-shadow:0 0 0 4px rgba(87,184,138,.12)}.liveNotice{display:flex;align-items:center;gap:7px;background:#edf8f1;border:1px solid #d8efdf;color:#3c8060;border-radius:12px;padding:10px 12px;font-size:12px;margin-bottom:14px}.liveSearch{margin-bottom:16px}.liveGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.liveCard{background:#fff;border:1px solid #e7e4eb;border-radius:18px;overflow:hidden;box-shadow:0 5px 18px rgba(38,32,60,.035)}.liveCardMain{display:block;width:100%;text-align:left;background:none;border:0;padding:18px;cursor:pointer}.liveCardTop{display:grid;grid-template-columns:auto 1fr auto;gap:11px;align-items:center}.liveCardTop .avatar{width:38px;height:38px;font-size:12px}.liveCardTop b,.liveCardTop span{display:block}.liveCardTop b{font-size:14px;color:#2e2a3b}.liveCardTop span{font-size:11px;color:#888394;margin-top:3px}.liveCardTop>strong{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:#f0ebff;color:#6650c8;font-size:12px}.liveWhy{margin:17px 0 12px;padding:12px 13px;border-radius:12px;background:#f8f6ff}.liveWhy span{display:block;font-size:9px;letter-spacing:.11em;color:#8678ad;font-weight:800;margin-bottom:5px}.liveWhy b{font-size:13px;line-height:1.45;color:#403a51;font-weight:650}.signalChips{display:flex;gap:6px;flex-wrap:wrap}.signalChips span{font-size:10px;color:#6e6979;background:#f5f4f6;border:1px solid #ebe9ee;padding:6px 8px;border-radius:999px}.liveExpanded{border-top:1px solid #eeeaf0;padding:15px 18px 17px;background:#fcfbfd}.liveSignal{display:flex;gap:10px;padding:8px 0}.signalStrength{width:7px;height:7px;border-radius:50%;margin-top:5px;flex:none;background:#b5afbf}.signalStrength.high{background:#57b88a}.signalStrength.medium{background:#d6a34e}.signalStrength.low{background:#aaa4b3}.liveSignal b{font-size:12px;color:#3a3547}.liveSignal p{font-size:11px;color:#777283;line-height:1.45;margin:3px 0}.liveSignal small{font-size:9px;color:#a19ca9}.liveSources{border-top:1px solid #ece9ef;margin-top:10px;padding-top:11px;display:flex;flex-direction:column;gap:6px}.liveSources>b{font-size:10px;color:#8c8796;text-transform:uppercase;letter-spacing:.08em}.liveSources a{font-size:10px;color:#6853c6;text-decoration:none;display:flex;align-items:center;gap:4px}.liveLoading{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.liveSkeleton{height:245px;border-radius:18px;background:linear-gradient(90deg,#f3f1f5 25%,#faf9fb 50%,#f3f1f5 75%);background-size:200% 100%;animation:liveShimmer 1.5s infinite}@keyframes liveShimmer{to{background-position:-200% 0}}@media(max-width:850px){.liveHero{align-items:flex-start;flex-direction:column}.liveGrid,.liveLoading{grid-template-columns:1fr}.liveHero h2{font-size:27px}}@media(max-width:600px){.liveMeta{flex-wrap:wrap;gap:8px 14px}.liveCardMain{padding:15px}.liveHero{padding-top:14px}.liveHero p{font-size:13px}.liveRefresh{width:100%;justify-content:center}}
 
-/* Login visual refinement — login page only. */
-.authPage{
-  min-height:100svh;
-  grid-template-columns:minmax(390px,500px) minmax(520px,760px);
-  gap:clamp(48px,7vw,112px);
-  padding:34px clamp(28px,5vw,76px);
-  background:
-    radial-gradient(circle at 78% 42%,rgba(112,84,230,.075),transparent 29%),
-    radial-gradient(circle at 92% 82%,rgba(77,190,153,.075),transparent 24%),
-    radial-gradient(circle at 62% 100%,rgba(247,185,166,.07),transparent 23%),
-    #fafaf8;
-}
-.authCard{
-  width:min(500px,100%);
-  padding:34px 38px 32px;
-  border:1px solid rgba(225,222,230,.72);
-  border-radius:26px;
-  background:rgba(255,255,255,.72);
-  box-shadow:0 18px 50px rgba(37,31,63,.055);
-  backdrop-filter:blur(12px);
-}
-.authLogo{width:46px;height:46px;margin:0 0 31px}
-.authCard h1{margin:0 0 10px;font-size:38px;line-height:1.08;letter-spacing:-.055em;color:#17151d;font-weight:780}
-.authCard>p{margin:0 0 30px;max-width:420px;font-size:15px;line-height:1.6;color:#747080}
-.authCard form{display:flex;flex-direction:column;gap:0}
-.authCard label{display:block;margin:0 0 17px;font-size:12px;font-weight:760;color:#272331}
-.authCard input{
-  display:block;width:100%;height:53px;margin-top:8px;padding:0 15px;
-  border:1px solid #dedbe4;border-radius:12px;background:#fff;color:#282432;
-  font:inherit;font-size:14px;outline:none;box-sizing:border-box;
-  transition:border-color .18s ease,box-shadow .18s ease,background .18s ease;
-}
-.authCard input::placeholder{color:#aaa5b1}
-.authCard input:focus{border-color:#a99ce7;box-shadow:0 0 0 4px rgba(112,84,230,.09);background:#fff}
-.forgotInline{
-  order:initial;align-self:flex-start;margin:-2px 0 17px;padding:0;
-  border:0;background:transparent;color:#6755d1;font-size:12px;font-weight:720;cursor:pointer;
-}
-.forgotInline:hover{text-decoration:underline}
-.authCard .primary.full{
-  width:100%;height:53px;border-radius:12px;border:1px solid #6650d8;
-  background:linear-gradient(135deg,#7058e7,#6549d5);color:#fff;
-  font-size:14px;font-weight:760;box-shadow:0 10px 24px rgba(101,73,213,.16);
-  transition:transform .18s ease,box-shadow .18s ease,filter .18s ease;
-}
-.authCard .primary.full:hover{transform:translateY(-1px);box-shadow:0 13px 28px rgba(101,73,213,.2);filter:saturate(1.04)}
-.authCard .primary.full:disabled{opacity:.65;transform:none}
-.authGoogleArea{margin-top:18px}
-.authDivider{display:flex;align-items:center;gap:12px;margin:0 0 14px;color:#aaa5b1;font-size:10px;font-weight:700;letter-spacing:.08em}
-.authDivider:before,.authDivider:after{content:"";height:1px;background:#e8e5eb;flex:1}
-.authDivider span{padding:0 2px}
-.googleButton{
-  width:100%;height:53px;border:1px solid #dedbe4;border-radius:12px;background:#fff;
-  color:#3a3544;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:10px;
-  cursor:pointer;transition:border-color .18s ease,box-shadow .18s ease,transform .18s ease;
-}
-.googleButton:hover{border-color:#c9c3d5;box-shadow:0 8px 20px rgba(45,37,72,.055);transform:translateY(-1px)}
-.authSwitch{display:block;margin:19px auto 0;padding:4px;border:0;background:transparent;color:#746f7f;font-size:12px;cursor:pointer}
-.authSwitch:hover{color:#5f4cc8}
-.authError,.authSuccess{margin:0 0 14px;padding:10px 12px;border-radius:10px;font-size:11px;line-height:1.45}
-.authHint{font-size:11px!important;text-align:center;margin:9px 0 0!important}
-
-.authStory{padding:0;align-self:stretch;min-width:0;position:relative;justify-content:center}
-.authStoryTop{position:absolute;right:0;top:28px;margin:0;color:#858091;font-size:12px;gap:10px}
-.authStoryTop i{color:#bbb6c4}
-.networkScene{min-height:590px;width:100%;max-width:760px;margin:0 auto;overflow:visible;isolation:isolate}
-.networkScene:before{
-  content:"";position:absolute;width:470px;height:470px;left:50%;top:50%;transform:translate(-50%,-50%);
-  border-radius:50%;background:radial-gradient(circle,rgba(119,91,232,.08),rgba(119,91,232,.018) 45%,transparent 72%);
-  filter:blur(3px);z-index:-2;
-}
-.networkGlow{position:absolute;border-radius:50%;filter:blur(2px);pointer-events:none;animation:glowFloat 7s ease-in-out infinite}
-.glowOne{width:210px;height:210px;left:7%;top:13%;background:rgba(248,185,183,.08)}
-.glowTwo{width:250px;height:250px;right:4%;bottom:9%;background:rgba(95,204,166,.075);animation-delay:1.5s}
-.orbit{border:1px dashed rgba(105,84,188,.18);box-shadow:inset 0 0 0 1px rgba(255,255,255,.2)}
-.orbitOne{width:min(92%,670px);animation:orbitFloat 10s ease-in-out infinite}
-.orbitTwo{width:min(72%,525px);border-color:rgba(95,175,150,.15);transform:rotate(24deg);animation:orbitFloatReverse 13s ease-in-out infinite}
-.orbitThree{width:min(54%,395px);border-color:rgba(221,168,111,.13);transform:rotate(-18deg);animation:orbitFloatThird 11s ease-in-out infinite}
-.orbitDot{width:8px;height:8px;box-shadow:0 0 0 5px rgba(112,84,230,.055);z-index:1}
-.dotOne{top:19%;left:19%;background:#e98586}.dotTwo{top:27%;right:12%;background:#70c9a5;animation-delay:.8s}.dotThree{bottom:17%;left:35%;background:#8569e5;animation-delay:1.4s}.dotFour{bottom:29%;right:21%;background:#efc46c;animation-delay:.4s}.dotFive{top:37%;left:7%;background:#9d83e9;animation-delay:1.9s}
-.networkNode{position:absolute;display:flex;align-items:center;gap:10px;z-index:3;animation:nodeFloat 5.5s ease-in-out infinite}
-.networkNode b{font-size:11px;font-weight:700;color:#403a4d;background:rgba(255,255,255,.9);border:1px solid rgba(228,224,235,.9);border-radius:999px;padding:9px 12px;white-space:nowrap;box-shadow:0 8px 22px rgba(48,40,78,.055);backdrop-filter:blur(8px)}
-.nodeIcon{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;position:relative;border:7px solid rgba(255,255,255,.74);box-shadow:0 9px 25px rgba(48,40,78,.1)}
-.nodeOne{top:16%;left:10%}.nodeOne .nodeIcon{background:#eee7ff}.nodeOne b{color:#6653b7}
-.nodeTwo{top:28%;left:1%;animation-delay:.7s}.nodeTwo .nodeIcon{background:#fff0f0}.nodeTwo b{color:#ae5364}
-.nodeThree{top:26%;right:0;animation-delay:1.2s}.nodeThree .nodeIcon{background:#e2f8ee}.nodeThree b{color:#3d876b}
-.nodeFour{bottom:18%;left:7%;animation-delay:1.7s}.nodeFour .nodeIcon{background:#fff3d3}.nodeFour b{color:#957027}
-.nodeFive{bottom:15%;right:5%;animation-delay:2.1s}.nodeFive .nodeIcon{background:#e8f2ff}.nodeFive b{color:#4973a4}
-.nodeHead{position:absolute;width:10px;height:10px;border-radius:50%;background:#6c57c9;top:15px}.nodeBody{position:absolute;width:24px;height:13px;border-radius:14px 14px 9px 9px;background:#6c57c9;bottom:13px}
-.signalIcon{display:flex;align-items:flex-end;justify-content:center;gap:3px;padding-top:2px}.signalIcon span{width:5px;border-radius:4px;background:#d56f83}.signalIcon span:nth-child(1){height:12px}.signalIcon span:nth-child(2){height:22px}.signalIcon span:nth-child(3){height:30px}
-.buildingIcon{display:grid;grid-template-columns:repeat(2,6px);grid-template-rows:repeat(2,9px);gap:3px;align-content:center;justify-content:center}.buildingIcon span{display:block;background:#4eaa84;border-radius:1px}
-.peopleIcon:before,.peopleIcon:after{content:"";position:absolute;border-radius:50%;background:#a27818;width:9px;height:9px;top:15px}.peopleIcon:before{left:18px}.peopleIcon:after{right:18px}.peopleIcon span{position:absolute;width:15px;height:9px;border-radius:10px 10px 4px 4px;background:#a27818;bottom:14px}.peopleIcon span:first-child{left:13px}.peopleIcon span:last-child{right:13px}
-.chatIcon{border-radius:0!important}.chatIcon:before{content:"";width:27px;height:20px;border:3px solid #4c78ad;border-radius:7px;position:absolute}.chatIcon:after{content:"";width:8px;height:8px;border-left:3px solid #4c78ad;border-bottom:3px solid #4c78ad;position:absolute;left:17px;bottom:12px;transform:skew(-18deg)}
-.authStoryHeadline{max-width:510px;margin:0;text-align:center;z-index:4}
-.headlineKicker{display:block;margin-bottom:15px;font-size:10px;font-weight:800;letter-spacing:.16em;color:#9189a3}
-.authStoryHeadline strong{font-size:44px;line-height:1.08;letter-spacing:-.055em;color:#25213a;font-weight:770}
-.authStoryHeadline em{font-style:normal;color:#7053e2}
-.authStoryHeadline p{max-width:410px;margin:19px auto 0;font-size:13px;line-height:1.55;color:#858091}
-.headlineUnderline{display:block!important;width:190px;height:10px;margin:13px auto 0;border-top:3px solid #d8ccfb;border-radius:50%;transform:rotate(-2deg)}
-.storyNote{position:absolute;z-index:4;color:#7d7398;font-size:11px;line-height:1.35;font-weight:650}
-.noteOne{left:15%;bottom:7%;display:flex;align-items:flex-start;gap:7px;transform:rotate(-5deg)}
-.noteArrow{font-size:25px;line-height:1;color:#8d7bd5}.noteTwo{right:12%;top:16%;display:flex;align-items:center;gap:8px;transform:rotate(4deg);opacity:.75}.noteTwo i{width:7px;height:7px;border-radius:50%;background:#65c49e;box-shadow:0 0 0 5px rgba(101,196,158,.1)}
-.authStoryFeatures{max-width:610px;width:100%;align-self:center;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px;margin:8px auto 0;padding-top:13px;border-top:1px solid rgba(229,225,234,.75)}
-.storyIcon{width:36px;height:36px;border-radius:11px;position:relative;box-shadow:none}.storyPeople{background:#eee8ff}.storySignal{background:#e3f7ed}.storyProgress{background:#ffeae6}.storyPeople span{position:absolute;width:6px;height:6px;border-radius:50%;background:#6a55c7;top:9px}.storyPeople span:nth-child(1){left:9px}.storyPeople span:nth-child(2){right:9px}.storyPeople span:nth-child(3){left:15px;bottom:7px;width:14px;height:7px;border-radius:8px 8px 4px 4px}.storySignal span{position:absolute;width:4px;border-radius:3px;background:#52a77d;bottom:9px}.storySignal span:nth-child(1){height:8px;left:9px}.storySignal span:nth-child(2){height:13px;left:16px}.storySignal span:nth-child(3){height:19px;left:23px}.storyProgress span{font-size:15px;color:#c16d63;font-weight:800}
-.authStoryFeatures b{font-size:11px}.authStoryFeatures small{font-size:9px}
-@keyframes nodeFloat{0%,100%{transform:translate3d(0,0,0)}50%{transform:translate3d(0,-6px,0)}}
-@keyframes glowFloat{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(7px,-8px) scale(1.04)}}
-@keyframes orbitFloatThird{0%,100%{transform:rotate(-18deg) scale(1)}50%{transform:rotate(-14deg) scale(1.012)}}
-@media (prefers-reduced-motion:reduce){.networkNode,.networkGlow,.orbit,.orbitDot{animation:none}}
-@media (max-width:1100px){
-  .authPage{grid-template-columns:minmax(350px,450px) minmax(430px,1fr);gap:38px;padding:28px}
-  .authCard{padding:30px}.authStoryHeadline strong{font-size:36px}.nodeIcon{width:50px;height:50px}.networkNode b{font-size:10px;padding:8px 10px}.authStoryFeatures{gap:14px}
-}
-@media (max-width:760px){
-  .authPage{grid-template-columns:1fr;place-items:center;min-height:100svh;padding:18px;background:#fafaf8;overflow:auto}
-  .authStory{display:none}
-  .authCard{width:100%;max-width:430px;padding:27px 21px 25px;border-radius:20px;box-shadow:0 12px 34px rgba(37,31,63,.055)}
-  .authLogo{margin-bottom:27px}.authCard h1{font-size:30px}.authCard>p{font-size:14px;margin-bottom:27px}.authCard input,.authCard .primary.full,.googleButton{height:52px}
-}
-
-/* People discovery redesign — replaces news-based Live Intelligence UI. */
-.discoverSetup{display:grid;grid-template-columns:2fr 1.2fr 1.2fr 1.2fr;gap:10px;padding:16px;background:#faf9fb;border:1px solid #e8e5ec;border-radius:16px;margin:18px 0}.discoverField label{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.08em;font-weight:800;color:#898394;margin:0 0 6px}.discoverField input,.discoverField select{width:100%;height:40px;border:1px solid #ddd9e3;border-radius:10px;background:#fff;padding:0 11px;font-size:12px;color:#302b3c;outline:none}.discoverField input:focus,.discoverField select:focus{border-color:#a997df;box-shadow:0 0 0 3px rgba(112,86,214,.08)}.discoverGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:16px}.discoverCard{display:grid;grid-template-columns:38px 1fr auto;gap:13px;align-items:center;background:#fff;border:1px solid #e6e2ea;border-radius:16px;padding:16px;box-shadow:0 5px 18px rgba(38,32,60,.025)}.discoverIcon{width:38px;height:38px;border-radius:11px;background:#f0ebff;color:#6650c8;display:grid;place-items:center}.discoverBody h3{margin:0;font-size:14px;color:#302b3c}.discoverBody p{margin:5px 0 7px;color:#7d7788;font-size:11px;line-height:1.45}.discoverRule{font-size:9px;color:#9a94a4}.discoverCard .primary{white-space:nowrap}.discoverSection{margin-top:28px}.discoverHint{font-size:12px;color:#807a8b;line-height:1.5;margin:4px 0 12px}.companySearchGrid{display:flex;flex-wrap:wrap;gap:8px}.companySearch{display:flex;align-items:center;gap:8px;border:1px solid #e3dfea;background:#fff;border-radius:999px;padding:9px 12px;color:#4c4658;font-size:11px;cursor:pointer}.companySearch:hover{border-color:#b9a9e7;background:#faf8ff}.discoverFooter{display:flex;gap:10px;align-items:flex-start;margin-top:24px;padding:13px 15px;border:1px solid #e8e4ed;border-radius:13px;background:#fcfbfd;color:#777181;font-size:10px;line-height:1.5}.discoverFooter b{color:#4b4556;white-space:nowrap}@media(max-width:900px){.discoverSetup{grid-template-columns:1fr 1fr}.discoverGrid{grid-template-columns:1fr}}@media(max-width:600px){.discoverSetup{grid-template-columns:1fr}.discoverCard{grid-template-columns:34px 1fr}.discoverCard .primary{grid-column:1/-1;width:100%}.discoverFooter{flex-direction:column}}
-
 /* =========================================================
-   LOGIN — FINAL UX PASS
-   Compact, single-screen authentication + quieter animation.
+   LOGIN — CONSOLIDATED DESKTOP HERO REFINEMENT
+   The desktop hero uses one authoritative four-signal composition.
+   Positioning is fixed; motion is applied only to inner elements.
    ========================================================= */
 .authPage{
   min-height:100svh;
@@ -4037,601 +3915,401 @@ html, body, .app, .content, .sidebar {
 .authLogo{width:42px;height:42px;margin-bottom:19px;border-radius:11px}
 .authCard h1{margin:0 0 7px;font-size:34px;line-height:1.04;letter-spacing:-.055em}
 .authCard>p{margin:0 0 20px;font-size:14px;line-height:1.4;color:#777181}
-.authCard form{gap:0}
-.authCard label{margin:0 0 13px;font-size:12px;font-weight:760}
+.authCard form{display:flex;flex-direction:column;gap:0}
+.authCard label{display:block;margin:0 0 13px;font-size:12px;font-weight:760}
 .authCard input{height:47px;border-radius:11px;padding:0 14px;border-color:#d9dce3;background:#fff}
 .authCard input:focus{border-color:#9a89e0;box-shadow:0 0 0 3px rgba(112,84,230,.09)}
 .authCard input::placeholder{color:#9aa2ac}
 .passwordField{display:block!important}
 .passwordLabelRow{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px}
 .passwordLabelRow>span{display:block}
-.forgotPassword{
-  border:0;
-  background:none;
-  padding:0;
-  color:#5f55c9!important;
-  font-size:11px;
-  font-weight:650;
-  text-decoration:none;
-  line-height:1;
-}
+.forgotPassword{border:0;background:none;padding:0;color:#5f55c9!important;font-size:11px;font-weight:650;text-decoration:none;line-height:1}
 .forgotPassword:hover{color:#493daf!important;text-decoration:underline}
 .passwordInputWrap{position:relative;display:block}
 .passwordInputWrap input{padding-right:46px}
-.passwordToggle{
-  position:absolute;right:9px;top:50%;transform:translateY(-50%);
-  width:32px;height:32px;border:0;background:transparent;border-radius:8px;
-  display:grid;place-items:center;color:#8b9099;padding:0;
-}
+.passwordToggle{position:absolute;right:9px;top:50%;transform:translateY(-50%);width:32px;height:32px;border:0;background:transparent;border-radius:8px;display:grid;place-items:center;color:#8b9099;padding:0}
 .passwordToggle:hover{background:#f5f3fb;color:#6654c9}
 .passwordToggle svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
-.authCard .primary.full{
-  height:47px;
-  min-height:47px;
-  margin-top:2px;
-  border-radius:11px;
-  background:#7053e2;
-  border-color:#7053e2;
-  box-shadow:0 9px 20px rgba(112,83,226,.18);
-  font-size:13px;
-  font-weight:750;
-}
+.authCard .primary.full{height:47px;min-height:47px;margin-top:2px;border-radius:11px;background:#7053e2;border-color:#7053e2;box-shadow:0 9px 20px rgba(112,83,226,.18);font-size:13px;font-weight:750}
 .authCard .primary.full:hover{background:#6247d0;border-color:#6247d0;box-shadow:0 12px 24px rgba(112,83,226,.22)}
 .authGoogleArea{margin-top:14px}
 .authDivider{height:14px;margin:0 0 9px;display:flex;align-items:center;gap:10px;color:#aaa6b0;font-size:9px;font-weight:700}
 .authDivider:before,.authDivider:after{content:"";height:1px;background:#ece9ef;flex:1}
 .googleButton{height:45px!important;border-radius:11px!important;border:1px solid #e1dfe5!important;background:#fff!important;color:#373341!important;font-size:12px!important;font-weight:650!important;box-shadow:none!important}
 .googleButton:hover{background:#faf9fc!important;border-color:#d6d1df!important}
-.authSwitch{margin-top:13px;font-size:11px;color:#8a8493;text-decoration:none}
+.authSwitch{margin-top:13px;font-size:11px;color:#8a8493}
 .authSwitch:hover{color:#5f55c9}
 .authError,.authSuccess{font-size:10px;margin:0 0 11px}
 .authStory{padding:0;align-self:stretch;min-width:0;display:flex;justify-content:center;align-items:center}
-.networkScene{min-height:540px;height:min(68vh,620px);width:100%;max-width:720px;margin:0 auto;overflow:visible;isolation:isolate}
-.networkScene:before{width:430px;height:430px}
-.authStoryHeadline{max-width:430px;text-align:center;margin:0;z-index:4}
-.authStoryHeadline strong{font-size:40px;line-height:1.06;letter-spacing:-.06em}
-.authStoryHeadline em{color:#7053e2}
-.networkNode{animation:nodeFloatSoft 6s ease-in-out infinite}
-.networkNode b{font-size:10px;padding:7px 10px;opacity:.8;transition:opacity .25s ease,transform .25s ease}
-.networkNode:hover b{opacity:1;transform:translateY(-1px)}
-.nodeIcon{width:54px;height:54px;border-width:6px}
-.nodeOne{top:15%;left:10%}.nodeTwo{top:30%;left:2%}.nodeThree{top:27%;right:1%}.nodeFour{bottom:18%;left:8%}.nodeFive{bottom:14%;right:7%}
-.orbitOne{animation:orbitFloat 12s ease-in-out infinite}
-.orbitTwo{animation:orbitFloatReverse 15s ease-in-out infinite}
-.orbitThree{animation:orbitFloatThird 13s ease-in-out infinite}
-.networkGlow{animation:glowFloat 9s ease-in-out infinite}
-.orbitDot{animation:dotPulseSoft 3.5s ease-in-out infinite}
-@keyframes nodeFloatSoft{0%,100%{transform:translate3d(0,0,0)}50%{transform:translate3d(0,-5px,0)}}
-@keyframes dotPulseSoft{0%,100%{transform:scale(1);opacity:.55}50%{transform:scale(1.3);opacity:.9}}
-@media(max-width:1100px){
-  .authPage{grid-template-columns:minmax(330px,440px) minmax(380px,1fr);gap:30px;padding:22px}
-  .authCard{padding:28px 30px 25px}.authStoryHeadline strong{font-size:34px}.networkScene{height:520px}.nodeIcon{width:50px;height:50px}
-}
-@media(max-width:760px){
-  .authPage{display:grid;grid-template-columns:1fr;min-height:100svh;height:auto;place-items:center;padding:14px;overflow:hidden}
-  .authStory{display:none}
-  .authCard{width:100%;max-width:400px;padding:24px 21px 22px;border-radius:18px;box-shadow:0 10px 28px rgba(37,31,63,.05)}
-  .authLogo{width:38px;height:38px;margin-bottom:17px}
-  .authCard h1{font-size:29px;margin-bottom:6px}.authCard>p{font-size:13px;margin-bottom:18px}
-  .authCard label{margin-bottom:12px}.authCard input{height:46px}.authCard .primary.full{height:46px;min-height:46px}
-  .googleButton{height:44px!important}.authGoogleArea{margin-top:12px}.authSwitch{margin-top:11px}
-}
-@media(max-height:760px) and (min-width:761px){
-  .authPage{padding-top:14px;padding-bottom:14px}
-  .authCard{padding-top:22px;padding-bottom:20px}
-  .authLogo{width:38px;height:38px;margin-bottom:13px}.authCard h1{font-size:31px}.authCard>p{margin-bottom:15px}
-  .authCard label{margin-bottom:10px}.authCard input{height:43px}.authCard .primary.full{height:44px;min-height:44px}.authGoogleArea{margin-top:10px}.googleButton{height:42px!important}.authSwitch{margin-top:9px}
-  .networkScene{height:500px;min-height:500px}
-}
 
-/* =========================================================
-   LOGIN — NETWORK ALIGNMENT REFINEMENT
-   Five nodes sit on an invisible oval around the headline.
-   The oval is a layout guide only — it is never drawn.
-   ========================================================= */
-@media (min-width:761px){
-  .networkScene{
-    position:relative;
-    max-width:700px;
-    height:min(68vh,600px);
-  }
-
-  /* Invisible oval: nodes are positioned around it, but no circle is rendered. */
-  .orbit{
-    border-color:transparent !important;
-    opacity:0;
-  }
-
-  /* Equal visual footprint + vertical lockup keeps every node consistent. */
-  .networkNode{
-    position:absolute;
-    width:104px;
-    min-height:78px;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:flex-start;
-    gap:7px;
-    z-index:2;
-    animation:nodeFloatOnly 6s ease-in-out infinite;
-  }
-
-  .networkNode b{
-    min-width:64px;
-    height:30px;
-    display:grid;
-    place-items:center;
-    padding:0 10px;
-    text-align:center;
-    font-size:10px;
-    line-height:1;
-  }
-
-  .nodeIcon{
-    width:54px;
-    height:54px;
-    flex:none;
-  }
-
-  /* Five equal angular positions around an invisible oval. */
-  .nodeOne{
-    top:6%;
-    left:50%;
-    transform:translateX(-50%);
-    animation-delay:0s;
-  }
-  .nodeTwo{
-    top:29%;
-    left:14%;
-    transform:translateX(-50%);
-    animation-delay:.8s;
-  }
-  .nodeThree{
-    top:29%;
-    left:86%;
-    transform:translateX(-50%);
-    animation-delay:1.6s;
-  }
-  .nodeFour{
-    bottom:7%;
-    left:27%;
-    transform:translateX(-50%);
-    animation-delay:2.4s;
-  }
-  .nodeFive{
-    bottom:7%;
-    left:73%;
-    transform:translateX(-50%);
-    animation-delay:3.2s;
-  }
-
-  /* Central message stays mathematically centred regardless of node size. */
-  .authStoryHeadline{
-    position:absolute;
-    left:50%;
-    top:50%;
-    transform:translate(-50%,-50%);
-    width:min(570px,82%);
-    max-width:none;
-    margin:0;
-    text-align:center;
-  }
-
-  .authStoryHeadline strong{
-    display:block;
-    font-size:40px;
-    line-height:1.06;
-    letter-spacing:-.06em;
-  }
-}
-
-@keyframes nodeFloatOnly{0%,100%{margin-top:0}50%{margin-top:-5px}}
-@media (min-width:761px) and (max-width:1100px){
-  .networkScene{height:540px}
-  .networkNode{width:96px}
-  .nodeOne{left:50%}
-  .nodeTwo{left:12%}
-  .nodeThree{left:88%}
-  .nodeFour{left:24%}
-  .nodeFive{left:76%}
-}
-
-
-/* LOGIN — STABLE NETWORK COMPOSITION
-   Five nodes follow an invisible horizontal oval. The oval itself is never rendered.
-   The headline owns the centre and remains stable as the viewport changes.
-*/
+/* Desktop hero: one clean coordinate system for the four signals. */
 @media (min-width:1001px){
-  .authPage{
-    grid-template-columns:minmax(380px,460px) minmax(560px,1fr);
-    gap:clamp(28px,4vw,64px);
-    padding:24px clamp(24px,4vw,64px);
-  }
-
-  .authStory{
-    min-width:0;
-    width:100%;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-  }
-
-  .networkScene{
+  .authStory .networkScene{
     position:relative;
-    width:min(100%,720px);
+    width:min(100%,760px);
     height:560px;
     min-height:560px;
     margin:0 auto;
+    display:block;
     overflow:visible;
     isolation:isolate;
   }
 
-  /* Decorative rings are disabled; positioning uses the invisible oval coordinates below. */
-  .networkScene .orbit{display:none!important;}
+  /* Never render the old orbit artwork. */
+  .authStory .networkScene > .orbit{display:none!important}
+  .authStory .networkScene .networkGlow{display:block;pointer-events:none}
 
-  .networkScene:before{
-    width:500px;
-    height:500px;
-    left:50%;
-    top:50%;
-    transform:translate(-50%,-50%);
-  }
-
-  .networkNode{
+  /* Quiet ambient dots reinforce the network without drawing an oval. */
+  .authStory .networkScene .orbitDot{
+    display:block!important;
     position:absolute;
-    z-index:5;
-    width:96px;
-    height:88px;
-    min-height:0;
-    margin:0!important;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:flex-start;
-    gap:7px;
-    transform:translateX(-50%);
-    animation:nodeFloatOnly 6s ease-in-out infinite;
+    width:7px;height:7px;border-radius:50%;z-index:2;
+    box-shadow:0 0 0 6px rgba(112,84,230,.04);
+    animation:signalDotDrift 4.8s ease-in-out infinite;
+    will-change:transform,opacity;
   }
+  .authStory .networkScene .dotOne{left:30%;top:25%;background:#8c76df;animation-delay:.2s}
+  .authStory .networkScene .dotTwo{left:70%;top:25%;background:#70c7a8;animation-delay:1.1s}
+  .authStory .networkScene .dotThree{left:73%;top:72%;background:#efc05e;animation-delay:2s}
+  .authStory .networkScene .dotFour{left:27%;top:72%;background:#8c76df;animation-delay:2.8s}
+  .authStory .networkScene .dotFive{left:50%;top:17%;background:#e9898f;animation-delay:3.6s}
 
-  .networkNode b{
-    width:74px;
-    min-width:74px;
-    height:28px;
-    padding:0 8px;
-    display:grid;
-    place-items:center;
-    border-radius:999px;
-    font-size:10px;
-    line-height:1;
-    white-space:nowrap;
-    background:rgba(255,255,255,.92);
-    border:1px solid rgba(230,226,235,.88);
-    box-shadow:0 5px 16px rgba(37,31,63,.045);
-  }
-
-  .nodeIcon{width:54px;height:54px;flex:none;}
-
-  /* Equal angular positions around an invisible horizontal oval. */
-  .nodeOne{top:2%;left:50%;animation-delay:0s;}
-  .nodeTwo{top:25%;left:12%;animation-delay:.8s;}
-  .nodeThree{top:25%;left:88%;animation-delay:1.6s;}
-  .nodeFour{top:73%;left:23%;animation-delay:2.4s;}
-  .nodeFive{top:73%;left:77%;animation-delay:3.2s;}
-
-  .authStoryHeadline{
+  /* The headline is independently centered and never participates in node positioning. */
+  .authStory .authStoryHeadline{
     position:absolute;
-    z-index:8;
-    left:50%;
-    top:50%;
-    width:560px;
-    max-width:72%;
+    left:50%;top:50%;
+    width:min(520px,70%);
+    max-width:520px;
     margin:0;
     transform:translate(-50%,-50%);
     text-align:center;
+    z-index:5;
+    pointer-events:none;
   }
-
-  .authStoryHeadline strong{
+  .authStory .authStoryHeadline strong{
     display:block;
-    font-size:40px;
+    font-size:clamp(36px,3.15vw,44px);
     line-height:1.06;
     letter-spacing:-.06em;
     white-space:normal;
   }
-}
+  .authStory .authStoryHeadline em{font-style:normal;color:#7053e2}
 
-@keyframes nodeFloatOnly{
-  0%,100%{translate:0 0;}
-  50%{translate:0 -5px;}
-}
-
-@media (min-width:1001px) and (max-width:1180px){
-  .authPage{
-    grid-template-columns:360px minmax(500px,1fr);
-    gap:24px;
-    padding-left:22px;
-    padding-right:22px;
-  }
-  .authCard{padding-left:28px;padding-right:28px;}
-  .networkScene{width:100%;height:520px;min-height:520px;}
-  .authStoryHeadline{width:500px;max-width:70%;}
-  .authStoryHeadline strong{font-size:35px;}
-  .nodeIcon{width:50px;height:50px;}
-  .networkNode{width:90px;height:82px;}
-}
-
-/* Below desktop width, keep the form clean rather than compressing the illustration into it. */
-@media (max-width:1000px){
-  .authStory{display:none!important;}
-  .authPage{
-    grid-template-columns:minmax(360px,480px);
-    place-items:center;
-  }
-}
-
-@media (max-width:760px){
-  .authPage{
-    display:grid;
-    grid-template-columns:1fr;
-    min-height:100svh;
-    height:auto;
-    place-items:center;
-    padding:14px;
-    overflow:hidden;
-  }
-  .authCard{
-    width:100%;
-    max-width:400px;
-    padding:24px 21px 22px;
-    border-radius:18px;
-    box-shadow:0 10px 28px rgba(37,31,63,.05);
-  }
-  .authLogo{width:38px;height:38px;margin-bottom:17px;}
-  .authCard h1{font-size:29px;margin-bottom:6px;}
-  .authCard>p{font-size:13px;margin-bottom:18px;}
-  .authCard label{margin-bottom:12px;}
-  .authCard input{height:46px;}
-  .authCard .primary.full{height:46px;min-height:46px;}
-  .googleButton{height:44px!important;}
-  .authGoogleArea{margin-top:12px;}
-  .authSwitch{margin-top:11px;}
-}
-
-@media (max-height:760px) and (min-width:761px){
-  .authPage{padding-top:14px;padding-bottom:14px;}
-  .authCard{padding-top:22px;padding-bottom:20px;}
-  .authLogo{width:38px;height:38px;margin-bottom:13px;}
-  .authCard h1{font-size:31px;}
-  .authCard>p{margin-bottom:15px;}
-  .authCard label{margin-bottom:10px;}
-  .authCard input{height:43px;}
-  .authCard .primary.full{height:44px;min-height:44px;}
-  .authGoogleArea{margin-top:10px;}
-  .googleButton{height:42px!important;}
-  .authSwitch{margin-top:9px;}
-}
-
-
-/* LOGIN — FOUR INITIALS NETWORK
-   Four equal profile-style initials arranged on an invisible oval. */
-@media (min-width:1001px){
-  .networkScene{height:560px;min-height:560px;width:min(100%,720px);max-width:720px;position:relative;overflow:visible}
-  .networkScene .orbit,.networkScene .orbitDot,.networkScene .networkGlow{display:none!important}
-
-  .networkNode{
+  /* Node anchors are static. Only the inner profile + label animate. */
+  .authStory .networkNode{
     position:absolute!important;
-    width:110px!important;
+    z-index:6!important;
+    width:104px!important;
     height:88px!important;
     min-height:0!important;
     margin:0!important;
+    padding:0!important;
     display:flex!important;
     flex-direction:column!important;
     align-items:center!important;
     justify-content:flex-start!important;
     gap:8px!important;
-    transform:translateX(-50%)!important;
-    z-index:6!important;
-    animation:nodeFloatOnly 6s ease-in-out infinite!important;
+    transform:translate(-50%,-50%)!important;
+    animation:none!important;
   }
-  .networkNode .nodeIcon{
-    width:54px!important;height:54px!important;
+  .authStory .networkNode .nodeIcon{
+    width:58px!important;
+    height:58px!important;
+    flex:0 0 58px!important;
     border-radius:50%!important;
-    border:5px solid rgba(255,255,255,.94)!important;
-    display:grid!important;place-items:center!important;
-    flex:none!important;
-    font-size:13px!important;font-weight:800!important;
+    border:6px solid rgba(255,255,255,.94)!important;
+    display:grid!important;
+    place-items:center!important;
+    font-size:14px!important;
+    font-weight:800!important;
     letter-spacing:-.03em!important;
-    box-shadow:0 9px 24px rgba(48,40,78,.10),0 0 0 1px rgba(104,82,190,.08)!important;
+    box-shadow:0 10px 26px rgba(48,40,78,.11),0 0 0 1px rgba(216,211,229,.76)!important;
+    will-change:transform,box-shadow;
+    animation:signalProfileFloat 4.8s ease-in-out infinite;
   }
-  .networkNode b{
+  .authStory .networkNode b{
     width:auto!important;min-width:0!important;height:auto!important;
-    padding:0!important;border:0!important;box-shadow:none!important;
-    background:transparent!important;border-radius:0!important;
-    color:#625b70!important;font-size:10px!important;font-weight:700!important;
-    line-height:1.1!important;white-space:nowrap!important;
-    opacity:1!important;
+    padding:0!important;border:0!important;background:transparent!important;
+    box-shadow:none!important;backdrop-filter:none!important;border-radius:0!important;
+    color:#625b70!important;font-size:11px!important;font-weight:750!important;
+    line-height:1.15!important;white-space:nowrap!important;text-align:center!important;
+    opacity:1!important;will-change:transform;
+    animation:signalLabelFloat 4.8s ease-in-out infinite;
   }
-  .initialIcon{background:#f0ebff!important;color:#6752c7!important}
-  .nodeTwo .initialIcon{background:#eaf7f1!important;color:#418a6c!important}
-  .nodeThree .initialIcon{background:#fff1ed!important;color:#b56559!important}
-  .nodeFour .initialIcon{background:#eaf1ff!important;color:#4e6fa8!important}
 
-  /* Four evenly spaced points on an invisible horizontal oval. */
-  .nodeOne{top:12%!important;left:24%!important;animation-delay:0s!important}
-  .nodeTwo{top:12%!important;left:76%!important;animation-delay:.8s!important}
-  .nodeThree{bottom:12%!important;left:76%!important;animation-delay:1.6s!important}
-  .nodeFour{bottom:12%!important;left:24%!important;animation-delay:2.4s!important}
+  /* Visually balanced wide oval — not mathematically rigid. */
+  .authStory .nodeOne{top:16%;left:19%;}
+  .authStory .nodeTwo{top:16%;left:81%;}
+  .authStory .nodeThree{top:84%;left:81%;}
+  .authStory .nodeFour{top:84%;left:19%;}
 
-  .authStoryHeadline{
-    position:absolute!important;left:50%!important;top:50%!important;
-    width:min(520px,70%)!important;max-width:none!important;margin:0!important;
-    transform:translate(-50%,-50%)!important;text-align:center!important;
-    z-index:8!important;
-  }
-  .authStoryHeadline strong{font-size:40px!important;line-height:1.07!important;letter-spacing:-.06em!important;display:block!important}
+  .authStory .nodeOne .nodeIcon,.authStory .nodeOne b{animation-delay:0s}
+  .authStory .nodeTwo .nodeIcon,.authStory .nodeTwo b{animation-delay:.9s}
+  .authStory .nodeThree .nodeIcon,.authStory .nodeThree b{animation-delay:1.8s}
+  .authStory .nodeFour .nodeIcon,.authStory .nodeFour b{animation-delay:2.7s}
+
+  .authStory .nodeOne .nodeIcon{background:#eee7ff!important;color:#6752c7!important}
+  .authStory .nodeTwo .nodeIcon{background:#eaf7f1!important;color:#418a6c!important}
+  .authStory .nodeThree .nodeIcon{background:#fff1ed!important;color:#b56559!important}
+  .authStory .nodeFour .nodeIcon{background:#eaf1ff!important;color:#4e6fa8!important}
+  .authStory .nodeOne b{color:#6653b7!important}
+  .authStory .nodeTwo b{color:#3d876b!important}
+  .authStory .nodeThree b{color:#ae6358!important}
+  .authStory .nodeFour b{color:#4973a4!important}
 }
+
+@keyframes signalProfileFloat{
+  0%,100%{transform:translate3d(0,0,0) scale(1) rotate(0deg);box-shadow:0 10px 26px rgba(48,40,78,.11),0 0 0 1px rgba(216,211,229,.76)}
+  50%{transform:translate3d(0,-10px,0) scale(1.04) rotate(-1deg);box-shadow:0 17px 30px rgba(48,40,78,.15),0 0 0 7px rgba(112,84,230,.035)}
+}
+@keyframes signalLabelFloat{
+  0%,100%{transform:translate3d(0,0,0)}
+  50%{transform:translate3d(0,-7px,0)}
+}
+@keyframes signalDotDrift{
+  0%,100%{transform:translate3d(0,0,0) scale(1);opacity:.68}
+  50%{transform:translate3d(5px,-8px,0) scale(1.25);opacity:1}
+}
+
 @media (min-width:1001px) and (max-width:1180px){
-  .networkNode{width:100px!important}
-  .networkNode .nodeIcon{width:50px!important;height:50px!important;font-size:12px!important}
-  .nodeOne{left:22%!important}.nodeTwo{left:78%!important}.nodeThree{left:78%!important}.nodeFour{left:22%!important}
-  .authStoryHeadline{width:470px!important}
-  .authStoryHeadline strong{font-size:34px!important}
-}
-@media (prefers-reduced-motion:reduce){.networkNode{animation:none!important}}
-
-/* LOGIN — FINAL FOUR-SIGNAL ORBIT / POLISHED FINAL
-   Four initials are placed on the diagonal points of one invisible wide oval.
-   The headline is locked to the exact center; nodes animate independently. */
-.authStory .networkScene{
-  position:relative;
-  width:min(100%,760px);
-  height:min(70vh,600px);
-  min-height:500px;
-  display:block;
-  overflow:visible;
+  .authPage{grid-template-columns:360px minmax(500px,1fr);gap:24px;padding-left:22px;padding-right:22px}
+  .authCard{padding-left:28px;padding-right:28px}
+  .authStory .networkScene{width:100%;height:520px;min-height:520px}
+  .authStory .authStoryHeadline{width:470px}
+  .authStory .authStoryHeadline strong{font-size:35px}
+  .authStory .networkNode{width:96px!important;height:82px!important}
+  .authStory .networkNode .nodeIcon{width:52px!important;height:52px!important;flex-basis:52px!important;font-size:13px!important}
+  .authStory .nodeOne,.authStory .nodeFour{left:18%}
+  .authStory .nodeTwo,.authStory .nodeThree{left:82%}
 }
 
-/* Remove legacy visible orbit geometry. */
-.authStory .networkScene > .orbit{display:none!important;opacity:0!important;}
-
-.authStory .authStoryHeadline{
-  position:absolute!important;
-  left:50%!important;
-  top:50%!important;
-  transform:translate(-50%,-50%)!important;
-  width:470px!important;
-  max-width:470px!important;
-  margin:0!important;
-  text-align:center!important;
-  z-index:5!important;
-  pointer-events:none!important;
+@media (max-width:1000px){
+  .authStory{display:none!important}
+  .authPage{grid-template-columns:minmax(360px,480px);place-items:center}
 }
 
-.authStory .authStoryHeadline strong{
-  display:block!important;
-  font-size:clamp(34px,3.15vw,46px)!important;
-  line-height:1.045!important;
-  letter-spacing:-.065em!important;
+@media (max-width:760px){
+  .authPage{display:grid;grid-template-columns:1fr;min-height:100svh;height:auto;place-items:center;padding:14px;overflow:hidden}
+  .authCard{width:100%;max-width:400px;padding:24px 21px 22px;border-radius:18px;box-shadow:0 10px 28px rgba(37,31,63,.05)}
+  .authLogo{width:38px;height:38px;margin-bottom:17px}
+  .authCard h1{font-size:29px;margin-bottom:6px}
+  .authCard>p{font-size:13px;margin-bottom:18px}
+  .authCard label{margin-bottom:12px}
+  .authCard input{height:46px}
+  .authCard .primary.full{height:46px;min-height:46px}
+  .googleButton{height:44px!important}
+  .authGoogleArea{margin-top:12px}
+  .authSwitch{margin-top:11px}
 }
 
-/* All four nodes share the same footprint so the oval stays visually balanced. */
-.authStory .networkNode{
-  position:absolute!important;
-  z-index:6!important;
-  width:108px!important;
-  display:flex!important;
-  flex-direction:column!important;
-  align-items:center!important;
-  justify-content:flex-start!important;
-  gap:8px!important;
-  margin:0!important;
-  will-change:transform,filter!important;
-}
-
-.authStory .networkNode .nodeIcon{
-  width:64px!important;
-  height:64px!important;
-  flex:0 0 64px!important;
-  border:6px solid rgba(255,255,255,.92)!important;
-  border-radius:50%!important;
-  box-shadow:0 10px 26px rgba(48,40,78,.12),0 0 0 1px rgba(216,211,229,.78)!important;
-  font-size:15px!important;
-  font-weight:850!important;
-  letter-spacing:-.03em!important;
-  transition:box-shadow .35s ease!important;
-}
-
-.authStory .networkNode b{
-  padding:0!important;
-  border:0!important;
-  background:transparent!important;
-  box-shadow:none!important;
-  backdrop-filter:none!important;
-  font-size:11px!important;
-  line-height:1.15!important;
-  font-weight:750!important;
-  white-space:nowrap!important;
-  text-align:center!important;
-  opacity:1!important;
-}
-
-/* Four diagonal points of one wide invisible oval, centered around the headline. */
-.authStory .nodeOne{
-  left:10%!important;
-  top:17%!important;
-  animation:signalFloatTL 4.8s cubic-bezier(.45,0,.55,1) infinite!important;
-  animation-delay:0s!important;
-}
-.authStory .nodeTwo{
-  right:10%!important;
-  top:17%!important;
-  animation:signalFloatTR 5.2s cubic-bezier(.45,0,.55,1) infinite!important;
-  animation-delay:.7s!important;
-}
-.authStory .nodeThree{
-  right:10%!important;
-  bottom:17%!important;
-  animation:signalFloatBR 5s cubic-bezier(.45,0,.55,1) infinite!important;
-  animation-delay:1.4s!important;
-}
-.authStory .nodeFour{
-  left:10%!important;
-  bottom:17%!important;
-  animation:signalFloatBL 5.4s cubic-bezier(.45,0,.55,1) infinite!important;
-  animation-delay:2.1s!important;
-}
-
-.authStory .nodeOne .nodeIcon{background:linear-gradient(145deg,#f0eaff,#e6dcff)}
-.authStory .nodeOne b{color:#6653b7}
-.authStory .nodeTwo .nodeIcon{background:linear-gradient(145deg,#e7f9f0,#d8f1e7)}
-.authStory .nodeTwo b{color:#3d876b}
-.authStory .nodeThree .nodeIcon{background:linear-gradient(145deg,#fff1ee,#ffe5df)}
-.authStory .nodeThree b{color:#a85b50}
-.authStory .nodeFour .nodeIcon{background:linear-gradient(145deg,#edf4ff,#e1ebff)}
-.authStory .nodeFour b{color:#4a71a3}
-
-/* Noticeable but soft motion: floating, slight tilt/scale, and a breathing shadow. */
-@keyframes signalFloatTL{
-  0%,100%{transform:translate3d(0,0,0) rotate(0deg) scale(1);filter:drop-shadow(0 0 0 rgba(112,86,214,0))}
-  50%{transform:translate3d(-5px,-13px,0) rotate(-1deg) scale(1.045);filter:drop-shadow(0 11px 18px rgba(112,86,214,.11))}
-}
-@keyframes signalFloatTR{
-  0%,100%{transform:translate3d(0,0,0) rotate(0deg) scale(1);filter:drop-shadow(0 0 0 rgba(68,151,117,0))}
-  50%{transform:translate3d(5px,-11px,0) rotate(1deg) scale(1.045);filter:drop-shadow(0 11px 18px rgba(68,151,117,.11))}
-}
-@keyframes signalFloatBR{
-  0%,100%{transform:translate3d(0,0,0) rotate(0deg) scale(1);filter:drop-shadow(0 0 0 rgba(184,98,86,0))}
-  50%{transform:translate3d(5px,12px,0) rotate(1deg) scale(1.045);filter:drop-shadow(0 11px 18px rgba(184,98,86,.11))}
-}
-@keyframes signalFloatBL{
-  0%,100%{transform:translate3d(0,0,0) rotate(0deg) scale(1);filter:drop-shadow(0 0 0 rgba(74,113,163,0))}
-  50%{transform:translate3d(-5px,13px,0) rotate(-1deg) scale(1.045);filter:drop-shadow(0 11px 18px rgba(74,113,163,.11))}
-}
-
-/* Small ambient particles reinforce the sense of a living network. */
-.authStory .orbitDot{
-  animation:signalDotPulse 2.5s ease-in-out infinite!important;
-}
-.authStory .dotOne{animation-delay:.15s!important}
-.authStory .dotTwo{animation-delay:.72s!important}
-.authStory .dotThree{animation-delay:1.29s!important}
-.authStory .dotFour{animation-delay:1.86s!important}
-.authStory .dotFive{animation-delay:2.43s!important}
-
-@keyframes signalDotPulse{
-  0%,100%{transform:scale(.78);opacity:.42}
-  50%{transform:scale(1.7);opacity:1}
-}
-
-@media (max-width:1200px) and (min-width:1001px){
-  .authStory .networkScene{width:min(100%,700px);height:560px;min-height:520px}
-  .authStory .authStoryHeadline{width:450px!important;max-width:450px!important}
-  .authStory .authStoryHeadline strong{font-size:clamp(32px,3.2vw,42px)!important}
-  .authStory .nodeOne{left:7%!important;top:17%!important}
-  .authStory .nodeTwo{right:7%!important;top:17%!important}
-  .authStory .nodeThree{right:7%!important;bottom:17%!important}
-  .authStory .nodeFour{left:7%!important;bottom:17%!important}
+@media (max-height:760px) and (min-width:761px){
+  .authPage{padding-top:14px;padding-bottom:14px}
+  .authCard{padding-top:22px;padding-bottom:20px}
+  .authLogo{width:38px;height:38px;margin-bottom:13px}
+  .authCard h1{font-size:31px}
+  .authCard>p{margin-bottom:15px}
+  .authCard label{margin-bottom:10px}
+  .authCard input{height:43px}
+  .authCard .primary.full{height:44px;min-height:44px}
+  .authGoogleArea{margin-top:10px}
+  .googleButton{height:42px!important}
+  .authSwitch{margin-top:9px}
 }
 
 @media (prefers-reduced-motion:reduce){
-  .authStory .networkNode,.authStory .orbitDot{animation:none!important}
+  .authStory .networkNode .nodeIcon,
+  .authStory .networkNode b,
+  .authStory .networkScene .orbitDot,
+  .authStory .networkScene .networkGlow{animation:none!important}
+}
+
+/* People discovery redesign — replaces news-based Live Intelligence UI. */
+.discoverSetup{display:grid;grid-template-columns:2fr 1.2fr 1.2fr 1.2fr;gap:10px;padding:16px;background:#faf9fb;border:1px solid #e8e5ec;border-radius:16px;margin:18px 0}.discoverField label{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.08em;font-weight:800;color:#898394;margin:0 0 6px}.discoverField input,.discoverField select{width:100%;height:40px;border:1px solid #ddd9e3;border-radius:10px;background:#fff;padding:0 11px;font-size:12px;color:#302b3c;outline:none}.discoverField input:focus,.discoverField select:focus{border-color:#a997df;box-shadow:0 0 0 3px rgba(112,86,214,.08)}.discoverGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:16px}.discoverCard{display:grid;grid-template-columns:38px 1fr auto;gap:13px;align-items:center;background:#fff;border:1px solid #e6e2ea;border-radius:16px;padding:16px;box-shadow:0 5px 18px rgba(38,32,60,.025)}.discoverIcon{width:38px;height:38px;border-radius:11px;background:#f0ebff;color:#6650c8;display:grid;place-items:center}.discoverBody h3{margin:0;font-size:14px;color:#302b3c}.discoverBody p{margin:5px 0 7px;color:#7d7788;font-size:11px;line-height:1.45}.discoverRule{font-size:9px;color:#9a94a4}.discoverCard .primary{white-space:nowrap}.discoverSection{margin-top:28px}.discoverHint{font-size:12px;color:#807a8b;line-height:1.5;margin:4px 0 12px}.companySearchGrid{display:flex;flex-wrap:wrap;gap:8px}.companySearch{display:flex;align-items:center;gap:8px;border:1px solid #e3dfea;background:#fff;border-radius:999px;padding:9px 12px;color:#4c4658;font-size:11px;cursor:pointer}.companySearch:hover{border-color:#b9a9e7;background:#faf8ff}.discoverFooter{display:flex;gap:10px;align-items:flex-start;margin-top:24px;padding:13px 15px;border:1px solid #e8e4ed;border-radius:13px;background:#fcfbfd;color:#777181;font-size:10px;line-height:1.5}.discoverFooter b{color:#4b4556;white-space:nowrap}@media(max-width:900px){.discoverSetup{grid-template-columns:1fr 1fr}.discoverGrid{grid-template-columns:1fr}}@media(max-width:600px){.discoverSetup{grid-template-columns:1fr}.discoverCard{grid-template-columns:34px 1fr}.discoverCard .primary{grid-column:1/-1;width:100%}.discoverFooter{flex-direction:column}}
+
+/* LOGIN — FINAL FOUR-SIGNAL NETWORK
+   Desktop-only hero composition. Four profile signals form a visually balanced
+   invisible oval around the headline. Positioning and animation are intentionally
+   separated so motion never changes the composition. */
+@media (min-width:1001px){
+  .authStory .networkScene{
+    position:relative;
+    width:min(100%,760px);
+    height:560px;
+    min-height:560px;
+    margin:0 auto;
+    display:block;
+    overflow:visible;
+    isolation:isolate;
+  }
+
+  /* The oval is an invisible layout guide — never render it. */
+  .authStory .networkScene > .orbit{display:none!important;}
+
+  /* Keep ambient dots visible and independent from node positioning. */
+  .authStory .networkScene .orbitDot{
+    display:block!important;
+    position:absolute;
+    width:8px;
+    height:8px;
+    border-radius:50%;
+    z-index:2;
+    box-shadow:0 0 0 6px rgba(112,84,230,.045);
+    animation:signalDotDrift 4.8s ease-in-out infinite;
+    will-change:transform,opacity;
+  }
+  .authStory .networkScene .dotOne{left:31%;top:24%;background:#8c76df;animation-delay:.2s;}
+  .authStory .networkScene .dotTwo{left:69%;top:23%;background:#70c7a8;animation-delay:1.1s;}
+  .authStory .networkScene .dotThree{left:75%;top:71%;background:#efc05e;animation-delay:2s;}
+  .authStory .networkScene .dotFour{left:25%;top:72%;background:#8c76df;animation-delay:2.8s;}
+  .authStory .networkScene .dotFive{left:50%;top:18%;background:#e9898f;animation-delay:3.6s;}
+
+  /* Headline owns the centre. Nodes never use the headline for positioning. */
+  .authStory .authStoryHeadline{
+    position:absolute;
+    left:50%;
+    top:50%;
+    width:min(520px,72%);
+    max-width:520px;
+    margin:0;
+    transform:translate(-50%,-50%);
+    text-align:center;
+    z-index:5;
+    pointer-events:none;
+  }
+  .authStory .authStoryHeadline strong{
+    display:block;
+    font-size:clamp(36px,3.15vw,44px);
+    line-height:1.06;
+    letter-spacing:-.06em;
+    white-space:normal;
+  }
+
+  /* Fixed anchor: the node itself does not animate. */
+  .authStory .networkNode{
+    position:absolute;
+    z-index:6;
+    width:104px;
+    height:88px;
+    min-height:0;
+    margin:0!important;
+    padding:0;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-start;
+    gap:8px;
+    transform:translate(-50%,-50%);
+    animation:none!important;
+  }
+
+  /* Profile position = fixed. Animation lives on the inner profile element. */
+  .authStory .networkNode .nodeIcon{
+    width:58px;
+    height:58px;
+    flex:0 0 58px;
+    border-radius:50%;
+    border:6px solid rgba(255,255,255,.94);
+    display:grid;
+    place-items:center;
+    font-size:14px;
+    font-weight:800;
+    letter-spacing:-.03em;
+    box-shadow:0 10px 26px rgba(48,40,78,.11),0 0 0 1px rgba(216,211,229,.76);
+    will-change:transform,box-shadow;
+    animation:signalProfileFloat 4.8s ease-in-out infinite;
+  }
+  .authStory .networkNode b{
+    width:auto;
+    min-width:0;
+    height:auto;
+    padding:0;
+    border:0;
+    background:transparent;
+    box-shadow:none;
+    backdrop-filter:none;
+    color:#625b70;
+    font-size:11px;
+    font-weight:750;
+    line-height:1.15;
+    white-space:nowrap;
+    text-align:center;
+    opacity:1;
+    will-change:transform;
+    animation:signalLabelFloat 4.8s ease-in-out infinite;
+  }
+
+  /* Visually balanced wide oval: intentionally not a perfect geometric circle. */
+  .authStory .nodeOne{
+    top:15%;
+    left:20%;
+    animation-delay:0s!important;
+  }
+  .authStory .nodeTwo{
+    top:15%;
+    left:80%;
+    animation-delay:.9s!important;
+  }
+  .authStory .nodeThree{
+    top:85%;
+    left:80%;
+    animation-delay:1.8s!important;
+  }
+  .authStory .nodeFour{
+    top:85%;
+    left:20%;
+    animation-delay:2.7s!important;
+  }
+
+  /* Per-node animation delays are applied to the inner elements. */
+  .authStory .nodeOne .nodeIcon,.authStory .nodeOne b{animation-delay:0s;}
+  .authStory .nodeTwo .nodeIcon,.authStory .nodeTwo b{animation-delay:.9s;}
+  .authStory .nodeThree .nodeIcon,.authStory .nodeThree b{animation-delay:1.8s;}
+  .authStory .nodeFour .nodeIcon,.authStory .nodeFour b{animation-delay:2.7s;}
+
+  .authStory .nodeOne .nodeIcon{background:#eee7ff;color:#6752c7;}
+  .authStory .nodeTwo .nodeIcon{background:#eaf7f1;color:#418a6c;}
+  .authStory .nodeThree .nodeIcon{background:#fff1ed;color:#b56559;}
+  .authStory .nodeFour .nodeIcon{background:#eaf1ff;color:#4e6fa8;}
+
+  .authStory .nodeOne b{color:#6653b7;}
+  .authStory .nodeTwo b{color:#3d876b;}
+  .authStory .nodeThree b{color:#ae6358;}
+  .authStory .nodeFour b{color:#4973a4;}
+}
+
+@keyframes signalProfileFloat{
+  0%,100%{
+    transform:translate3d(0,0,0) scale(1) rotate(0deg);
+    box-shadow:0 10px 26px rgba(48,40,78,.11),0 0 0 1px rgba(216,211,229,.76);
+  }
+  50%{
+    transform:translate3d(0,-10px,0) scale(1.04) rotate(-1deg);
+    box-shadow:0 17px 30px rgba(48,40,78,.15),0 0 0 7px rgba(112,84,230,.035);
+  }
+}
+
+@keyframes signalLabelFloat{
+  0%,100%{transform:translate3d(0,0,0);}
+  50%{transform:translate3d(0,-7px,0);}
+}
+
+@keyframes signalDotDrift{
+  0%,100%{transform:translate3d(0,0,0) scale(1);opacity:.72;}
+  50%{transform:translate3d(5px,-8px,0) scale(1.25);opacity:1;}
+}
+
+@media (min-width:1001px) and (max-width:1180px){
+  .authStory .networkScene{height:520px;min-height:520px;}
+  .authStory .authStoryHeadline{width:min(470px,72%);}
+  .authStory .authStoryHeadline strong{font-size:35px;}
+  .authStory .networkNode{width:96px;height:82px;}
+  .authStory .networkNode .nodeIcon{width:52px;height:52px;flex-basis:52px;font-size:13px;}
+  .authStory .nodeOne,.authStory .nodeFour{left:18%;}
+  .authStory .nodeTwo,.authStory .nodeThree{left:82%;}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .authStory .networkNode .nodeIcon,
+  .authStory .networkNode b,
+  .authStory .networkScene .orbitDot{animation:none!important;}
 }
