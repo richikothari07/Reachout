@@ -4478,248 +4478,158 @@ html, body, .app, .content, .sidebar {
 }
 @media (prefers-reduced-motion:reduce){.networkNode{animation:none!important}}
 
-/* LOGIN — FINAL FOUR-SIGNAL ORBIT
-   Four equally spaced initials around an invisible ellipse.
-   Headline remains centered and independent of the moving nodes. */
+/* LOGIN — FINAL FOUR-SIGNAL ORBIT / POLISHED FINAL
+   Four initials are placed on the diagonal points of one invisible wide oval.
+   The headline is locked to the exact center; nodes animate independently. */
 .authStory .networkScene{
   position:relative;
   width:min(100%,760px);
-  height:min(68vh,600px);
+  height:min(70vh,600px);
   min-height:500px;
   display:block;
   overflow:visible;
 }
-.authStory .networkScene > .orbit{
-  opacity:0;
-  pointer-events:none;
-}
-.authStory .networkScene:before{
-  width:440px;
-  height:440px;
-  left:50%;
-  top:50%;
-}
+
+/* Remove legacy visible orbit geometry. */
+.authStory .networkScene > .orbit{display:none!important;opacity:0!important;}
+
 .authStory .authStoryHeadline{
-  position:absolute;
-  left:50%;
-  top:50%;
-  transform:translate(-50%,-50%);
-  width:min(88%,500px);
-  max-width:500px;
-  margin:0;
-  text-align:center;
-  z-index:5;
-  pointer-events:none;
+  position:absolute!important;
+  left:50%!important;
+  top:50%!important;
+  transform:translate(-50%,-50%)!important;
+  width:470px!important;
+  max-width:470px!important;
+  margin:0!important;
+  text-align:center!important;
+  z-index:5!important;
+  pointer-events:none!important;
 }
+
 .authStory .authStoryHeadline strong{
-  display:block;
-  font-size:clamp(34px,3.2vw,46px);
-  line-height:1.04;
-  letter-spacing:-.065em;
+  display:block!important;
+  font-size:clamp(34px,3.15vw,46px)!important;
+  line-height:1.045!important;
+  letter-spacing:-.065em!important;
 }
+
+/* All four nodes share the same footprint so the oval stays visually balanced. */
 .authStory .networkNode{
-  position:absolute;
-  z-index:6;
-  width:92px;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:flex-start;
-  gap:8px;
-  margin:0;
-  animation:signalFloat 6s ease-in-out infinite;
-  will-change:transform;
+  position:absolute!important;
+  z-index:6!important;
+  width:108px!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  gap:8px!important;
+  margin:0!important;
+  will-change:transform,filter!important;
 }
+
 .authStory .networkNode .nodeIcon{
-  width:58px;
-  height:58px;
-  flex:0 0 58px;
-  border:6px solid rgba(255,255,255,.82);
-  box-shadow:0 10px 26px rgba(48,40,78,.10),0 0 0 1px rgba(216,211,229,.72);
-  font-size:14px;
-  font-weight:800;
+  width:64px!important;
+  height:64px!important;
+  flex:0 0 64px!important;
+  border:6px solid rgba(255,255,255,.92)!important;
+  border-radius:50%!important;
+  box-shadow:0 10px 26px rgba(48,40,78,.12),0 0 0 1px rgba(216,211,229,.78)!important;
+  font-size:15px!important;
+  font-weight:850!important;
+  letter-spacing:-.03em!important;
+  transition:box-shadow .35s ease!important;
 }
+
 .authStory .networkNode b{
-  padding:0;
-  border:0;
-  background:transparent;
-  box-shadow:none;
-  backdrop-filter:none;
-  font-size:11px;
-  line-height:1.15;
-  font-weight:750;
-  white-space:nowrap;
-  text-align:center;
-  opacity:1;
+  padding:0!important;
+  border:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  backdrop-filter:none!important;
+  font-size:11px!important;
+  line-height:1.15!important;
+  font-weight:750!important;
+  white-space:nowrap!important;
+  text-align:center!important;
+  opacity:1!important;
 }
-/* Four cardinal points on the same invisible ellipse. */
+
+/* Four diagonal points of one wide invisible oval, centered around the headline. */
 .authStory .nodeOne{
-  top:8%;
-  left:50%;
-  transform:translateX(-50%);
-  animation-delay:0s;
+  left:10%!important;
+  top:17%!important;
+  animation:signalFloatTL 4.8s cubic-bezier(.45,0,.55,1) infinite!important;
+  animation-delay:0s!important;
 }
 .authStory .nodeTwo{
-  top:50%;
-  left:5%;
-  transform:translateY(-50%);
-  animation-delay:1.5s;
+  right:10%!important;
+  top:17%!important;
+  animation:signalFloatTR 5.2s cubic-bezier(.45,0,.55,1) infinite!important;
+  animation-delay:.7s!important;
 }
 .authStory .nodeThree{
-  top:50%;
-  right:5%;
-  transform:translateY(-50%);
-  animation-delay:3s;
+  right:10%!important;
+  bottom:17%!important;
+  animation:signalFloatBR 5s cubic-bezier(.45,0,.55,1) infinite!important;
+  animation-delay:1.4s!important;
 }
 .authStory .nodeFour{
-  bottom:8%;
-  left:50%;
-  transform:translateX(-50%);
-  animation-delay:4.5s;
-}
-.authStory .nodeOne .nodeIcon{background:#eee7ff}.authStory .nodeOne b{color:#6653b7}
-.authStory .nodeTwo .nodeIcon{background:#fff0f0}.authStory .nodeTwo b{color:#ae5364}
-.authStory .nodeThree .nodeIcon{background:#e2f8ee}.authStory .nodeThree b{color:#3d876b}
-.authStory .nodeFour .nodeIcon{background:#e8f2ff}.authStory .nodeFour b{color:#4973a4}
-@keyframes signalFloat{
-  0%,100%{margin-top:0}
-  50%{margin-top:-7px}
-}
-@media (max-width:1100px){
-  .authStory .networkScene{max-width:620px;height:500px;min-height:500px}
-  .authStory .authStoryHeadline strong{font-size:clamp(31px,3.5vw,40px)}
-  .authStory .nodeOne{top:7%}.authStory .nodeFour{bottom:7%}
-  .authStory .nodeTwo{left:3%}.authStory .nodeThree{right:3%}
-}
-@media (prefers-reduced-motion:reduce){
-  .authStory .networkNode{animation:none}
+  left:10%!important;
+  bottom:17%!important;
+  animation:signalFloatBL 5.4s cubic-bezier(.45,0,.55,1) infinite!important;
+  animation-delay:2.1s!important;
 }
 
-/* LOGIN — BALANCED OVAL SIGNALS (final override)
-   Four signals sit on the four diagonal points of an invisible oval.
-   The headline is independent and always centered. */
-@media (min-width:1001px){
-  .authStory .networkScene{
-    width:min(100%,760px)!important;
-    height:min(72vh,620px)!important;
-    min-height:520px!important;
-    position:relative!important;
-    overflow:visible!important;
-  }
+.authStory .nodeOne .nodeIcon{background:linear-gradient(145deg,#f0eaff,#e6dcff)}
+.authStory .nodeOne b{color:#6653b7}
+.authStory .nodeTwo .nodeIcon{background:linear-gradient(145deg,#e7f9f0,#d8f1e7)}
+.authStory .nodeTwo b{color:#3d876b}
+.authStory .nodeThree .nodeIcon{background:linear-gradient(145deg,#fff1ee,#ffe5df)}
+.authStory .nodeThree b{color:#a85b50}
+.authStory .nodeFour .nodeIcon{background:linear-gradient(145deg,#edf4ff,#e1ebff)}
+.authStory .nodeFour b{color:#4a71a3}
 
-  .authStory .authStoryHeadline{
-    position:absolute!important;
-    left:50%!important;
-    top:50%!important;
-    transform:translate(-50%,-50%)!important;
-    width:500px!important;
-    max-width:500px!important;
-    margin:0!important;
-    text-align:center!important;
-    z-index:4!important;
-  }
+/* Noticeable but soft motion: floating, slight tilt/scale, and a breathing shadow. */
+@keyframes signalFloatTL{
+  0%,100%{transform:translate3d(0,0,0) rotate(0deg) scale(1);filter:drop-shadow(0 0 0 rgba(112,86,214,0))}
+  50%{transform:translate3d(-5px,-13px,0) rotate(-1deg) scale(1.045);filter:drop-shadow(0 11px 18px rgba(112,86,214,.11))}
+}
+@keyframes signalFloatTR{
+  0%,100%{transform:translate3d(0,0,0) rotate(0deg) scale(1);filter:drop-shadow(0 0 0 rgba(68,151,117,0))}
+  50%{transform:translate3d(5px,-11px,0) rotate(1deg) scale(1.045);filter:drop-shadow(0 11px 18px rgba(68,151,117,.11))}
+}
+@keyframes signalFloatBR{
+  0%,100%{transform:translate3d(0,0,0) rotate(0deg) scale(1);filter:drop-shadow(0 0 0 rgba(184,98,86,0))}
+  50%{transform:translate3d(5px,12px,0) rotate(1deg) scale(1.045);filter:drop-shadow(0 11px 18px rgba(184,98,86,.11))}
+}
+@keyframes signalFloatBL{
+  0%,100%{transform:translate3d(0,0,0) rotate(0deg) scale(1);filter:drop-shadow(0 0 0 rgba(74,113,163,0))}
+  50%{transform:translate3d(-5px,13px,0) rotate(-1deg) scale(1.045);filter:drop-shadow(0 11px 18px rgba(74,113,163,.11))}
+}
 
-  .authStory .authStoryHeadline strong{
-    display:block!important;
-    font-size:clamp(34px,3.15vw,46px)!important;
-    line-height:1.04!important;
-    letter-spacing:-.065em!important;
-  }
+/* Small ambient particles reinforce the sense of a living network. */
+.authStory .orbitDot{
+  animation:signalDotPulse 2.5s ease-in-out infinite!important;
+}
+.authStory .dotOne{animation-delay:.15s!important}
+.authStory .dotTwo{animation-delay:.72s!important}
+.authStory .dotThree{animation-delay:1.29s!important}
+.authStory .dotFour{animation-delay:1.86s!important}
+.authStory .dotFive{animation-delay:2.43s!important}
 
-  .authStory .networkNode{
-    position:absolute!important;
-    z-index:6!important;
-    width:104px!important;
-    display:flex!important;
-    flex-direction:column!important;
-    align-items:center!important;
-    gap:9px!important;
-    margin:0!important;
-    transform:none!important;
-    will-change:transform!important;
-  }
+@keyframes signalDotPulse{
+  0%,100%{transform:scale(.78);opacity:.42}
+  50%{transform:scale(1.7);opacity:1}
+}
 
-  .authStory .networkNode .nodeIcon{
-    width:62px!important;
-    height:62px!important;
-    flex:0 0 62px!important;
-    border:6px solid rgba(255,255,255,.86)!important;
-    box-shadow:0 10px 26px rgba(48,40,78,.12),0 0 0 1px rgba(216,211,229,.78)!important;
-    font-size:15px!important;
-  }
-
-  .authStory .networkNode b{
-    padding:0!important;
-    border:0!important;
-    background:transparent!important;
-    box-shadow:none!important;
-    font-size:11px!important;
-    line-height:1.15!important;
-    font-weight:750!important;
-    white-space:nowrap!important;
-    text-align:center!important;
-  }
-
-  /* Diagonal points of one invisible ellipse: TL → TR → BR → BL */
-  .authStory .nodeOne{
-    left:23%!important;
-    top:24%!important;
-    animation:signalFloatTL 4.2s ease-in-out infinite!important;
-    animation-delay:0s!important;
-  }
-  .authStory .nodeTwo{
-    left:auto!important;
-    right:23%!important;
-    top:24%!important;
-    animation:signalFloatTR 4.6s ease-in-out infinite!important;
-    animation-delay:.65s!important;
-  }
-  .authStory .nodeThree{
-    left:auto!important;
-    right:23%!important;
-    top:auto!important;
-    bottom:24%!important;
-    animation:signalFloatBR 4.4s ease-in-out infinite!important;
-    animation-delay:1.3s!important;
-  }
-  .authStory .nodeFour{
-    left:23%!important;
-    top:auto!important;
-    bottom:24%!important;
-    animation:signalFloatBL 4.8s ease-in-out infinite!important;
-    animation-delay:1.95s!important;
-  }
-
-  /* More visible movement, while remaining polished: gentle lift + scale + rotation. */
-  @keyframes signalFloatTL{
-    0%,100%{transform:translate3d(0,0,0) rotate(0deg) scale(1)}
-    50%{transform:translate3d(-3px,-12px,0) rotate(-1deg) scale(1.035)}
-  }
-  @keyframes signalFloatTR{
-    0%,100%{transform:translate3d(0,0,0) rotate(0deg) scale(1)}
-    50%{transform:translate3d(3px,-10px,0) rotate(1deg) scale(1.035)}
-  }
-  @keyframes signalFloatBR{
-    0%,100%{transform:translate3d(0,0,0) rotate(0deg) scale(1)}
-    50%{transform:translate3d(3px,11px,0) rotate(1deg) scale(1.035)}
-  }
-  @keyframes signalFloatBL{
-    0%,100%{transform:translate3d(0,0,0) rotate(0deg) scale(1)}
-    50%{transform:translate3d(-3px,10px,0) rotate(-1deg) scale(1.035)}
-  }
-
-  /* Keep the decorative dots alive, but remove the old orbit geometry. */
-  .authStory .networkScene > .orbit{display:none!important}
-  .authStory .orbitDot{animation:signalDotPulse 2.2s ease-in-out infinite!important}
-  .authStory .dotOne{animation-delay:.2s!important}
-  .authStory .dotTwo{animation-delay:.8s!important}
-  .authStory .dotThree{animation-delay:1.4s!important}
-  .authStory .dotFour{animation-delay:2s!important}
-  .authStory .dotFive{animation-delay:2.6s!important}
-  @keyframes signalDotPulse{
-    0%,100%{transform:scale(.8);opacity:.45}
-    50%{transform:scale(1.55);opacity:1}
-  }
+@media (max-width:1200px) and (min-width:1001px){
+  .authStory .networkScene{width:min(100%,700px);height:560px;min-height:520px}
+  .authStory .authStoryHeadline{width:450px!important;max-width:450px!important}
+  .authStory .authStoryHeadline strong{font-size:clamp(32px,3.2vw,42px)!important}
+  .authStory .nodeOne{left:7%!important;top:17%!important}
+  .authStory .nodeTwo{right:7%!important;top:17%!important}
+  .authStory .nodeThree{right:7%!important;bottom:17%!important}
+  .authStory .nodeFour{left:7%!important;bottom:17%!important}
 }
 
 @media (prefers-reduced-motion:reduce){
