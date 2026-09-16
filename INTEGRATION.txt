@@ -1,0 +1,34 @@
+# ReachOut UX polish — exact integration
+
+This is intentionally a visual-only layer so existing product/API logic remains unchanged.
+
+1. Copy `app_reachout_polish.css` into your repo as:
+   `app/reachout-polish.css`
+
+2. Add this line immediately after the existing globals import in `app/layout.tsx`:
+
+   import './reachout-polish.css'
+
+   So the top of layout.tsx becomes:
+
+   import './globals.css'
+   import './reachout-polish.css'
+   import type { Metadata } from 'next'
+
+3. Run:
+   npm run build
+
+What this changes:
+- softer, more playful cards and hover states
+- clearer visual hierarchy on Home
+- cleaner AI command area
+- stronger people-card treatment
+- improved list/table surfaces
+- Goal & Data modal is capped to the viewport and scrolls internally
+- close button is forced to the top-right and remains visible
+- removes the unnecessary wizard/profile layer from the normal Goal & Data modal
+- mobile modal becomes single-column and button-safe
+- existing save/import/navigation logic is untouched
+
+Important:
+The CSS deliberately does not remove or alter API calls, Supabase state, LinkedIn imports, message generation, or routing.

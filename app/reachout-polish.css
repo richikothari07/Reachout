@@ -1,0 +1,212 @@
+/* ReachOut UX POLISH
+   Drop-in visual layer. No product logic or API behavior is changed. */
+
+:root{
+  --ro-bg:#f6f7fb;
+  --ro-ink:#171925;
+  --ro-border:#e6e8f0;
+  --ro-purple:#684ff3;
+  --ro-blue:#2370e8;
+  --ro-coral:#ff6f61;
+  --ro-mint:#40b98b;
+  --ro-shadow:0 18px 50px rgba(40,44,78,.08)
+}
+html,body{background:var(--ro-bg)!important;color:var(--ro-ink)!important}
+body{overflow-x:hidden}
+
+/* Navigation */
+.topbar{position:relative;z-index:20!important;align-items:center!important;margin-bottom:34px!important}
+.topbar .nav{transition:transform .16s ease,background .16s ease,color .16s ease,box-shadow .16s ease!important;border-radius:14px!important}
+.topbar .nav:hover{transform:translateY(-1px)!important;background:#f0edff!important;color:#4f3ed2!important}
+.topbar .nav.active{background:#eeeaff!important;color:#5b49e6!important;box-shadow:inset 0 -3px 0 #6654ed!important}
+
+/* Home hierarchy */
+.topbar h1{font-size:clamp(34px,4vw,54px)!important;letter-spacing:-.065em!important;line-height:1.01!important}
+.topbar p{font-size:13px!important;max-width:760px!important;color:#6f7588!important}
+
+/* Stats */
+.stats{gap:14px!important;margin-bottom:15px!important}
+.stat{
+  border:1px solid var(--ro-border)!important;
+  border-radius:17px!important;
+  padding:18px!important;
+  min-height:86px!important;
+  box-shadow:0 6px 24px rgba(40,44,78,.035)!important;
+  transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease!important
+}
+.stat:hover{transform:translateY(-3px)!important;box-shadow:0 16px 34px rgba(40,44,78,.08)!important;border-color:#d9daf0!important}
+.statIcon{width:38px!important;height:38px!important;border-radius:12px!important;background:#f0edff!important;color:var(--ro-purple)!important}
+.stat:nth-child(2) .statIcon{background:#fff0ed!important;color:var(--ro-coral)!important}
+.stat:nth-child(3) .statIcon{background:#fff6d9!important;color:#d39a08!important}
+.stat:nth-child(4) .statIcon{background:#eaf8f1!important;color:var(--ro-mint)!important}
+.stat strong{font-size:23px!important}
+.stat span{font-size:10px!important;color:#84899a!important}
+.insightBar{border-radius:17px!important;padding:16px 20px!important;margin-bottom:26px!important;box-shadow:0 6px 24px rgba(40,44,78,.03)!important}
+
+/* AI command card */
+.agentCard{
+  border-radius:22px!important;
+  background:linear-gradient(135deg,#f0edff 0%,#f5f7ff 58%,#eef6ff 100%)!important;
+  border:1px solid #ddd9ff!important;
+  box-shadow:var(--ro-shadow)!important;
+  overflow:hidden!important
+}
+.agentCard:before{
+  content:"";position:absolute;inset:auto -90px -130px auto;width:280px;height:280px;border-radius:50%;
+  background:radial-gradient(circle,#8a73ff22 0,#8a73ff00 68%);pointer-events:none
+}
+.agentInput{border-radius:15px!important;border:1px solid #dedff0!important;box-shadow:0 7px 18px rgba(34,36,60,.05)!important}
+.agentInput input{font-size:12px!important}
+.agentChips{gap:8px!important}
+.agentChips button{
+  border-radius:999px!important;padding:8px 12px!important;background:#fff!important;border-color:#dddbea!important;
+  transition:transform .14s ease,box-shadow .14s ease!important
+}
+.agentChips button:hover{transform:translateY(-2px)!important;box-shadow:0 8px 18px rgba(40,44,78,.08)!important}
+
+/* People cards */
+.cards{gap:14px!important}
+.personCard{
+  border-radius:19px!important;padding:18px!important;min-height:236px!important;border-color:var(--ro-border)!important;
+  box-shadow:0 6px 22px rgba(40,44,78,.035)!important;
+  transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease!important
+}
+.personCard:hover{transform:translateY(-5px)!important;box-shadow:0 18px 40px rgba(40,44,78,.10)!important;border-color:#dad7f6!important}
+.avatar{background:linear-gradient(145deg,#f0edff,#e9eeff)!important;color:#5e50d8!important}
+.personCard .identity b{font-size:12px!important}
+.personCard .identity span{font-size:9px!important;color:#5f6578!important}
+.personCard .identity small{font-size:9px!important;color:#9297a7!important}
+.whyTag{margin:15px 0 10px!important;background:#f7f7fb!important;border:1px solid #ececf3!important;border-radius:11px!important;padding:10px!important;font-size:9px!important}
+.reasonList{gap:6px!important}
+.reasonList span{font-size:9px!important;color:#71778a!important}
+.cardAction{padding-top:12px!important;color:#5746df!important}
+
+/* Action lists */
+.twoCol{gap:14px!important;margin-top:28px!important}
+.actionList,.explainCard{border-radius:16px!important;border-color:var(--ro-border)!important;box-shadow:0 6px 22px rgba(40,44,78,.035)!important}
+.actionRow{padding:15px 16px!important}
+.actionRow:hover{background:#fbfaff!important}
+.actionIcon{width:35px!important;height:35px!important;border-radius:11px!important;background:#f0edff!important;color:#5d4ce4!important}
+
+/* Opportunities/discover */
+.pageTitle{margin:8px 0 24px!important}
+.pageTitle h2{font-size:42px!important;letter-spacing:-.06em!important}
+.pageTitle p{font-size:12px!important;line-height:1.55!important;color:#777d8f!important}
+.search{height:50px!important;border-radius:15px!important;box-shadow:0 5px 18px rgba(40,44,78,.035)!important}
+.search input{font-size:11px!important}
+.search button{border-radius:10px!important}
+.table{border-radius:16px!important;box-shadow:0 6px 22px rgba(40,44,78,.035)!important}
+.tr{padding:15px 18px!important}
+.tr.row:hover{background:#fbfaff!important}
+
+/* Overlays */
+.modalOverlay{
+  padding:18px!important;background:rgba(34,38,58,.48)!important;backdrop-filter:blur(10px)!important;z-index:90!important
+}
+
+/* GOAL & DATA modal — compact, clear, always closable */
+.setupModal{
+  position:relative!important;
+  width:min(760px,calc(100vw - 32px))!important;
+  max-height:86vh!important;
+  overflow:auto!important;
+  overscroll-behavior:contain!important;
+  border-radius:24px!important;
+  padding:28px 30px 24px!important;
+  background:#fff!important;
+  border:1px solid #e4e4ef!important;
+  box-shadow:0 30px 90px rgba(17,20,39,.22)!important
+}
+.setupModal::-webkit-scrollbar{width:8px}
+.setupModal::-webkit-scrollbar-thumb{background:#d9d9e8;border-radius:999px}
+.modalClose{
+  position:absolute!important;right:16px!important;top:16px!important;z-index:10!important;
+  width:38px!important;height:38px!important;border-radius:12px!important;border:1px solid #dedff0!important;
+  background:#f7f7fd!important;display:grid!important;place-items:center!important;color:#5d6172!important;
+  box-shadow:0 4px 12px rgba(30,34,60,.06)!important
+}
+.modalClose:hover{background:#eeebff!important;color:#5a47db!important;transform:translateY(-1px)!important}
+.setupModal>.modalEyebrow{font-size:10px!important;color:#6d5ee8!important;letter-spacing:.16em!important;font-weight:800!important}
+.setupModal>h2{font-size:31px!important;letter-spacing:-.055em!important;margin:8px 48px 6px 0!important}
+.setupModal>.modalSub{max-width:590px!important;font-size:11px!important;line-height:1.55!important;color:#7b8193!important;margin:0 38px 18px 0!important}
+
+/* Hide the unnecessary wizard/professional-profile layer on the normal settings modal.
+   Existing state, save logic and data import remain untouched. */
+.setupModal .setupSteps{display:none!important}
+.setupModal .keywordHint{display:none!important}
+.setupModal .profileImportBox{display:none!important}
+.setupModal:not(.onboardingModalClean)>.modalFields>.fieldRow:nth-of-type(2){display:none!important}
+.setupModal:not(.onboardingModalClean)>.modalFields>label:last-of-type{display:none!important}
+
+.setupModal .modalFields{display:grid!important;gap:12px!important;margin-top:10px!important}
+.setupModal .modalFields .fieldRow{display:grid!important;grid-template-columns:1.15fr 1fr!important;gap:12px!important}
+.setupModal .modalFields label{gap:6px!important}
+.setupModal .modalFields label>span{font-size:10px!important;font-weight:750!important;color:#4f5465!important}
+.setupModal .modalFields input{
+  height:44px!important;border-radius:12px!important;border:1px solid #dfe1eb!important;padding:0 13px!important;
+  background:#fbfbfd!important;font-size:11px!important;outline:none!important
+}
+.setupModal .modalFields input:focus{background:#fff!important;border-color:#7b6cf0!important;box-shadow:0 0 0 4px #6a55f312!important}
+.setupModal .importBox{
+  margin-top:16px!important;border:1.5px dashed #cfc9ff!important;border-radius:17px!important;padding:18px!important;
+  background:linear-gradient(180deg,#fbfaff,#f6f7ff)!important;
+  display:grid!important;grid-template-columns:42px 1fr auto!important;align-items:center!important;gap:12px!important
+}
+.setupModal .uploadIcon{width:42px!important;height:42px!important;border-radius:13px!important;background:#ece8ff!important;color:#624de8!important}
+.setupModal .importBox b{font-size:12px!important}
+.setupModal .importBox span{font-size:9px!important;color:#73798a!important}
+.setupModal .importBox small{font-size:8px!important;color:#999dad!important}
+.setupModal .importBox button{
+  border-radius:11px!important;background:#644ee7!important;color:#fff!important;border:0!important;padding:10px 13px!important;
+  font-size:10px!important;box-shadow:0 8px 18px #644ee72b!important
+}
+.setupModal .modalFiles{margin-top:10px!important}
+.setupModal .modalFile{border:1px solid #ececf3!important;border-radius:12px!important;padding:10px 12px!important;background:#fcfcfe!important}
+.setupModal .modalFooter{
+  display:flex!important;justify-content:flex-end!important;gap:9px!important;margin-top:18px!important;padding-top:16px!important;
+  border-top:1px solid #ececf3!important
+}
+.setupModal .modalFooter .secondary{border-radius:11px!important}
+.setupModal .modalFooter .primary{
+  border-radius:11px!important;background:linear-gradient(135deg,#664ee8,#3679e9)!important;
+  border-color:transparent!important;box-shadow:0 10px 24px #5f55e52b!important
+}
+.setupModal .privacyNote{font-size:8.5px!important;color:#898e9e!important;margin-top:9px!important}
+.onboardingModalClean{max-height:90vh!important}
+.onboardingModalClean .cleanOnboardingHeader h2{letter-spacing:-.055em!important}
+.onboardingModalClean .cleanOnboardingActions{
+  position:sticky!important;bottom:-1px!important;
+  background:linear-gradient(180deg,#ffffff00 0,#fff 22%)!important;
+  padding-top:15px!important;margin-top:8px!important
+}
+
+/* Mobile */
+@media(max-width:900px){
+  .content{margin-left:0!important;padding:20px 14px 88px!important;max-width:none!important}
+  .topbar{gap:14px!important;margin-bottom:24px!important}
+  .topbar h1{font-size:37px!important}
+  .topbar p{font-size:11px!important}
+  .stats{grid-template-columns:1fr 1fr!important}
+  .cards{grid-template-columns:1fr!important}
+  .twoCol{grid-template-columns:1fr!important}
+  .insightBar{align-items:flex-start!important;gap:12px!important;flex-direction:column!important}
+  .setupModal{width:calc(100vw - 20px)!important;max-height:90vh!important;padding:22px 18px 18px!important;border-radius:20px!important}
+  .setupModal>h2{font-size:25px!important;margin-right:36px!important}
+  .setupModal .modalFields .fieldRow{grid-template-columns:1fr!important}
+  .setupModal .importBox{grid-template-columns:38px 1fr!important}
+  .setupModal .importBox button{grid-column:1/-1;width:100%!important}
+  .setupModal .modalFooter{flex-direction:column-reverse!important}
+  .setupModal .modalFooter button{width:100%!important}
+}
+@media(max-width:560px){
+  .topbar{align-items:flex-start!important}
+  .topbar .nav{padding:8px 9px!important;font-size:9px!important}
+  .topbar .nav:nth-child(n+4){display:none!important}
+  .stats{gap:9px!important}
+  .stat{padding:14px!important}
+  .stat strong{font-size:19px!important}
+  .stat span{font-size:8px!important}
+  .agentCard{border-radius:18px!important}
+  .personCard{min-height:0!important}
+  .pageTitle h2{font-size:32px!important}
+}
