@@ -4409,3 +4409,71 @@ html, body, .app, .content, .sidebar {
   .googleButton{height:42px!important;}
   .authSwitch{margin-top:9px;}
 }
+
+
+/* LOGIN — FOUR INITIALS NETWORK
+   Four equal profile-style initials arranged on an invisible oval. */
+@media (min-width:1001px){
+  .networkScene{height:560px;min-height:560px;width:min(100%,720px);max-width:720px;position:relative;overflow:visible}
+  .networkScene .orbit,.networkScene .orbitDot,.networkScene .networkGlow{display:none!important}
+
+  .networkNode{
+    position:absolute!important;
+    width:110px!important;
+    height:88px!important;
+    min-height:0!important;
+    margin:0!important;
+    display:flex!important;
+    flex-direction:column!important;
+    align-items:center!important;
+    justify-content:flex-start!important;
+    gap:8px!important;
+    transform:translateX(-50%)!important;
+    z-index:6!important;
+    animation:nodeFloatOnly 6s ease-in-out infinite!important;
+  }
+  .networkNode .nodeIcon{
+    width:54px!important;height:54px!important;
+    border-radius:50%!important;
+    border:5px solid rgba(255,255,255,.94)!important;
+    display:grid!important;place-items:center!important;
+    flex:none!important;
+    font-size:13px!important;font-weight:800!important;
+    letter-spacing:-.03em!important;
+    box-shadow:0 9px 24px rgba(48,40,78,.10),0 0 0 1px rgba(104,82,190,.08)!important;
+  }
+  .networkNode b{
+    width:auto!important;min-width:0!important;height:auto!important;
+    padding:0!important;border:0!important;box-shadow:none!important;
+    background:transparent!important;border-radius:0!important;
+    color:#625b70!important;font-size:10px!important;font-weight:700!important;
+    line-height:1.1!important;white-space:nowrap!important;
+    opacity:1!important;
+  }
+  .initialIcon{background:#f0ebff!important;color:#6752c7!important}
+  .nodeTwo .initialIcon{background:#eaf7f1!important;color:#418a6c!important}
+  .nodeThree .initialIcon{background:#fff1ed!important;color:#b56559!important}
+  .nodeFour .initialIcon{background:#eaf1ff!important;color:#4e6fa8!important}
+
+  /* Four evenly spaced points on an invisible horizontal oval. */
+  .nodeOne{top:12%!important;left:24%!important;animation-delay:0s!important}
+  .nodeTwo{top:12%!important;left:76%!important;animation-delay:.8s!important}
+  .nodeThree{bottom:12%!important;left:76%!important;animation-delay:1.6s!important}
+  .nodeFour{bottom:12%!important;left:24%!important;animation-delay:2.4s!important}
+
+  .authStoryHeadline{
+    position:absolute!important;left:50%!important;top:50%!important;
+    width:min(520px,70%)!important;max-width:none!important;margin:0!important;
+    transform:translate(-50%,-50%)!important;text-align:center!important;
+    z-index:8!important;
+  }
+  .authStoryHeadline strong{font-size:40px!important;line-height:1.07!important;letter-spacing:-.06em!important;display:block!important}
+}
+@media (min-width:1001px) and (max-width:1180px){
+  .networkNode{width:100px!important}
+  .networkNode .nodeIcon{width:50px!important;height:50px!important;font-size:12px!important}
+  .nodeOne{left:22%!important}.nodeTwo{left:78%!important}.nodeThree{left:78%!important}.nodeFour{left:22%!important}
+  .authStoryHeadline{width:470px!important}
+  .authStoryHeadline strong{font-size:34px!important}
+}
+@media (prefers-reduced-motion:reduce){.networkNode{animation:none!important}}

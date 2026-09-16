@@ -204,24 +204,20 @@ export default function Login({ onAuthed }: { onAuthed: () => void }) {
           <span className="orbitDot dotFive"></span>
 
           <div className="networkNode nodeOne">
-            <span className="nodeIcon"><span className="nodeHead"></span><span className="nodeBody"></span></span>
-            <b>Role</b>
-          </div>
-          <div className="networkNode nodeTwo">
-            <span className="nodeIcon signalIcon"><span></span><span></span><span></span></span>
+            <span className="nodeIcon initialIcon">RK</span>
             <b>Hiring</b>
           </div>
-          <div className="networkNode nodeThree">
-            <span className="nodeIcon buildingIcon"><span></span><span></span><span></span><span></span></span>
+          <div className="networkNode nodeTwo">
+            <span className="nodeIcon initialIcon">AS</span>
             <b>Funding</b>
           </div>
-          <div className="networkNode nodeFour">
-            <span className="nodeIcon peopleIcon"><span></span><span></span></span>
-            <b>People</b>
+          <div className="networkNode nodeThree">
+            <span className="nodeIcon initialIcon">PM</span>
+            <b>Network</b>
           </div>
-          <div className="networkNode nodeFive">
-            <span className="nodeIcon chatIcon"><span></span></span>
-            <b>Talk</b>
+          <div className="networkNode nodeFour">
+            <span className="nodeIcon initialIcon">AK</span>
+            <b>Opportunity</b>
           </div>
 
           <div className="authStoryHeadline">
