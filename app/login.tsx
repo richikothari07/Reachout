@@ -221,7 +221,7 @@ export default function Login({ onAuthed }: { onAuthed: () => void }) {
           </div>
 
           <div className="authStoryHeadline">
-            <strong>The right conversations<br />create <em>opportunities.</em></strong>
+            <strong>The right conversations<br />create new<br /><em>opportunities.</em></strong>
           </div>
         </div>
       </section>

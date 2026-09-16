@@ -3848,7 +3848,7 @@ html, body, .app, .content, .sidebar {
 .passwordField{display:block!important}
 .passwordLabelRow{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px}
 .passwordLabelRow>span{display:block}
-.forgotPassword{border:0;background:none;padding:0;color:#5f55c9!important;font-size:11px;font-weight:650;text-decoration:none;line-height:1}
+.forgotPassword{border:0;background:none;padding:0;color:#5f55c9!important;font-size:9px;font-weight:650;text-decoration:none;line-height:1}
 .forgotPassword:hover{color:#493daf!important;text-decoration:underline}
 .passwordInputWrap{position:relative;display:block}
 .passwordInputWrap input{padding-right:46px}
@@ -3910,7 +3910,7 @@ html, body, .app, .content, .sidebar {
     white-space:normal!important;
   }
   .authStory .authStoryHeadline em{
-    font-style:normal!important;
+    font-style:italic!important;
     color:#705cf6!important;
   }
 
@@ -3965,10 +3965,10 @@ html, body, .app, .content, .sidebar {
   }
 
   /* Four visual anchor points of a wide, invisible oval. */
-  .authStory .nodeOne{left:18%;top:23%}
-  .authStory .nodeTwo{left:82%;top:23%}
-  .authStory .nodeThree{left:82%;top:77%}
-  .authStory .nodeFour{left:18%;top:77%}
+  .authStory .nodeOne{left:21%;top:23%}
+  .authStory .nodeTwo{left:79%;top:23%}
+  .authStory .nodeThree{left:79%;top:77%}
+  .authStory .nodeFour{left:21%;top:77%}
 
   .authStory .nodeOne .nodeIcon,.authStory .nodeOne b{animation-delay:0s}
   .authStory .nodeTwo .nodeIcon,.authStory .nodeTwo b{animation-delay:1.05s}
@@ -4013,16 +4013,16 @@ html, body, .app, .content, .sidebar {
     height:500px;
   }
   .authStory .authStoryHeadline{
-    width:min(460px,86%)!important;
+    width:min(500px,90%)!important;
   }
   .authStory .authStoryHeadline strong{
     font-size:clamp(30px,3.3vw,36px)!important;
   }
   .authStory .networkNode{width:100px!important}
-  .authStory .nodeOne{left:17%;top:22%}
-  .authStory .nodeTwo{left:83%;top:22%}
-  .authStory .nodeThree{left:83%;top:78%}
-  .authStory .nodeFour{left:17%;top:78%}
+  .authStory .nodeOne{left:20%;top:22%}
+  .authStory .nodeTwo{left:80%;top:22%}
+  .authStory .nodeThree{left:80%;top:78%}
+  .authStory .nodeFour{left:20%;top:78%}
 }
 
 @keyframes signalProfileFloat{
