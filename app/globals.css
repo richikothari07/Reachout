@@ -4123,3 +4123,73 @@ html, body, .app, .content, .sidebar {
   .authCard label{margin-bottom:10px}.authCard input{height:43px}.authCard .primary.full{height:44px;min-height:44px}.authGoogleArea{margin-top:10px}.googleButton{height:42px!important}.authSwitch{margin-top:9px}
   .networkScene{height:500px;min-height:500px}
 }
+
+/* =========================================================
+   LOGIN — NETWORK ALIGNMENT REFINEMENT
+   Keep all illustration nodes on a balanced, symmetric orbit.
+   ========================================================= */
+@media (min-width:761px){
+  .networkScene{
+    position:relative;
+    max-width:700px;
+    height:min(68vh,600px);
+  }
+
+  /* Give every node the same visual footprint so the icons read as one system. */
+  .networkNode{
+    width:132px;
+    min-height:72px;
+    justify-content:center;
+    gap:8px;
+  }
+
+  .networkNode b{
+    min-width:58px;
+    text-align:center;
+    padding:8px 10px;
+  }
+
+  /* Five evenly distributed anchor points around the central message. */
+  .nodeOne{
+    top:8%;
+    left:17%;
+  }
+  .nodeTwo{
+    top:31%;
+    left:1%;
+  }
+  .nodeThree{
+    top:31%;
+    right:1%;
+  }
+  .nodeFour{
+    bottom:8%;
+    left:17%;
+  }
+  .nodeFive{
+    bottom:8%;
+    right:17%;
+  }
+
+  /* Keep the central headline locked to the visual centre. */
+  .authStoryHeadline{
+    position:absolute;
+    left:50%;
+    top:50%;
+    transform:translate(-50%,-50%);
+    width:min(570px,82%);
+    max-width:none;
+  }
+
+  .authStoryHeadline strong{
+    display:block;
+  }
+}
+
+@media (min-width:761px) and (max-width:1100px){
+  .networkScene{height:540px}
+  .networkNode{width:118px}
+  .nodeOne{left:12%}
+  .nodeFour{left:12%}
+  .nodeFive{right:12%}
+}
