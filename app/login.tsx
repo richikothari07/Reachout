@@ -96,7 +96,7 @@ export default function Login({ onAuthed }: { onAuthed: () => void }) {
         <p>
           {mode === 'reset'
             ? "Enter your email and we'll send a secure reset link."
-            : 'Pick up where you left off.'}
+            : 'Keep building your network.'}
         </p>
 
         <form onSubmit={submit}>

@@ -4235,3 +4235,141 @@ html, body, .app, .content, .sidebar {
   .nodeFour{left:24%}
   .nodeFive{left:76%}
 }
+
+
+/* LOGIN — FINAL NETWORK COMPOSITION
+   The illustration uses an invisible horizontal oval as its layout grid.
+   Nodes are evenly distributed around the perimeter while the headline owns the centre.
+*/
+@media (min-width: 1001px){
+  .authPage{
+    grid-template-columns: minmax(380px, 460px) minmax(560px, 1fr);
+    gap: clamp(28px, 4vw, 64px);
+    padding-left: clamp(24px, 4vw, 64px);
+    padding-right: clamp(24px, 4vw, 64px);
+  }
+
+  .authStory{min-width:0;width:100%;}
+
+  .networkScene{
+    position:relative;
+    width:min(100%, 700px);
+    height:560px;
+    min-height:560px;
+    margin:0 auto;
+    overflow:visible;
+  }
+
+  /* Decorative orbits remain invisible — they are not the positioning mechanism. */
+  .networkScene .orbit{display:none;}
+
+  /* Soft background remains behind the composition. */
+  .networkScene:before{
+    width:500px;
+    height:500px;
+    left:50%;
+    top:50%;
+    transform:translate(-50%,-50%);
+  }
+
+  .networkNode{
+    position:absolute;
+    width:108px;
+    height:86px;
+    min-height:0;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-start;
+    gap:7px;
+    z-index:5;
+    transform:none;
+    animation:nodeFloatOnly 6s ease-in-out infinite;
+  }
+
+  .networkNode b{
+    width:76px;
+    min-width:76px;
+    height:30px;
+    padding:0 8px;
+    display:grid;
+    place-items:center;
+    border-radius:999px;
+    font-size:10px;
+    line-height:1;
+    white-space:nowrap;
+    background:rgba(255,255,255,.9);
+    border:1px solid rgba(230,226,235,.9);
+    box-shadow:0 5px 16px rgba(37,31,63,.045);
+  }
+
+  .nodeIcon{width:54px;height:54px;flex:none;}
+
+  /* Five fixed points around a wide, invisible oval. */
+  .nodeOne{
+    top:2%; left:50%;
+    margin-left:-54px;
+    animation-delay:0s;
+  }
+  .nodeTwo{
+    top:29%; left:7%;
+    animation-delay:.8s;
+  }
+  .nodeThree{
+    top:29%; right:7%;
+    animation-delay:1.6s;
+  }
+  .nodeFour{
+    bottom:6%; left:18%;
+    animation-delay:2.4s;
+  }
+  .nodeFive{
+    bottom:6%; right:18%;
+    animation-delay:3.2s;
+  }
+
+  .authStoryHeadline{
+    position:absolute;
+    z-index:8;
+    left:50%;
+    top:50%;
+    width:570px;
+    max-width:calc(100% - 180px);
+    margin:0;
+    transform:translate(-50%,-50%);
+    text-align:center;
+  }
+
+  .authStoryHeadline strong{
+    display:block;
+    font-size:40px;
+    line-height:1.06;
+    letter-spacing:-.06em;
+    white-space:normal;
+  }
+}
+
+/* At narrower desktop widths, preserve the two-column login but give the story room. */
+@media (min-width: 1001px) and (max-width: 1180px){
+  .authPage{
+    grid-template-columns:360px minmax(500px,1fr);
+    gap:24px;
+    padding-left:22px;
+    padding-right:22px;
+  }
+  .authCard{padding-left:28px;padding-right:28px;}
+  .networkScene{height:520px;min-height:520px;}
+  .authStoryHeadline{width:500px;max-width:calc(100% - 150px);}
+  .authStoryHeadline strong{font-size:35px;}
+  .nodeIcon{width:50px;height:50px;}
+  .nodeTwo{left:2%;}
+  .nodeThree{right:2%;}
+  .nodeFour{left:12%;}
+  .nodeFive{right:12%;}
+}
+
+/* Below this width the form gets the full screen rather than producing a cramped illustration. */
+@media (max-width:1000px) and (min-width:761px){
+  .authStory{display:none;}
+  .authPage{grid-template-columns:minmax(360px,480px);place-items:center;}
+}
