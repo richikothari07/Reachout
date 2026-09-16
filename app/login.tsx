@@ -11,6 +11,7 @@ export default function Login({ onAuthed }: { onAuthed: () => void }) {
   const [password, setPassword] = useState('')
   const [busy, setBusy] = useState(false)
   const [googleBusy, setGoogleBusy] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
 
@@ -94,8 +95,8 @@ export default function Login({ onAuthed }: { onAuthed: () => void }) {
 
         <p>
           {mode === 'reset'
-            ? "Enter your email and we'll send you a secure password reset link."
-            : 'Keep your network, outreach history and follow-ups saved securely across devices.'}
+            ? "Enter your email and we'll send a secure reset link."
+            : 'Pick up where you left off.'}
         </p>
 
         <form onSubmit={submit}>
@@ -110,28 +111,38 @@ export default function Login({ onAuthed }: { onAuthed: () => void }) {
             />
           </label>
 
+
           {mode !== 'reset' && (
             <label className="passwordField">
               <span className="passwordLabelRow">
                 <span>Password</span>
-                {mode === 'login' && (
-                  <button
-                    className="forgotPassword forgotInline"
-                    type="button"
-                    onClick={() => switchMode('reset')}
-                  >
-                    Forgot password?
-                  </button>
-                )}
+                <button className="forgotPassword" type="button" onClick={() => switchMode('reset')}>
+                  Forgot password?
+                </button>
               </span>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                minLength={6}
-                placeholder="••••••••"
-              />
+              <span className="passwordInputWrap">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  minLength={6}
+                  placeholder="••••••••"
+                />
+                <button
+                  className="passwordToggle"
+                  type="button"
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  aria-pressed={showPassword}
+                  onClick={() => setShowPassword((value) => !value)}
+                >
+                  {showPassword ? (
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3l18 18M10.6 10.7a2 2 0 0 0 2.7 2.7M9.9 5.2A10.8 10.8 0 0 1 12 5c5 0 8.5 4 9.7 6.2a11.8 11.8 0 0 1-3.1 3.5M6.2 6.2C3.9 7.7 2.6 10 2.3 11.2 3.5 13.5 7 17.5 12 17.5c1.2 0 2.3-.2 3.3-.6"/></svg>
+                  ) : (
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.3 12S5.5 5 12 5s9.7 7 9.7 7-3.2 7-9.7 7-9.7-7-9.7-7Z"/><circle cx="12" cy="12" r="2.7"/></svg>
+                  )}
+                </button>
+              </span>
             </label>
           )}
 
@@ -194,46 +205,28 @@ export default function Login({ onAuthed }: { onAuthed: () => void }) {
 
           <div className="networkNode nodeOne">
             <span className="nodeIcon"><span className="nodeHead"></span><span className="nodeBody"></span></span>
-            <b>New role</b>
+            <b>Role</b>
           </div>
           <div className="networkNode nodeTwo">
             <span className="nodeIcon signalIcon"><span></span><span></span><span></span></span>
-            <b>Hiring signal</b>
+            <b>Hiring</b>
           </div>
           <div className="networkNode nodeThree">
             <span className="nodeIcon buildingIcon"><span></span><span></span><span></span><span></span></span>
-            <b>Recently raised funding</b>
+            <b>Funding</b>
           </div>
           <div className="networkNode nodeFour">
             <span className="nodeIcon peopleIcon"><span></span><span></span></span>
-            <b>Shared interest</b>
+            <b>People</b>
           </div>
           <div className="networkNode nodeFive">
             <span className="nodeIcon chatIcon"><span></span></span>
-            <b>Worth a conversation</b>
+            <b>Talk</b>
           </div>
 
           <div className="authStoryHeadline">
-            <span className="headlineKicker">YOUR NETWORK, IN MOTION</span>
-            <strong>The right conversations<br />create new <em>opportunities.</em></strong>
-            <p>Insights from your network. Real signals from the web. Powered by AI.</p>
-            <span className="headlineUnderline"></span>
+            <strong>The right conversations<br />create <em>opportunities.</em></strong>
           </div>
-
-          <div className="storyNote noteOne">
-            <span className="noteArrow">↗</span>
-            <span>Turn your network<br />into opportunities</span>
-          </div>
-          <div className="storyNote noteTwo">
-            <span>Live signals</span>
-            <i></i>
-          </div>
-        </div>
-
-        <div className="authStoryFeatures">
-          <div><span className="storyIcon storyPeople"><span></span><span></span><span></span></span><section><b>People</b><small>From your network</small></section></div>
-          <div><span className="storyIcon storySignal"><span></span><span></span><span></span></span><section><b>Signals</b><small>That matter now</small></section></div>
-          <div><span className="storyIcon storyProgress"><span>↗</span></span><section><b>Progress</b><small>One conversation at a time</small></section></div>
         </div>
       </section>
     </main>
