@@ -4237,33 +4237,38 @@ html, body, .app, .content, .sidebar {
 }
 
 
-/* LOGIN — FINAL NETWORK COMPOSITION
-   The illustration uses an invisible horizontal oval as its layout grid.
-   Nodes are evenly distributed around the perimeter while the headline owns the centre.
+/* LOGIN — STABLE NETWORK COMPOSITION
+   Five nodes follow an invisible horizontal oval. The oval itself is never rendered.
+   The headline owns the centre and remains stable as the viewport changes.
 */
-@media (min-width: 1001px){
+@media (min-width:1001px){
   .authPage{
-    grid-template-columns: minmax(380px, 460px) minmax(560px, 1fr);
-    gap: clamp(28px, 4vw, 64px);
-    padding-left: clamp(24px, 4vw, 64px);
-    padding-right: clamp(24px, 4vw, 64px);
+    grid-template-columns:minmax(380px,460px) minmax(560px,1fr);
+    gap:clamp(28px,4vw,64px);
+    padding:24px clamp(24px,4vw,64px);
   }
 
-  .authStory{min-width:0;width:100%;}
+  .authStory{
+    min-width:0;
+    width:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
 
   .networkScene{
     position:relative;
-    width:min(100%, 700px);
+    width:min(100%,720px);
     height:560px;
     min-height:560px;
     margin:0 auto;
     overflow:visible;
+    isolation:isolate;
   }
 
-  /* Decorative orbits remain invisible — they are not the positioning mechanism. */
-  .networkScene .orbit{display:none;}
+  /* Decorative rings are disabled; positioning uses the invisible oval coordinates below. */
+  .networkScene .orbit{display:none!important;}
 
-  /* Soft background remains behind the composition. */
   .networkScene:before{
     width:500px;
     height:500px;
@@ -4274,23 +4279,24 @@ html, body, .app, .content, .sidebar {
 
   .networkNode{
     position:absolute;
-    width:108px;
-    height:86px;
+    z-index:5;
+    width:96px;
+    height:88px;
     min-height:0;
+    margin:0!important;
     display:flex;
     flex-direction:column;
     align-items:center;
     justify-content:flex-start;
     gap:7px;
-    z-index:5;
-    transform:none;
+    transform:translateX(-50%);
     animation:nodeFloatOnly 6s ease-in-out infinite;
   }
 
   .networkNode b{
-    width:76px;
-    min-width:76px;
-    height:30px;
+    width:74px;
+    min-width:74px;
+    height:28px;
     padding:0 8px;
     display:grid;
     place-items:center;
@@ -4298,43 +4304,27 @@ html, body, .app, .content, .sidebar {
     font-size:10px;
     line-height:1;
     white-space:nowrap;
-    background:rgba(255,255,255,.9);
-    border:1px solid rgba(230,226,235,.9);
+    background:rgba(255,255,255,.92);
+    border:1px solid rgba(230,226,235,.88);
     box-shadow:0 5px 16px rgba(37,31,63,.045);
   }
 
   .nodeIcon{width:54px;height:54px;flex:none;}
 
-  /* Five fixed points around a wide, invisible oval. */
-  .nodeOne{
-    top:2%; left:50%;
-    margin-left:-54px;
-    animation-delay:0s;
-  }
-  .nodeTwo{
-    top:29%; left:7%;
-    animation-delay:.8s;
-  }
-  .nodeThree{
-    top:29%; right:7%;
-    animation-delay:1.6s;
-  }
-  .nodeFour{
-    bottom:6%; left:18%;
-    animation-delay:2.4s;
-  }
-  .nodeFive{
-    bottom:6%; right:18%;
-    animation-delay:3.2s;
-  }
+  /* Equal angular positions around an invisible horizontal oval. */
+  .nodeOne{top:2%;left:50%;animation-delay:0s;}
+  .nodeTwo{top:25%;left:12%;animation-delay:.8s;}
+  .nodeThree{top:25%;left:88%;animation-delay:1.6s;}
+  .nodeFour{top:73%;left:23%;animation-delay:2.4s;}
+  .nodeFive{top:73%;left:77%;animation-delay:3.2s;}
 
   .authStoryHeadline{
     position:absolute;
     z-index:8;
     left:50%;
     top:50%;
-    width:570px;
-    max-width:calc(100% - 180px);
+    width:560px;
+    max-width:72%;
     margin:0;
     transform:translate(-50%,-50%);
     text-align:center;
@@ -4349,8 +4339,12 @@ html, body, .app, .content, .sidebar {
   }
 }
 
-/* At narrower desktop widths, preserve the two-column login but give the story room. */
-@media (min-width: 1001px) and (max-width: 1180px){
+@keyframes nodeFloatOnly{
+  0%,100%{translate:0 0;}
+  50%{translate:0 -5px;}
+}
+
+@media (min-width:1001px) and (max-width:1180px){
   .authPage{
     grid-template-columns:360px minmax(500px,1fr);
     gap:24px;
@@ -4358,18 +4352,60 @@ html, body, .app, .content, .sidebar {
     padding-right:22px;
   }
   .authCard{padding-left:28px;padding-right:28px;}
-  .networkScene{height:520px;min-height:520px;}
-  .authStoryHeadline{width:500px;max-width:calc(100% - 150px);}
+  .networkScene{width:100%;height:520px;min-height:520px;}
+  .authStoryHeadline{width:500px;max-width:70%;}
   .authStoryHeadline strong{font-size:35px;}
   .nodeIcon{width:50px;height:50px;}
-  .nodeTwo{left:2%;}
-  .nodeThree{right:2%;}
-  .nodeFour{left:12%;}
-  .nodeFive{right:12%;}
+  .networkNode{width:90px;height:82px;}
 }
 
-/* Below this width the form gets the full screen rather than producing a cramped illustration. */
-@media (max-width:1000px) and (min-width:761px){
-  .authStory{display:none;}
-  .authPage{grid-template-columns:minmax(360px,480px);place-items:center;}
+/* Below desktop width, keep the form clean rather than compressing the illustration into it. */
+@media (max-width:1000px){
+  .authStory{display:none!important;}
+  .authPage{
+    grid-template-columns:minmax(360px,480px);
+    place-items:center;
+  }
+}
+
+@media (max-width:760px){
+  .authPage{
+    display:grid;
+    grid-template-columns:1fr;
+    min-height:100svh;
+    height:auto;
+    place-items:center;
+    padding:14px;
+    overflow:hidden;
+  }
+  .authCard{
+    width:100%;
+    max-width:400px;
+    padding:24px 21px 22px;
+    border-radius:18px;
+    box-shadow:0 10px 28px rgba(37,31,63,.05);
+  }
+  .authLogo{width:38px;height:38px;margin-bottom:17px;}
+  .authCard h1{font-size:29px;margin-bottom:6px;}
+  .authCard>p{font-size:13px;margin-bottom:18px;}
+  .authCard label{margin-bottom:12px;}
+  .authCard input{height:46px;}
+  .authCard .primary.full{height:46px;min-height:46px;}
+  .googleButton{height:44px!important;}
+  .authGoogleArea{margin-top:12px;}
+  .authSwitch{margin-top:11px;}
+}
+
+@media (max-height:760px) and (min-width:761px){
+  .authPage{padding-top:14px;padding-bottom:14px;}
+  .authCard{padding-top:22px;padding-bottom:20px;}
+  .authLogo{width:38px;height:38px;margin-bottom:13px;}
+  .authCard h1{font-size:31px;}
+  .authCard>p{margin-bottom:15px;}
+  .authCard label{margin-bottom:10px;}
+  .authCard input{height:43px;}
+  .authCard .primary.full{height:44px;min-height:44px;}
+  .authGoogleArea{margin-top:10px;}
+  .googleButton{height:42px!important;}
+  .authSwitch{margin-top:9px;}
 }
