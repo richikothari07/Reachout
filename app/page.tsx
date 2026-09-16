@@ -497,6 +497,15 @@ function SetupModal({ownerName,setOwnerName,target,setTarget,keywords,setKeyword
 }
 
 function Drawer({selected,ownerName,target,profile,messages,close,markContacted,contacted,followedUp,toggleFollowedUp,apiFetch,autoGenerate}:{selected:Ranked;ownerName:string;target:string;profile:ProfileContext|null;messages:Message[];close:()=>void;markContacted:(p:Ranked)=>void;contacted:string[];followedUp:string[];toggleFollowedUp:(p:Ranked)=>void;apiFetch:(input:string,init?:RequestInit)=>Promise<Response>;autoGenerate?:boolean}){
+ useEffect(()=>{
+  if(typeof window==='undefined')return
+  window.history.pushState({drawer:true},'',window.location.href)
+  const onPop=()=>close()
+  const onKey=(e:KeyboardEvent)=>{if(e.key==='Escape')close()}
+  window.addEventListener('popstate',onPop)
+  window.addEventListener('keydown',onKey)
+  return()=>{window.removeEventListener('popstate',onPop);window.removeEventListener('keydown',onKey)}
+ },[])
  const mine=(m:Message)=>isSelf(m,ownerName)
  const conversation=messages.filter(m=>matchesPerson(m,selected)).sort((a,b)=>dateMs(a.date)-dateMs(b.date)).slice(-14)
  const opener=`Hi ${selected.first_name}, I came across your work at ${selected.company||'your company'} and wanted to reach out regarding my interest in ${target}. Would love to connect and learn more about your team.`
@@ -527,7 +536,7 @@ function Drawer({selected,ownerName,target,profile,messages,close,markContacted,
   <div className="draft"><div className="draftHead"><div><b>{isFollowup?'Here’s what I’d send':'Here’s what I’d send'}</b><span className="aiBadge"><Sparkles size={9}/> AI</span></div><button onClick={()=>navigator.clipboard?.writeText(draft)}>Copy</button></div><p>{aiLoading?'Thinking about what you’d actually say…':draft}</p></div>
   {aiError&&<div className="aiError">{aiError}</div>}
   <button className="aiGenerate aiFriendButton" onClick={generateAI} disabled={aiLoading}><Sparkles size={14}/>{aiLoading?'Writing…':aiDraft?'Try another version':'Help me say it'}</button>
-  <div className="drawerCtas"><button className="secondary" onClick={()=>navigator.clipboard?.writeText(draft)}><Check size={14}/> Copy message</button>{selected.linkedin_url&&<a className="primary" href={selected.linkedin_url} target="_blank" rel="noreferrer">Open LinkedIn <ExternalLink size={14}/></a>}<button className={`secondary ${followedUp.includes(key)?'completed':''}`} onClick={()=>toggleFollowedUp(selected)}>{followedUp.includes(key)?<><Check size={14}/> Nudged · Unmark</>:<>Nudge <span className="drawerTick"><Check size={12}/></span></>}</button><button className={`primary ${done?'completed':''}`} onClick={()=>markContacted(selected)}>{done?<><Check size={14}/> Contacted · Unmark</>:<>Message <span className="drawerTick"><Check size={12}/></span></>}</button></div>
+  <div className="drawerCtas"><button className="secondary" onClick={()=>navigator.clipboard?.writeText(draft)}><Check size={14}/> Copy message</button><button className={`secondary ${followedUp.includes(key)?'completed':''}`} onClick={()=>toggleFollowedUp(selected)}>{followedUp.includes(key)?<><Check size={14}/> Nudged · Unmark</>:<>Nudge <span className="drawerTick"><Check size={12}/></span></>}</button><button className={`primary ${done?'completed':''}`} onClick={()=>markContacted(selected)}>{done?<><Check size={14}/> Contacted · Unmark</>:<>Message <span className="drawerTick"><Check size={12}/></span></>}</button></div>
   <div className="history"><h3>Conversation history</h3>{conversation.map((m,i)=><div className={`message ${mine(m)?'mine':''}`} key={i}><small>{mine(m)?'YOU':m.from} · {m.date}</small><p>{m.content}</p></div>)}{!conversation.length&&<span className="muted">No messages found with this connection.</span>}</div>
  </div></div>
 }
