@@ -4594,3 +4594,134 @@ html, body, .app, .content, .sidebar {
 @media (prefers-reduced-motion:reduce){
   .authStory .networkNode{animation:none}
 }
+
+/* LOGIN — BALANCED OVAL SIGNALS (final override)
+   Four signals sit on the four diagonal points of an invisible oval.
+   The headline is independent and always centered. */
+@media (min-width:1001px){
+  .authStory .networkScene{
+    width:min(100%,760px)!important;
+    height:min(72vh,620px)!important;
+    min-height:520px!important;
+    position:relative!important;
+    overflow:visible!important;
+  }
+
+  .authStory .authStoryHeadline{
+    position:absolute!important;
+    left:50%!important;
+    top:50%!important;
+    transform:translate(-50%,-50%)!important;
+    width:500px!important;
+    max-width:500px!important;
+    margin:0!important;
+    text-align:center!important;
+    z-index:4!important;
+  }
+
+  .authStory .authStoryHeadline strong{
+    display:block!important;
+    font-size:clamp(34px,3.15vw,46px)!important;
+    line-height:1.04!important;
+    letter-spacing:-.065em!important;
+  }
+
+  .authStory .networkNode{
+    position:absolute!important;
+    z-index:6!important;
+    width:104px!important;
+    display:flex!important;
+    flex-direction:column!important;
+    align-items:center!important;
+    gap:9px!important;
+    margin:0!important;
+    transform:none!important;
+    will-change:transform!important;
+  }
+
+  .authStory .networkNode .nodeIcon{
+    width:62px!important;
+    height:62px!important;
+    flex:0 0 62px!important;
+    border:6px solid rgba(255,255,255,.86)!important;
+    box-shadow:0 10px 26px rgba(48,40,78,.12),0 0 0 1px rgba(216,211,229,.78)!important;
+    font-size:15px!important;
+  }
+
+  .authStory .networkNode b{
+    padding:0!important;
+    border:0!important;
+    background:transparent!important;
+    box-shadow:none!important;
+    font-size:11px!important;
+    line-height:1.15!important;
+    font-weight:750!important;
+    white-space:nowrap!important;
+    text-align:center!important;
+  }
+
+  /* Diagonal points of one invisible ellipse: TL → TR → BR → BL */
+  .authStory .nodeOne{
+    left:23%!important;
+    top:24%!important;
+    animation:signalFloatTL 4.2s ease-in-out infinite!important;
+    animation-delay:0s!important;
+  }
+  .authStory .nodeTwo{
+    left:auto!important;
+    right:23%!important;
+    top:24%!important;
+    animation:signalFloatTR 4.6s ease-in-out infinite!important;
+    animation-delay:.65s!important;
+  }
+  .authStory .nodeThree{
+    left:auto!important;
+    right:23%!important;
+    top:auto!important;
+    bottom:24%!important;
+    animation:signalFloatBR 4.4s ease-in-out infinite!important;
+    animation-delay:1.3s!important;
+  }
+  .authStory .nodeFour{
+    left:23%!important;
+    top:auto!important;
+    bottom:24%!important;
+    animation:signalFloatBL 4.8s ease-in-out infinite!important;
+    animation-delay:1.95s!important;
+  }
+
+  /* More visible movement, while remaining polished: gentle lift + scale + rotation. */
+  @keyframes signalFloatTL{
+    0%,100%{transform:translate3d(0,0,0) rotate(0deg) scale(1)}
+    50%{transform:translate3d(-3px,-12px,0) rotate(-1deg) scale(1.035)}
+  }
+  @keyframes signalFloatTR{
+    0%,100%{transform:translate3d(0,0,0) rotate(0deg) scale(1)}
+    50%{transform:translate3d(3px,-10px,0) rotate(1deg) scale(1.035)}
+  }
+  @keyframes signalFloatBR{
+    0%,100%{transform:translate3d(0,0,0) rotate(0deg) scale(1)}
+    50%{transform:translate3d(3px,11px,0) rotate(1deg) scale(1.035)}
+  }
+  @keyframes signalFloatBL{
+    0%,100%{transform:translate3d(0,0,0) rotate(0deg) scale(1)}
+    50%{transform:translate3d(-3px,10px,0) rotate(-1deg) scale(1.035)}
+  }
+
+  /* Keep the decorative dots alive, but remove the old orbit geometry. */
+  .authStory .networkScene > .orbit{display:none!important}
+  .authStory .orbitDot{animation:signalDotPulse 2.2s ease-in-out infinite!important}
+  .authStory .dotOne{animation-delay:.2s!important}
+  .authStory .dotTwo{animation-delay:.8s!important}
+  .authStory .dotThree{animation-delay:1.4s!important}
+  .authStory .dotFour{animation-delay:2s!important}
+  .authStory .dotFive{animation-delay:2.6s!important}
+  @keyframes signalDotPulse{
+    0%,100%{transform:scale(.8);opacity:.45}
+    50%{transform:scale(1.55);opacity:1}
+  }
+}
+
+@media (prefers-reduced-motion:reduce){
+  .authStory .networkNode,.authStory .orbitDot{animation:none!important}
+}
