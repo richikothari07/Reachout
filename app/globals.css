@@ -4013,3 +4013,52 @@ html, body, .app, .content, .sidebar {
 
 /* People discovery redesign — replaces news-based Live Intelligence UI. */
 .discoverSetup{display:grid;grid-template-columns:2fr 1.2fr 1.2fr 1.2fr;gap:10px;padding:16px;background:#faf9fb;border:1px solid #e8e5ec;border-radius:16px;margin:18px 0}.discoverField label{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.08em;font-weight:800;color:#898394;margin:0 0 6px}.discoverField input,.discoverField select{width:100%;height:40px;border:1px solid #ddd9e3;border-radius:10px;background:#fff;padding:0 11px;font-size:12px;color:#302b3c;outline:none}.discoverField input:focus,.discoverField select:focus{border-color:#a997df;box-shadow:0 0 0 3px rgba(112,86,214,.08)}.discoverGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:16px}.discoverCard{display:grid;grid-template-columns:38px 1fr auto;gap:13px;align-items:center;background:#fff;border:1px solid #e6e2ea;border-radius:16px;padding:16px;box-shadow:0 5px 18px rgba(38,32,60,.025)}.discoverIcon{width:38px;height:38px;border-radius:11px;background:#f0ebff;color:#6650c8;display:grid;place-items:center}.discoverBody h3{margin:0;font-size:14px;color:#302b3c}.discoverBody p{margin:5px 0 7px;color:#7d7788;font-size:11px;line-height:1.45}.discoverRule{font-size:9px;color:#9a94a4}.discoverCard .primary{white-space:nowrap}.discoverSection{margin-top:28px}.discoverHint{font-size:12px;color:#807a8b;line-height:1.5;margin:4px 0 12px}.companySearchGrid{display:flex;flex-wrap:wrap;gap:8px}.companySearch{display:flex;align-items:center;gap:8px;border:1px solid #e3dfea;background:#fff;border-radius:999px;padding:9px 12px;color:#4c4658;font-size:11px;cursor:pointer}.companySearch:hover{border-color:#b9a9e7;background:#faf8ff}.discoverFooter{display:flex;gap:10px;align-items:flex-start;margin-top:24px;padding:13px 15px;border:1px solid #e8e4ed;border-radius:13px;background:#fcfbfd;color:#777181;font-size:10px;line-height:1.5}.discoverFooter b{color:#4b4556;white-space:nowrap}@media(max-width:900px){.discoverSetup{grid-template-columns:1fr 1fr}.discoverGrid{grid-template-columns:1fr}}@media(max-width:600px){.discoverSetup{grid-template-columns:1fr}.discoverCard{grid-template-columns:34px 1fr}.discoverCard .primary{grid-column:1/-1;width:100%}.discoverFooter{flex-direction:column}}
+
+/* Final login cleanup: compact single-screen form and simpler hierarchy. */
+.authPage{
+  min-height:100svh;
+  height:100svh;
+  overflow:hidden;
+  align-items:center;
+}
+.authCard{
+  width:min(450px,100%);
+  padding:28px 34px 24px;
+  border-radius:22px;
+}
+.authLogo{width:42px;height:42px;margin-bottom:22px}
+.authCard h1{font-size:34px;margin-bottom:8px}
+.authCard>p{font-size:14px;line-height:1.45;margin-bottom:22px}
+.authCard label{margin-bottom:13px}
+.passwordLabelRow{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.passwordField .forgotInline{margin:0;padding:0;color:#2563eb;font-size:10px;font-weight:650;line-height:1;white-space:nowrap;text-decoration:none}
+.passwordField .forgotInline:hover{color:#1d4ed8;text-decoration:underline}
+.authCard input{height:48px;margin-top:7px;border-radius:11px}
+.authCard .primary.full{height:48px;border-radius:11px}
+.authGoogleArea{margin-top:13px}
+.authDivider{margin-bottom:10px}
+.googleButton{height:46px;border-radius:11px}
+.authSwitch{margin-top:11px}
+.authError,.authSuccess{margin-bottom:10px;padding:8px 10px;font-size:10px}
+.authStory{overflow:hidden}
+.authStoryTop{display:none}
+@media (max-width:1100px) and (min-width:761px){
+  .authPage{grid-template-columns:minmax(330px,420px) minmax(420px,1fr);gap:28px;padding:24px 32px}
+  .authCard{padding:25px 28px 22px}
+  .authCard h1{font-size:31px}
+  .authCard>p{margin-bottom:19px}
+  .authStoryHeadline strong{font-size:33px}
+}
+@media (max-width:760px){
+  .authPage{height:100svh;min-height:100svh;padding:14px;overflow:hidden}
+  .authCard{max-width:400px;padding:24px 20px 20px;border-radius:18px}
+  .authLogo{width:40px;height:40px;margin-bottom:19px}
+  .authCard h1{font-size:28px}
+  .authCard>p{font-size:13px;margin-bottom:19px}
+  .authCard label{margin-bottom:11px}
+  .authCard input{height:45px}
+  .authCard .primary.full{height:45px}
+  .googleButton{height:44px}
+  .authGoogleArea{margin-top:11px}
+  .authSwitch{margin-top:9px}
+}

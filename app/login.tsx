@@ -110,15 +110,20 @@ export default function Login({ onAuthed }: { onAuthed: () => void }) {
             />
           </label>
 
-          {mode === 'login' && (
-            <button className="forgotPassword forgotInline" type="button" onClick={() => switchMode('reset')}>
-              Forgot password?
-            </button>
-          )}
-
           {mode !== 'reset' && (
-            <label>
-              Password
+            <label className="passwordField">
+              <span className="passwordLabelRow">
+                <span>Password</span>
+                {mode === 'login' && (
+                  <button
+                    className="forgotPassword forgotInline"
+                    type="button"
+                    onClick={() => switchMode('reset')}
+                  >
+                    Forgot password?
+                  </button>
+                )}
+              </span>
               <input
                 type="password"
                 value={password}
@@ -174,10 +179,6 @@ export default function Login({ onAuthed }: { onAuthed: () => void }) {
       </div>
 
       <section className="authStory" aria-label="ReachOut network overview">
-        <div className="authStoryTop">
-          <span>Build</span><i>•</i><span>Nurture</span><i>•</i><span>Move forward</span>
-        </div>
-
         <div className="networkScene" aria-hidden="true">
           <div className="networkGlow glowOne"></div>
           <div className="networkGlow glowTwo"></div>
