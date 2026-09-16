@@ -4126,7 +4126,8 @@ html, body, .app, .content, .sidebar {
 
 /* =========================================================
    LOGIN — NETWORK ALIGNMENT REFINEMENT
-   Keep all illustration nodes on a balanced, symmetric orbit.
+   Five nodes sit on an invisible oval around the headline.
+   The oval is a layout guide only — it is never drawn.
    ========================================================= */
 @media (min-width:761px){
   .networkScene{
@@ -4135,43 +4136,76 @@ html, body, .app, .content, .sidebar {
     height:min(68vh,600px);
   }
 
-  /* Give every node the same visual footprint so the icons read as one system. */
+  /* Invisible oval: nodes are positioned around it, but no circle is rendered. */
+  .orbit{
+    border-color:transparent !important;
+    opacity:0;
+  }
+
+  /* Equal visual footprint + vertical lockup keeps every node consistent. */
   .networkNode{
-    width:132px;
-    min-height:72px;
-    justify-content:center;
-    gap:8px;
+    position:absolute;
+    width:104px;
+    min-height:78px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-start;
+    gap:7px;
+    z-index:2;
+    animation:nodeFloatOnly 6s ease-in-out infinite;
   }
 
   .networkNode b{
-    min-width:58px;
+    min-width:64px;
+    height:30px;
+    display:grid;
+    place-items:center;
+    padding:0 10px;
     text-align:center;
-    padding:8px 10px;
+    font-size:10px;
+    line-height:1;
   }
 
-  /* Five evenly distributed anchor points around the central message. */
+  .nodeIcon{
+    width:54px;
+    height:54px;
+    flex:none;
+  }
+
+  /* Five equal angular positions around an invisible oval. */
   .nodeOne{
-    top:8%;
-    left:17%;
+    top:6%;
+    left:50%;
+    transform:translateX(-50%);
+    animation-delay:0s;
   }
   .nodeTwo{
-    top:31%;
-    left:1%;
+    top:29%;
+    left:14%;
+    transform:translateX(-50%);
+    animation-delay:.8s;
   }
   .nodeThree{
-    top:31%;
-    right:1%;
+    top:29%;
+    left:86%;
+    transform:translateX(-50%);
+    animation-delay:1.6s;
   }
   .nodeFour{
-    bottom:8%;
-    left:17%;
+    bottom:7%;
+    left:27%;
+    transform:translateX(-50%);
+    animation-delay:2.4s;
   }
   .nodeFive{
-    bottom:8%;
-    right:17%;
+    bottom:7%;
+    left:73%;
+    transform:translateX(-50%);
+    animation-delay:3.2s;
   }
 
-  /* Keep the central headline locked to the visual centre. */
+  /* Central message stays mathematically centred regardless of node size. */
   .authStoryHeadline{
     position:absolute;
     left:50%;
@@ -4179,17 +4213,25 @@ html, body, .app, .content, .sidebar {
     transform:translate(-50%,-50%);
     width:min(570px,82%);
     max-width:none;
+    margin:0;
+    text-align:center;
   }
 
   .authStoryHeadline strong{
     display:block;
+    font-size:40px;
+    line-height:1.06;
+    letter-spacing:-.06em;
   }
 }
 
+@keyframes nodeFloatOnly{0%,100%{margin-top:0}50%{margin-top:-5px}}
 @media (min-width:761px) and (max-width:1100px){
   .networkScene{height:540px}
-  .networkNode{width:118px}
-  .nodeOne{left:12%}
-  .nodeFour{left:12%}
-  .nodeFive{right:12%}
+  .networkNode{width:96px}
+  .nodeOne{left:50%}
+  .nodeTwo{left:12%}
+  .nodeThree{left:88%}
+  .nodeFour{left:24%}
+  .nodeFive{left:76%}
 }
