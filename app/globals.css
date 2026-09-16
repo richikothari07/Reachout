@@ -3841,6 +3841,7 @@ html, body, .app, .content, .sidebar {
 .authCard>p{margin:0 0 20px;font-size:14px;line-height:1.4;color:#777181}
 .authCard form{display:flex;flex-direction:column;gap:0}
 .authCard label{display:block;margin:0 0 13px;font-size:12px;font-weight:760}
+.authCard form > label:first-child{display:grid;gap:7px}
 .authCard input{height:47px;border-radius:11px;padding:0 14px;border-color:#d9dce3;background:#fff}
 .authCard input:focus{border-color:#9a89e0;box-shadow:0 0 0 3px rgba(112,84,230,.09)}
 .authCard input::placeholder{color:#9aa2ac}
@@ -3908,6 +3909,10 @@ html, body, .app, .content, .sidebar {
     letter-spacing:-.06em!important;
     white-space:normal!important;
   }
+  .authStory .authStoryHeadline em{
+    font-style:normal!important;
+    color:#705cf6!important;
+  }
 
   /* The node itself is the fixed oval anchor. Only its children animate. */
   .authStory .networkNode{
@@ -3960,10 +3965,10 @@ html, body, .app, .content, .sidebar {
   }
 
   /* Four visual anchor points of a wide, invisible oval. */
-  .authStory .nodeOne{left:14%;top:20%}
-  .authStory .nodeTwo{left:86%;top:20%}
-  .authStory .nodeThree{left:86%;top:80%}
-  .authStory .nodeFour{left:14%;top:80%}
+  .authStory .nodeOne{left:18%;top:23%}
+  .authStory .nodeTwo{left:82%;top:23%}
+  .authStory .nodeThree{left:82%;top:77%}
+  .authStory .nodeFour{left:18%;top:77%}
 
   .authStory .nodeOne .nodeIcon,.authStory .nodeOne b{animation-delay:0s}
   .authStory .nodeTwo .nodeIcon,.authStory .nodeTwo b{animation-delay:1.05s}
@@ -4014,10 +4019,10 @@ html, body, .app, .content, .sidebar {
     font-size:clamp(30px,3.3vw,36px)!important;
   }
   .authStory .networkNode{width:100px!important}
-  .authStory .nodeOne{left:12%;top:19%}
-  .authStory .nodeTwo{left:88%;top:19%}
-  .authStory .nodeThree{left:88%;top:81%}
-  .authStory .nodeFour{left:12%;top:81%}
+  .authStory .nodeOne{left:17%;top:22%}
+  .authStory .nodeTwo{left:83%;top:22%}
+  .authStory .nodeThree{left:83%;top:78%}
+  .authStory .nodeFour{left:17%;top:78%}
 }
 
 @keyframes signalProfileFloat{
