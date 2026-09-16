@@ -4226,7 +4226,6 @@ html, body, .app, .content, .sidebar {
 }
 .drawerHeader h2{font-size:18px !important;line-height:1.2 !important}
 .drawerHeader .role{font-size:9px !important;line-height:1.45 !important;margin-top:4px !important}
-.profileActions{display:none !important}
 .close{
   position:sticky !important;
   float:right !important;
@@ -4332,3 +4331,18 @@ html, body, .app, .content, .sidebar {
   .drawer .history{margin-top:7px !important; padding-top:7px !important;}
   .drawer .history h3{font-size:10px !important;}
 }
+
+/* Requested drawer polish: slightly smaller name + stronger Help me say it contrast */
+.drawerHeader h2{font-size:16px !important;}
+.drawer .aiGenerate.aiFriendButton{color:#fff !important;}
+.drawer .aiGenerate.aiFriendButton svg{color:#fff !important;stroke:currentColor !important;}
+@media(max-width:760px){
+  .drawerHeader h2{font-size:15px !important;}
+  .drawer .aiGenerate.aiFriendButton{color:#fff !important;}
+  .drawer .aiGenerate.aiFriendButton svg{color:#fff !important;stroke:currentColor !important;}
+}
+
+
+/* LinkedIn profile link — keep visible in the profile drawer */
+.profileActions{display:flex !important;align-items:center;gap:6px;margin:8px 0 10px !important;}
+.profileActions a{display:inline-flex !important;align-items:center;gap:5px;text-decoration:none !important;}
