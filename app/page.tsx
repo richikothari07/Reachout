@@ -324,58 +324,69 @@ function LiveIntelligenceView({target,keywords,goal,connections}:{target:string;
  const [degree,setDegree]=useState('2nd')
  const [seniority,setSeniority]=useState('Manager')
  const [company,setCompany]=useState('')
- const [copied,setCopied]=useState('')
+ const [searchKeywords,setSearchKeywords]=useState(keywords||'')
+ const [opened,setOpened]=useState('')
  const existingCompanies=[...new Set(connections.map(c=>String(c.company||'').trim()).filter(Boolean))].slice(0,12)
 
- const buildUrl=(extra:string)=>{
-   const parts=[searchRole, location, extra].filter(Boolean)
-   const q=encodeURIComponent(parts.join(' '))
-   return `https://www.linkedin.com/search/results/people/?keywords=${q}&origin=GLOBAL_SEARCH_HEADER`
+ const buildUrl=(extra='')=>{
+   const terms=[searchRole,location,searchKeywords,company,extra].map(x=>x.trim()).filter(Boolean)
+   const params=new URLSearchParams({keywords:terms.join(' '),origin:'GLOBAL_SEARCH_HEADER'})
+   return `https://www.linkedin.com/search/results/people/?${params.toString()}`
  }
- const openSearch=(key:string,extra:string)=>{
-   window.open(buildUrl(extra), '_blank', 'noopener,noreferrer')
-   setCopied(key)
-   window.setTimeout(()=>setCopied(''),1800)
+ const openSearch=(key:string,extra='')=>{
+   window.open(buildUrl(extra),'_blank','noopener,noreferrer')
+   setOpened(key)
+   window.setTimeout(()=>setOpened(''),1800)
  }
- const searchCards=[
-   {id:'pm',title:'Product managers in India',desc:'People currently working in Product who match your target role.',extra:''},
-   {id:'hiring',title:'PMs at hiring companies',desc:'Use LinkedIn people search, then add the company or hiring filters that matter to you.',extra:'hiring product'},
-   {id:'leaders',title:'Product leaders',desc:'Senior PMs, Product Leads and Heads of Product who can give you a team-level perspective.',extra:'product lead head'},
-   {id:'recruiters',title:'PM recruiters',desc:'Recruiters and talent partners focused on Product hiring.',extra:'product recruiter talent acquisition'},
+ const quickSearches=[
+  {id:'role',icon:<Users size={17}/>,title:`${searchRole} in ${location}`,desc:'Search for people whose current role matches what you are targeting.',extra:''},
+  {id:'hiring',icon:<Target size={17}/>,title:'Hiring managers',desc:'Look for product leaders and hiring-side contacts at relevant companies.',extra:`${searchRole} hiring manager`},
+  {id:'leaders',icon:<Sparkles size={17}/>,title:'Product leaders',desc:'Find senior product people who can help you understand teams and opportunities.',extra:`${searchRole} product lead head`},
+  {id:'recruiters',icon:<MessageSquare size={17}/>,title:'Product recruiters',desc:'Find recruiters and talent partners who work on Product roles.',extra:`${searchRole} recruiter talent acquisition`},
  ]
- return <>
+ return <div className="livePage">
   <div className="liveHero">
-   <div><span className="sectionEyebrow">PEOPLE DISCOVERY</span><h2>Who should you <em>connect with?</em></h2><p>Find new Product people outside your existing network. ReachOut uses your target role and gives you focused LinkedIn people searches instead of pretending a news headline is a networking recommendation.</p></div>
+   <div className="liveHeroCopy">
+    <div className="liveTitleRow"><span className="sectionEyebrow">LIVE INTELLIGENCE</span><span className="liveStatus"><i/> LinkedIn search</span></div>
+    <h2>Find people worth <em>meeting.</em></h2>
+    <p>Turn your job-search goal into focused people searches. ReachOut uses your target role, keywords and network context to help you discover who to look for on LinkedIn.</p>
+   </div>
+   <div className="liveGoal"><span>YOUR CURRENT GOAL</span><b>{goal||'Land a Product role'}</b><small>{searchRole}{searchKeywords?` · ${searchKeywords}`:''}</small></div>
   </div>
 
-  <div className="discoverSetup">
-   <div className="discoverField"><label>Target role</label><input value={searchRole} onChange={e=>setSearchRole(e.target.value)} placeholder="Product Manager"/></div>
-   <div className="discoverField"><label>Location</label><input value={location} onChange={e=>setLocation(e.target.value)} placeholder="India"/></div>
-   <div className="discoverField"><label>Connection degree</label><select value={degree} onChange={e=>setDegree(e.target.value)}><option value="2nd">2nd-degree first</option><option value="3rd">3rd-degree+</option></select></div>
-   <div className="discoverField"><label>Seniority</label><select value={seniority} onChange={e=>setSeniority(e.target.value)}><option>Manager</option><option>Senior</option><option>Director</option><option>Any</option></select></div>
-  </div>
+  <section className="liveSearchPanel">
+   <div className="livePanelHead"><div><span className="sectionEyebrow">BUILD A SEARCH</span><h3>Who do you want to meet?</h3></div><span className="liveHint">Opens a live LinkedIn people search</span></div>
+   <div className="liveFields">
+    <label><span>Target role</span><input value={searchRole} onChange={e=>setSearchRole(e.target.value)} placeholder="Product Manager"/></label>
+    <label><span>Location</span><input value={location} onChange={e=>setLocation(e.target.value)} placeholder="India"/></label>
+    <label><span>Company <small>optional</small></span><input value={company} onChange={e=>setCompany(e.target.value)} placeholder="e.g. Razorpay"/></label>
+    <label><span>Keywords <small>optional</small></span><input value={searchKeywords} onChange={e=>setSearchKeywords(e.target.value)} placeholder="fintech, payments"/></label>
+   </div>
+   <div className="liveFilters">
+    <label><span>Connection</span><select value={degree} onChange={e=>setDegree(e.target.value)}><option value="2nd">2nd-degree first</option><option value="3rd">3rd-degree+</option><option value="any">Any</option></select></label>
+    <label><span>Seniority</span><select value={seniority} onChange={e=>setSeniority(e.target.value)}><option>Manager</option><option>Senior</option><option>Director</option><option>Any</option></select></label>
+    <div className="liveFilterNote"><Check size={14}/> Use LinkedIn's filters after opening to narrow connection degree and seniority.</div>
+    <button className="primary liveSearchButton" onClick={()=>openSearch('main')}><Search size={15}/>{opened==='main'?'Search opened':'Find people on LinkedIn'}<ExternalLink size={13}/></button>
+   </div>
+  </section>
 
-  <div className="liveMeta"><span><i className="liveDot"/> New people only</span><span>Existing imported connections are not the recommendation pool</span></div>
-
+  <div className="liveSectionHead"><div><span className="sectionEyebrow">START HERE</span><h3>Focused searches for your goal</h3></div><span>{searchRole} · {location}</span></div>
   <div className="discoverGrid">
-   {searchCards.map(card=><article className="discoverCard" key={card.id}>
-    <div className="discoverIcon"><Users size={17}/></div>
-    <div className="discoverBody"><h3>{card.title}</h3><p>{card.desc}</p><span className="discoverRule">{searchRole} · {location} · {degree}-degree+</span></div>
-    <button className="primary" onClick={()=>openSearch(card.id,card.extra)}>{copied===card.id?'Opened ✓':'Find people'} <ExternalLink size={14}/></button>
+   {quickSearches.map(card=><article className="discoverCard" key={card.id}>
+    <div className="discoverIcon">{card.icon}</div>
+    <div className="discoverBody"><h3>{card.title}</h3><p>{card.desc}</p><span className="discoverRule">{degree === 'any' ? 'Any connection' : `${degree}-degree+`} · {seniority}+</span></div>
+    <button className="secondary" onClick={()=>openSearch(card.id,card.extra)}>{opened===card.id?'Opened ✓':'Open search'} <ExternalLink size={13}/></button>
    </article>)}
   </div>
 
-  {existingCompanies.length>0&&<div className="discoverSection">
-   <div className="sectionHead compact"><div><span className="sectionEyebrow">YOUR NETWORK → NEW PEOPLE</span><h2>People at companies already in your network</h2></div></div>
-   <p className="discoverHint">These searches use companies you already have relationships with, but open LinkedIn's people search so you can discover other Product people there.</p>
-   <div className="companySearchGrid">{existingCompanies.map(c=><button key={c} className="companySearch" onClick={()=>openSearch(`company-${c}`,`"${c}"`)}><span>{c}</span><ExternalLink size={13}/></button>)}</div>
-  </div>}
+  {existingCompanies.length>0&&<section className="discoverSection">
+   <div className="liveSectionHead"><div><span className="sectionEyebrow">NETWORK LEVERAGE</span><h3>Look for Product people at companies you already know</h3></div></div>
+   <p className="discoverHint">These are companies already present in your imported LinkedIn network. Open a company-specific people search to find additional contacts there.</p>
+   <div className="companySearchGrid">{existingCompanies.map(c=><button key={c} className="companySearch" onClick={()=>openSearch(`company-${c}`,`"${c}" ${searchRole}`)}><span>{c}</span><ExternalLink size={13}/></button>)}</div>
+  </section>}
 
-  <div className="discoverFooter">
-   <b>Why this changed</b>
-   <span>LinkedIn's own people search is personalized and supports filters such as connection degree, location, current company and keywords. ReachOut should use that live search for discovery rather than inventing people from news data.</span>
-  </div>
- </>
+  <div className="liveDisclaimer"><Globe2 size={15}/><span><b>Live means LinkedIn search.</b> ReachOut does not have access to LinkedIn's private people database, so it won't invent profiles or claim that a person is currently hiring.</span></div>
+ </div>
 }
 
 function HomeView({dashboardReady,hasData,target,connectionCount,messageCount,highPriority,hiringSignals,followups,recommended,goal,goalTarget,conversations,goalPct,setTab,navigateTab,setSelected,openImport,loading,markContacted,toggleFollowedUp,agentOpen,setAgentOpen,agentCommand,setAgentCommand,agentBusy,agentReply,agentActions,agentError,runAgent,findPerson,setVoiceGenerate}:{dashboardReady:boolean;hasData:boolean;target:string;connectionCount:number;messageCount:number;highPriority:number;hiringSignals:number;followups:Ranked[];recommended:Ranked[];goal:string;goalTarget:number;conversations:number;goalPct:number;setTab:any;navigateTab:(next:'Home'|'Opportunities'|'Outreach'|'Follow-ups'|'Live Intelligence')=>void;setSelected:any;openImport:()=>void;loading:boolean;markContacted:(p:Ranked)=>void;toggleFollowedUp:(p:Ranked)=>void;agentOpen:boolean;setAgentOpen:(v:boolean)=>void;agentCommand:string;setAgentCommand:(v:string)=>void;agentBusy:boolean;agentReply:string;agentActions:any[];agentError:string;runAgent:(c?:string)=>void;findPerson:(name:string)=>Ranked|undefined;setVoiceGenerate:(v:boolean)=>void}){

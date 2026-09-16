@@ -4346,3 +4346,75 @@ html, body, .app, .content, .sidebar {
 /* LinkedIn profile link — keep visible in the profile drawer */
 .profileActions{display:flex !important;align-items:center;gap:6px;margin:8px 0 10px !important;}
 .profileActions a{display:inline-flex !important;align-items:center;gap:5px;text-decoration:none !important;}
+
+
+/* Live Intelligence / People Discovery — clean responsive layout */
+.livePage{display:grid;gap:14px}
+.liveHero{background:#fff;border:1px solid #e4e4df;border-radius:16px;padding:24px 26px;display:flex;justify-content:space-between;gap:24px;align-items:flex-end}
+.liveHeroCopy{max-width:760px}
+.liveTitleRow{display:flex;align-items:center;gap:9px}
+.liveStatus{display:inline-flex;align-items:center;gap:5px;border:1px solid #e1e1dc;border-radius:999px;padding:4px 7px;font-size:7px;color:#777770}
+.liveStatus i{width:5px;height:5px;border-radius:50%;background:#4c9b67;display:block}
+.liveHero h2{font-size:28px;letter-spacing:-.055em;line-height:1.08;margin:9px 0 7px}
+.liveHero h2 em{font-style:italic}
+.liveHero p{font-size:10px;color:#777770;line-height:1.55;margin:0;max-width:720px}
+.liveGoal{min-width:220px;background:#1e1e1c;color:#f3f3ee;border-radius:11px;padding:14px 15px}
+.liveGoal span{display:block;color:#85857e;font-size:7px;letter-spacing:.14em;font-weight:800}
+.liveGoal b{display:block;font-size:11px;margin-top:6px}
+.liveGoal small{display:block;color:#9c9c95;font-size:8px;margin-top:5px}
+.liveSearchPanel{background:#fff;border:1px solid #e4e4df;border-radius:13px;padding:18px}
+.livePanelHead{display:flex;justify-content:space-between;align-items:flex-end;gap:15px;margin-bottom:13px}
+.livePanelHead h3,.liveSectionHead h3{font-size:14px;letter-spacing:-.025em;margin:5px 0 0}
+.liveHint,.liveSectionHead>span{font-size:8px;color:#8a8a83}
+.liveFields{display:grid;grid-template-columns:1.1fr .8fr 1fr 1fr;gap:9px}
+.liveFields label,.liveFilters label{display:grid;gap:5px}
+.liveFields label>span,.liveFilters label>span{font-size:8px;font-weight:750;color:#55554f}
+.liveFields label small{font-size:7px;color:#999991;font-weight:500}
+.liveFields input,.liveFilters select{width:100%;height:36px;border:1px solid #dfdfd8;border-radius:8px;background:#fff;padding:0 10px;font-size:9px;color:#33332f;outline:none}
+.liveFields input:focus,.liveFilters select:focus{border-color:#aaa9a1;box-shadow:0 0 0 3px #00000008}
+.liveFilters{display:grid;grid-template-columns:160px 160px 1fr auto;gap:9px;align-items:end;margin-top:10px;padding-top:11px;border-top:1px solid #ededE8}
+.liveFilterNote{height:36px;border:1px dashed #d9d9d2;border-radius:8px;display:flex;align-items:center;gap:7px;padding:0 10px;color:#7c7c75;font-size:8px}
+.liveFilterNote svg{flex:none;color:#66665f}
+.liveSearchButton{height:36px;white-space:nowrap}
+.liveSectionHead{display:flex;justify-content:space-between;align-items:flex-end;margin:7px 0 0}
+.discoverGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}
+.discoverCard{background:#fff;border:1px solid #e4e4df;border-radius:11px;padding:14px;display:grid;grid-template-columns:34px 1fr auto;gap:11px;align-items:center;min-height:104px}
+.discoverIcon{width:32px;height:32px;border-radius:8px;background:#f0f0eb;display:grid;place-items:center;color:#55554f}
+.discoverBody{min-width:0}
+.discoverBody h3{font-size:10px;margin:0 0 4px;letter-spacing:-.01em}
+.discoverBody p{font-size:8px;color:#85857e;line-height:1.45;margin:0 0 6px}
+.discoverRule{font-size:7px;color:#a0a099}
+.discoverCard .secondary{white-space:nowrap}
+.discoverSection{background:#fff;border:1px solid #e4e4df;border-radius:13px;padding:16px}
+.discoverHint{font-size:8px;color:#85857e;margin:0 0 10px;line-height:1.45}
+.companySearchGrid{display:flex;flex-wrap:wrap;gap:7px}
+.companySearch{border:1px solid #deded7;background:#fff;border-radius:8px;padding:8px 10px;display:inline-flex;align-items:center;gap:8px;font-size:8px;color:#4f4f49}
+.companySearch:hover{background:#f8f8f5}
+.liveDisclaimer{display:flex;align-items:flex-start;gap:8px;padding:11px 13px;border:1px solid #e4e4df;background:#f5f5f0;border-radius:10px;color:#777770;font-size:8px;line-height:1.45}
+.liveDisclaimer svg{flex:none;margin-top:1px}
+.liveDisclaimer b{color:#4f4f49}
+@media(max-width:980px){
+ .liveHero{align-items:stretch;flex-direction:column}
+ .liveGoal{min-width:0}
+ .liveFields{grid-template-columns:1fr 1fr}
+ .liveFilters{grid-template-columns:1fr 1fr}
+ .liveFilterNote{grid-column:1/-1}
+ .liveSearchButton{grid-column:1/-1;width:100%}
+}
+@media(max-width:760px){
+ .content{padding:20px 14px 76px}
+ .liveHero{padding:18px 16px;border-radius:13px}
+ .liveHero h2{font-size:23px}
+ .liveHero p{font-size:9px}
+ .liveGoal{padding:11px 12px}
+ .liveFields{grid-template-columns:1fr;gap:8px}
+ .liveFilters{grid-template-columns:1fr 1fr}
+ .liveFilterNote{font-size:7.5px}
+ .discoverGrid{grid-template-columns:1fr}
+ .discoverCard{grid-template-columns:32px 1fr;align-items:start}
+ .discoverCard .secondary{grid-column:1/-1;width:100%;margin-top:2px}
+ .liveSectionHead{align-items:flex-start;gap:8px;flex-direction:column}
+ .liveSectionHead>span{font-size:7px}
+ .discoverSection{padding:13px}
+ .liveDisclaimer{font-size:7.5px}
+}
