@@ -112,3 +112,10 @@ create table if not exists public.live_signals (
 );
 create index if not exists live_signals_user_score_idx on public.live_signals(user_id, score desc);
 create index if not exists live_signals_checked_idx on public.live_signals(user_id, last_checked_at desc);
+-- Structured fields used by the Live Intelligence feed.
+alter table public.live_signals add column if not exists status text not null default 'new';
+alter table public.live_signals add column if not exists primary_type text not null default 'news';
+alter table public.live_signals add column if not exists why_now text not null default '';
+create index if not exists live_signals_status_idx on public.live_signals(user_id, status);
+create index if not exists live_signals_type_idx on public.live_signals(user_id, primary_type);
+
