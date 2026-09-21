@@ -131,6 +131,7 @@ export async function POST(req: Request) {
           for (const result of searchResults) {
             if (!result.url) continue
             const signal = classifyResult(result, person, target)
+            if (!signal) continue
             const key = `${signal.type}:${signal.title.toLowerCase()}`
             if (!unique.has(key)) unique.set(key, { signal, source: { title: clean(result.title), url: result.url, published_date: result.published_date || null } })
           }
