@@ -345,52 +345,65 @@ function Empty({title,text,icon=<Sparkles size={20}/>}:{title:string;text:string
 function Stat({icon,value,label}:{icon:React.ReactNode;value:string|number;label:string}){return <div className="stat"><div className="statIcon">{icon}</div><div><strong>{value}</strong><span>{label}</span></div></div>}
 
 function LiveIntelligenceView({target,keywords,goal,ranked,signals,configured,loading,liveStatus,liveError,onRefresh,onSelect}:{target:string;keywords:string;goal:string;ranked:Ranked[];signals:LiveSignal[];configured:boolean;loading:boolean;liveStatus:string;liveError:string;onRefresh:()=>void;onSelect:(p:Ranked)=>void}){
- const [filter,setFilter]=useState<'All'|'Hiring'|'Funding'|'Career'|'Company'|'News'>('All')
  const [expanded,setExpanded]=useState<string|null>(null)
+ const typeOf=(s:LiveSignal)=>s.primary_type||s.signals?.[0]?.type||'news'
  const label=(type:string)=>({hiring:'Hiring',funding:'Funding',career:'Career',company:'Company',news:'News'} as any)[type]||'News'
- const icon=(type:string)=>type==='hiring'?<Flame size={15}/>:type==='funding'?<BarChart3 size={15}/>:type==='career'?<UserRound size={15}/>:type==='company'?<Zap size={15}/>:<Globe2 size={15}/>
- const colorClass=(type:string)=>`signalType signalType-${type}`
- const filtered=signals.filter(s=>filter==='All'||label(s.primary_type||s.signals?.[0]?.type)==filter)
- const newCount=signals.filter(s=>!s.status||s.status==='new').length
- const counts={hiring:0,funding:0,career:0,company:0,news:0};signals.forEach(s=>{const t=s.primary_type||s.signals?.[0]?.type||'news';if(t in counts)(counts as any)[t]++})
+ const icon=(type:string)=>type==='hiring'?<Flame size={14}/>:type==='funding'?<BarChart3 size={14}/>:type==='career'?<UserRound size={14}/>:type==='company'?<Zap size={14}/>:<Globe2 size={14}/>
  const findRanked=(s:LiveSignal)=>ranked.find(p=>(s.linkedin_url&&p.linkedin_url===s.linkedin_url)||(`${p.first_name} ${p.last_name}`).trim().toLowerCase()===`${s.first_name} ${s.last_name}`.trim().toLowerCase())
  const timeAgo=(v:string)=>{const d=Date.parse(v||'');if(!Number.isFinite(d))return 'Recently';const mins=Math.max(1,Math.floor((Date.now()-d)/60000));if(mins<60)return `${mins}m ago`;const hrs=Math.floor(mins/60);if(hrs<24)return `${hrs}h ago`;const days=Math.floor(hrs/24);return `${days}d ago`}
+ const allSignals=useMemo(()=>signals.flatMap(s=>s.signals.map((x,i)=>({parent:s,signal:x,index:i}))).sort((a,b)=>(b.parent.score||0)-(a.parent.score||0)),[signals])
+ const opportunity=allSignals.filter(x=>x.signal.type!=='news').slice(0,4)
+ const people=allSignals.filter(x=>x.signal.type==='career').slice(0,4)
+ const companies=allSignals.filter(x=>['hiring','funding','company'].includes(x.signal.type)).slice(0,6)
+ const news=allSignals.filter(x=>x.signal.type==='news').slice(0,4)
+ const counts={hiring:0,funding:0,career:0,company:0,news:0};allSignals.forEach(x=>{counts[x.signal.type]++})
+ const newCount=signals.filter(s=>!s.status||s.status==='new').length
+ const Section=({eyebrow,title,sub,items,empty}:{eyebrow:string;title:string;sub:string;items:any[];empty:string})=><section className="liveIntelSection">
+   <div className="liveSectionHeader"><div><span className="sectionEyebrow">{eyebrow}</span><h3>{title}</h3><p>{sub}</p></div><span className="liveSectionCount">{items.length} {items.length===1?'signal':'signals'}</span></div>
+   {items.length?<div className="liveSectionGrid">{items.map((item:any)=><SignalMini key={`${item.parent.id}-${item.index}`} item={item} expanded={expanded===`${item.parent.id}-${item.index}`} onExpand={()=>setExpanded(expanded===`${item.parent.id}-${item.index}`?null:`${item.parent.id}-${item.index}`)} onSelect={onSelect} findRanked={findRanked} label={label} icon={icon} timeAgo={timeAgo}/>)}</div>:<div className="liveSectionEmpty">{empty}</div>}
+ </section>
  return <div className="livePage">
   <div className="liveHero liveIntelligenceHero">
    <div className="liveHeroCopy">
     <div className="liveTitleRow"><span className="sectionEyebrow">LIVE INTELLIGENCE</span><span className="liveStatus"><i/> Public web signals</span></div>
     <h2>New reasons to <em>reach out.</em></h2>
-    <p>ReachOut watches public web signals around people and companies in your network, then turns them into timely reasons to start a conversation.</p>
+    <p>Not a news feed. ReachOut looks for changes that give you a credible reason to start a conversation with someone in your network.</p>
    </div>
    <div className="liveGoal"><span>YOUR CURRENT GOAL</span><b>{goal||'Land a Product role'}</b><small>{target}{keywords?` · ${keywords}`:''}</small></div>
   </div>
 
-  <section className="liveIntelToolbar">
-   <div className="liveIntelSummary"><strong>{newCount || signals.length}</strong><span>{newCount ? 'new reasons to reach out' : signals.length ? 'reasons to reach out' : 'signals found so far'}</span><small>{signals[0]?.last_checked_at?`Updated ${timeAgo(signals[0].last_checked_at)}`:'Not checked yet'}</small></div>
-   <button className="primary liveRefreshButton" onClick={onRefresh} disabled={loading}>{loading?<RefreshCw size={15} className="spin"/>:<RefreshCw size={15}/>} {loading?'Refreshing web…':'Refresh intelligence'}</button>
+  <section className="liveIntelOverview">
+   <div className="liveOverviewTop"><div><span className="sectionEyebrow">YOUR SIGNALS</span><h3>{newCount||signals.length} <span>{newCount?'new reasons to reach out':'reasons to reach out'}</span></h3><small>{signals[0]?.last_checked_at?`Updated ${timeAgo(signals[0].last_checked_at)}`:'Refresh to find fresh public-web signals'}</small></div><button className="primary liveRefreshButton" onClick={onRefresh} disabled={loading}>{loading?<RefreshCw size={15} className="spin"/>:<RefreshCw size={15}/>} {loading?'Searching your network…':'Refresh intelligence'}</button></div>
+   <div className="liveMetricRow"><div><b>{counts.hiring+counts.funding+counts.company}</b><span>Opportunity</span></div><div><b>{counts.career}</b><span>People</span></div><div><b>{counts.news}</b><span>Relevant news</span></div><div><b>{signals.length}</b><span>People checked</span></div></div>
   </section>
+
   {liveStatus&&<div className={`liveRunStatus ${liveError?'hasError':''}`}>{liveError?<span>⚠ {liveStatus}: {liveError}</span>:<span>✓ {liveStatus}</span>}</div>}
   {!configured&&<section className="liveSetupNote"><div className="setupNoteIcon"><Globe2 size={17}/></div><div><b>Connect public-web search</b><p>Add <code>TAVILY_API_KEY</code> to your Vercel environment variables. The rest of Live Intelligence is already wired into ReachOut.</p></div></section>}
 
-  {signals.length>0&&<>
-   <div className="liveSignalFilters">{(['All','Hiring','Funding','Career','Company','News'] as const).map(x=><button key={x} className={filter===x?'active':''} onClick={()=>setFilter(x)}>{x}{x!=='All'&&<span>{(counts as any)[x.toLowerCase()]||0}</span>}</button>)}</div>
-   <div className="liveSignalFeed">
-    {filtered.map(s=>{const primary=s.signals?.find(x=>x.type===s.primary_type)||s.signals?.[0];const person=findRanked(s);const open=expanded===s.id;return <article className={`liveSignalCard ${(!s.status||s.status==='new')?'isNew':''}`} key={s.id}>
-      <div className="signalCardTop"><span className={colorClass(primary?.type||s.primary_type)}>{icon(primary?.type||s.primary_type)} {label(primary?.type||s.primary_type)}</span>{(!s.status||s.status==='new')&&<span className="newPill">NEW</span>}<span className="signalTime">{timeAgo(s.last_checked_at)}</span></div>
-      <h3>{primary?.title||s.summary||'New public signal'}</h3>
-      <div className="signalPerson"><div className="avatar">{initials(s as any)}</div><div><b>{s.first_name} {s.last_name}</b><span>{s.position||'Role not listed'}{s.company?` · ${s.company}`:''}</span></div></div>
-      <p className="signalWhy">{primary?.why_now||s.why_now||s.summary}</p>
-      <div className="signalCardFooter"><span>{s.source_count||0} source{s.source_count===1?'':'s'}</span><button className="signalEvidence" onClick={()=>setExpanded(open?null:s.id)}>{open?'Hide evidence':'View evidence'} <ChevronDown size={13}/></button><button className="primary signalReach" onClick={()=>person&&onSelect(person)} disabled={!person}>Reach out <ArrowRight size={13}/></button></div>
-      {open&&<div className="signalEvidencePanel">{(s.sources||[]).map((src,i)=><a key={`${s.id}-${i}`} href={src.url} target="_blank" rel="noreferrer"><span>{src.title||'Source'}</span><ExternalLink size={12}/></a>)}{!(s.sources||[]).length&&<span className="muted">No source links were returned.</span>}</div>}
-    </article>})}
-   </div>
-   {!filtered.length&&<Empty title="No signals in this filter" text="Try another signal type or refresh the web."/>}
-  </>}
+  <div className="liveSectionStack">
+   <Section eyebrow="01 · WHY NOW" title="Reasons worth acting on" sub="Signals where something changed and there is a concrete reason to contact someone." items={opportunity} empty="No strong opportunity signals yet. Refresh to look for hiring, funding and company changes."/>
+   <Section eyebrow="02 · PEOPLE" title="People moves" sub="Career changes that can naturally reopen a conversation." items={people} empty="No recent career moves found in your network yet."/>
+   <Section eyebrow="03 · COMPANIES" title="Companies to watch" sub="Hiring, funding and business changes around people you already know." items={companies} empty="No company signals found yet."/>
+   <Section eyebrow="04 · RELEVANT NEWS" title="Conversation starters" sub="Public news that could give you a useful, timely reason to say hello." items={news} empty="No relevant news signals found yet."/>
+  </div>
 
-  {!signals.length&&configured&&<div className="liveEmptyState"><div className="emptyIcon"><Globe2 size={20}/></div><h3>Nothing new yet</h3><p>{liveStatus||'Refresh Live Intelligence to search public web sources around people and companies in your network.'}</p><button className="primary" onClick={onRefresh} disabled={loading}>{loading?'Searching…':'Find my signals'}</button></div>}
-
-  {signals.length>0&&<div className="liveSignalNote"><Globe2 size={14}/><span>Signals come from public web sources. ReachOut shows the source links so you can verify the context before reaching out.</span></div>}
+  {!signals.length&&configured&&<div className="liveEmptyState"><div className="emptyIcon"><Globe2 size={20}/></div><h3>Ready to find your signals</h3><p>{liveStatus||'Refresh Live Intelligence and ReachOut will check a small batch of people in your network for useful public-web changes.'}</p><button className="primary" onClick={onRefresh} disabled={loading}>{loading?'Searching…':'Find my signals'}</button></div>}
+  {signals.length>0&&<div className="liveSignalNote"><Globe2 size={14}/><span>Signals come from public web sources. Open the evidence on any card to verify the context before reaching out.</span></div>}
  </div>
+}
+
+function SignalMini({item,expanded,onExpand,onSelect,findRanked,label,icon,timeAgo}:{item:any;expanded:boolean;onExpand:()=>void;onSelect:(p:Ranked)=>void;findRanked:(s:LiveSignal)=>Ranked|undefined;label:(t:string)=>string;icon:(t:string)=>React.ReactNode;timeAgo:(v:string)=>string}){
+ const s=item.parent as LiveSignal
+ const signal=item.signal
+ const person=findRanked(s)
+ return <article className={`liveSignalMini ${(!s.status||s.status==='new')?'isNew':''}`}>
+  <div className="signalMiniTop"><span className={`signalType signalType-${signal.type}`}>{icon(signal.type)} {label(signal.type)}</span><span className="signalTime">{timeAgo(s.last_checked_at)}</span></div>
+  <h4>{signal.title||s.summary}</h4>
+  <div className="signalMiniPerson"><div className="avatar">{initials(s as any)}</div><div><b>{s.first_name} {s.last_name}</b><span>{s.position||'Role not listed'}{s.company?` · ${s.company}`:''}</span></div></div>
+  <p>{signal.why_now||s.why_now||s.summary}</p>
+  <div className="signalMiniActions"><button className="signalEvidence" onClick={onExpand}>{expanded?'Hide evidence':'Evidence'} <ChevronDown size={12}/></button><button className="primary signalReach" onClick={()=>person&&onSelect(person)} disabled={!person}>Reach out <ArrowRight size={12}/></button></div>
+  {expanded&&<div className="signalEvidencePanel">{(s.sources||[]).map((src:any,i:number)=><a key={`${s.id}-${i}`} href={src.url} target="_blank" rel="noreferrer"><span>{src.title||'Source'}</span><ExternalLink size={11}/></a>)}{!(s.sources||[]).length&&<span className="muted">No source links were returned.</span>}</div>}
+ </article>
 }
 
 function HomeView({dashboardReady,hasData,target,connectionCount,messageCount,highPriority,hiringSignals,followups,recommended,goal,goalTarget,conversations,goalPct,setTab,navigateTab,setSelected,openImport,loading,markContacted,toggleFollowedUp,agentOpen,setAgentOpen,agentCommand,setAgentCommand,agentBusy,agentReply,agentActions,agentError,runAgent,findPerson,setVoiceGenerate}:{dashboardReady:boolean;hasData:boolean;target:string;connectionCount:number;messageCount:number;highPriority:number;hiringSignals:number;followups:Ranked[];recommended:Ranked[];goal:string;goalTarget:number;conversations:number;goalPct:number;setTab:any;navigateTab:(next:'Home'|'Opportunities'|'Outreach'|'Follow-ups'|'Live Intelligence')=>void;setSelected:any;openImport:()=>void;loading:boolean;markContacted:(p:Ranked)=>void;toggleFollowedUp:(p:Ranked)=>void;agentOpen:boolean;setAgentOpen:(v:boolean)=>void;agentCommand:string;setAgentCommand:(v:string)=>void;agentBusy:boolean;agentReply:string;agentActions:any[];agentError:string;runAgent:(c?:string)=>void;findPerson:(name:string)=>Ranked|undefined;setVoiceGenerate:(v:boolean)=>void}){
