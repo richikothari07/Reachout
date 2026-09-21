@@ -4418,3 +4418,86 @@ html, body, .app, .content, .sidebar {
  .discoverSection{padding:13px}
  .liveDisclaimer{font-size:7.5px}
 }
+
+
+/* Mobile navigation: the full desktop sidebar becomes an off-canvas menu.
+   This keeps every tab accessible without squeezing or horizontally scrolling. */
+.mobileMenuWrap,.mobileNavOverlay,.mobileNavClose{display:none}
+
+@media (max-width:760px){
+  .app{min-width:0;overflow-x:hidden}
+  .content{margin-left:0!important;width:100%;max-width:none;padding:16px 14px 72px}
+  .sidebar{
+    width:min(280px,86vw)!important;
+    transform:translateX(-105%);
+    transition:transform .22s ease;
+    padding:18px 14px;
+    box-shadow:16px 0 40px rgba(0,0,0,.16);
+    z-index:100;
+  }
+  .sidebar.mobileOpen{transform:translateX(0)}
+  .mobileNavClose{
+    display:grid;
+    place-items:center;
+    position:absolute;
+    top:14px;
+    right:12px;
+    width:34px;
+    height:34px;
+    border:1px solid #34342f;
+    border-radius:9px;
+    background:#242420;
+    color:#f4f4ef;
+    z-index:2;
+  }
+  .mobileNavOverlay{
+    display:block;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.42);
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .2s ease;
+    z-index:90;
+  }
+  .mobileNavOverlay.open{
+    opacity:1;
+    pointer-events:auto;
+  }
+  .mobileMenuWrap{display:block;flex:none}
+  .mobileMenuButton{
+    width:40px;
+    height:40px;
+    display:grid;
+    place-items:center;
+    border:1px solid #deded7;
+    border-radius:10px;
+    background:#fff;
+    color:#292925;
+    box-shadow:0 2px 8px rgba(0,0,0,.04);
+  }
+  .topbar{
+    display:grid;
+    grid-template-columns:40px minmax(0,1fr);
+    gap:10px;
+    align-items:start;
+    margin-bottom:20px;
+  }
+  .topbar>div:nth-child(2){min-width:0}
+  .topbar h1{font-size:25px;overflow-wrap:anywhere}
+  .topbar p{font-size:10px}
+  .topbarRight{grid-column:2;min-width:0}
+  .topActions{flex-wrap:wrap}
+  .topActions button{flex:1;min-width:0}
+  .brand{padding-top:18px;padding-right:42px}
+  .sideGoal{margin-top:4px}
+  .sidebar nav{display:grid!important;grid-template-columns:1fr!important;overflow:visible!important;flex:none!important;margin-top:4px!important}
+  .nav{min-height:44px;font-size:11px;padding:11px 12px}
+  .nav svg{width:18px;height:18px}
+  .nav span{white-space:nowrap}
+  .sidebarAccountRow{margin-top:auto}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .sidebar,.mobileNavOverlay{transition:none}
+}

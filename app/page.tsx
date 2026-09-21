@@ -3,7 +3,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react'
 import Papa from 'papaparse'
 import { supabaseBrowser } from '@/lib/supabase-browser'
 import Login from './login'
-import { ArrowRight, ArrowUpRight, BarChart3, Check, CheckCircle2, ChevronDown, ChevronRight, Clock3, ExternalLink, Flame, MessageSquare, MoreHorizontal, RefreshCw, Search, Settings2, Sparkles, Mail, Target, Trash2, UploadCloud, UserRound, Users, WandSparkles, X, Zap, Mic, MicOff, Volume2, Globe2 } from 'lucide-react'
+import { ArrowRight, ArrowUpRight, BarChart3, Check, CheckCircle2, ChevronDown, ChevronRight, Clock3, ExternalLink, Flame, MessageSquare, MoreHorizontal, RefreshCw, Search, Settings2, Sparkles, Mail, Target, Trash2, UploadCloud, UserRound, Users, WandSparkles, X, Zap, Mic, MicOff, Volume2, Globe2, Menu } from 'lucide-react'
 
 type Connection={first_name:string;last_name:string;linkedin_url:string;email:string;company:string;position:string;connected_on:string;education?:string}
 type Message={from:string;sender:string;to:string;recipient:string;date:string;content:string;folder:string}
@@ -39,10 +39,11 @@ export default function Home(){
  const [connectionCount,setConnectionCount]=useState(0),[messageCount,setMessageCount]=useState(0)
  const [ownerName,setOwnerName]=useState('Richi Kothari'),[target,setTarget]=useState('Product Manager'),[keywords,setKeywords]=useState(''),[goal,setGoal]=useState('Land a Product role'),[goalTarget,setGoalTarget]=useState(10),[conversations,setConversations]=useState(0)
  const [profile,setProfile]=useState<ProfileContext|null>(null),[profileFiles,setProfileFiles]=useState<{name:string;status:'ready'|'error';error?:string}[]>([])
- const [tab,setTab]=useState<'Home'|'Opportunities'|'Outreach'|'Follow-ups'|'Live Intelligence'>('Home'),[query,setQuery]=useState(''),[selected,setSelected]=useState<Ranked|null>(null)
+ const [tab,setTab]=useState<'Home'|'Opportunities'|'Outreach'|'Follow-ups'|'Live Intelligence'>('Home'),[query,setQuery]=useState(''),[selected,setSelected]=useState<Ranked|null>(null),[mobileNavOpen,setMobileNavOpen]=useState(false)
  const validTabs=['Home','Opportunities','Outreach','Follow-ups','Live Intelligence'] as const
  const navigateTab=(next:typeof validTabs[number], replace=false)=>{
   setTab(next)
+  setMobileNavOpen(false)
   if(typeof window!=='undefined'){
    const hash=next==='Home'?'':`#${encodeURIComponent(next)}`
    const current=window.location.hash
@@ -286,14 +287,16 @@ export default function Home(){
  if(!signedIn)return <Login onAuthed={()=>setSignedIn(true)}/>
 
  return <main className="app" onDragOver={e=>{e.preventDefault();setDrag(true)}} onDragLeave={()=>setDrag(false)} onDrop={e=>{e.preventDefault();setDrag(false);importFiles(e.dataTransfer.files)}}>
-  <aside className="sidebar">
+  <div className={`mobileNavOverlay ${mobileNavOpen ? "open" : ""}`} onClick={()=>setMobileNavOpen(false)} aria-hidden="true"/>
+  <aside className={`sidebar ${mobileNavOpen ? "mobileOpen" : ""}`}>
+   <button className="mobileNavClose" onClick={()=>setMobileNavOpen(false)} aria-label="Close navigation"><X size={20}/></button>
    <div className="brand"><img className="brandLogo" src="/reachout-logo.png" alt="ReachOut"/><div><b>ReachOut</b><span>OUTREACH INTELLIGENCE</span></div></div>
    <div className="sideGoal"><span>YOUR GOAL</span><b>{goal}</b><div className="goalMini"><i style={{width:`${goalPct}%`}}/></div><small>{conversations} / {goalTarget} conversations</small></div>
    <nav>{([['Home',Sparkles],['Opportunities',Flame],['Outreach',Zap],['Follow-ups',Clock3],['Live Intelligence',Globe2]] as const).map(([x,Icon])=><button key={x} className={tab===x?'nav active':'nav'} onClick={()=>navigateTab(x as any)}><Icon size={17}/><span>{x==='Follow-ups'?'Follow ups':x}</span>{x==='Follow-ups'&&followups.length>0&&<em>{followups.length}</em>}</button>)}</nav>
    <div className="sidebarAccountRow"><div className="accountMenuWrap sidebarAccount" ref={accountMenuRef}><button className="accountButton" onClick={()=>setAccountMenuOpen(v=>!v)} aria-expanded={accountMenuOpen} aria-label="Account"><span className="accountAvatar" aria-hidden="true">{(accountName||'R').trim().charAt(0).toUpperCase()}</span></button>{accountMenuOpen&&<div className="accountMenu"><div className="accountMenuLabel">SIGNED IN AS</div><div className="accountMenuEmail">{accountEmail||'Your account'}</div><button onClick={()=>{setAccountMenuOpen(false);setSetupOpen(true)}}><Settings2 size={14}/> Goal & data</button><button className="accountLogout" onClick={async()=>{setAccountMenuOpen(false);await supabaseBrowser.auth.signOut({scope:'local'})}}><X size={14}/> Log out</button></div>}</div></div>
   </aside>
   <section className="content">
-   <header className="topbar"><div>{tab==='Home'&&greeting&&<span className="homeGreeting">{greeting.toUpperCase()} <span aria-hidden="true">👋</span></span>}<h1>{tab==='Home'?<>Who should you <em className="homeAccent">reach out</em> to?</>:tab}</h1><p>{tab==='Home'?`I found a few people worth your attention. Here’s why and what you can do next.`:tab==='Opportunities'?'People who stand out because of your goals, your network, and what is happening around them.':tab==='Outreach'?'Here are the people I think you should say hi to first.':tab==='Follow-ups'?'A few conversations that could use a little nudge.':'Live web signals that can change who is worth reaching out to today.'}</p></div><div className="topbarRight">{tab==='Home'&&<div className="topActions"><button className="refresh" onClick={()=>loadDashboard(3)} disabled={loading}><RefreshCw size={15} className={loading?'spin':''}/>{loading?'Refreshing':'Refresh'}</button><button className="primary" onClick={()=>setSetupOpen(true)}><Target size={15}/> Edit goal</button></div>}</div></header>
+   <header className="topbar"><div className="mobileMenuWrap"><button className="mobileMenuButton" onClick={()=>setMobileNavOpen(true)} aria-label="Open navigation"><Menu size={20}/></button></div><div>{tab==='Home'&&greeting&&<span className="homeGreeting">{greeting.toUpperCase()} <span aria-hidden="true">👋</span></span>}<h1>{tab==='Home'?<>Who should you <em className="homeAccent">reach out</em> to?</>:tab}</h1><p>{tab==='Home'?`I found a few people worth your attention. Here’s why and what you can do next.`:tab==='Opportunities'?'People who stand out because of your goals, your network, and what is happening around them.':tab==='Outreach'?'Here are the people I think you should say hi to first.':tab==='Follow-ups'?'A few conversations that could use a little nudge.':'Live web signals that can change who is worth reaching out to today.'}</p></div><div className="topbarRight">{tab==='Home'&&<div className="topActions"><button className="refresh" onClick={()=>loadDashboard(3)} disabled={loading}><RefreshCw size={15} className={loading?'spin':''}/>{loading?'Refreshing':'Refresh'}</button><button className="primary" onClick={()=>setSetupOpen(true)}><Target size={15}/> Edit goal</button></div>}</div></header>
    {notice&&<div className="toast"><Check size={15}/>{notice}</div>}
    {dataError&&<div className="dataError"><AlertCircleIcon/><div><b>ReachOut couldn't refresh the dashboard.</b><span>{dataError}</span></div><button onClick={()=>loadDashboard(4)}>Retry</button></div>}
 
