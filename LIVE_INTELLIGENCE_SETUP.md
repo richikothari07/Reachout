@@ -20,3 +20,17 @@ Live Intelligence searches public web results for contacts already in the user's
 - News
 
 Each card contains a concise `why now` explanation and expandable source links.
+
+## Refresh reliability
+
+Live Intelligence refreshes in batches of 5 contacts per click to keep Vercel requests small. Each refresh advances to the next 5 connections and wraps back to the beginning after the end of the list.
+
+The UI now shows whether the refresh checked contacts, found signals, timed out, or failed because configuration/data is missing.
+
+Required Vercel environment variable:
+- `TAVILY_API_KEY`
+
+Required Supabase table:
+- `live_signals` (run the included `supabase.sql` if it does not exist)
+
+If the UI says there are no connections with companies, import LinkedIn `Connections.csv` first.

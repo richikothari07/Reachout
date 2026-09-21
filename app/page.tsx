@@ -75,7 +75,7 @@ export default function Home(){
  const accountMenuRef=useRef<HTMLDivElement>(null)
  const [voiceOpen,setVoiceOpen]=useState(false),[voiceListening,setVoiceListening]=useState(false),[voiceTranscript,setVoiceTranscript]=useState(''),[voiceReply,setVoiceReply]=useState(''),[voiceGenerate,setVoiceGenerate]=useState(false)
  const [agentOpen,setAgentOpen]=useState(false),[agentCommand,setAgentCommand]=useState(''),[agentBusy,setAgentBusy]=useState(false),[agentReply,setAgentReply]=useState(''),[agentActions,setAgentActions]=useState<any[]>([]),[agentError,setAgentError]=useState('')
- const [liveSignals,setLiveSignals]=useState<LiveSignal[]>([]),[liveConfigured,setLiveConfigured]=useState(true),[liveLoading,setLiveLoading]=useState(false)
+ const [liveSignals,setLiveSignals]=useState<LiveSignal[]>([]),[liveConfigured,setLiveConfigured]=useState(true),[liveLoading,setLiveLoading]=useState(false),[liveOffset,setLiveOffset]=useState(0),[liveStatus,setLiveStatus]=useState(''),[liveError,setLiveError]=useState('')
  const recognitionRef=useRef<any>(null)
  const voiceBusyRef=useRef(false)
  useEffect(()=>{
@@ -212,12 +212,23 @@ export default function Home(){
 
  const loadLiveIntelligence=async()=>{
   if(!userId||!signedIn)return
-  try{const r=await apiFetch('/api/live-intelligence?limit=50',{cache:'no-store'});const d=await r.json();if(!r.ok)throw new Error(d.error||'Could not load live intelligence.');setLiveSignals(Array.isArray(d.signals)?d.signals:[]);setLiveConfigured(d.configured!==false)}catch(e){setLiveConfigured(false);flash(e instanceof Error?e.message:'Could not load live intelligence.')}
+  try{const r=await apiFetch('/api/live-intelligence?limit=50',{cache:'no-store'});const d=await r.json();if(!r.ok)throw new Error(d.error||'Could not load live intelligence.');setLiveSignals(Array.isArray(d.signals)?d.signals:[]);setLiveConfigured(d.configured!==false);setLiveError('')}catch(e){const msg=e instanceof Error?e.message:'Could not load live intelligence.';setLiveError(msg);setLiveConfigured(false)}
  }
  const refreshLiveIntelligence=async()=>{
   if(!userId||liveLoading)return
-  setLiveLoading(true)
-  try{const r=await apiFetch('/api/live-intelligence',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({target,keywords,max_people:20})});const d=await r.json();if(!r.ok)throw new Error(d.error||'Could not refresh live intelligence.');setLiveConfigured(true);setLiveSignals(Array.isArray(d.signals)?d.signals:[]);flash(`${Number(d.createdSignals||0)} new web signals found across ${Number(d.checked||0)} contacts.`)}catch(e){flash(e instanceof Error?e.message:'Could not refresh live intelligence.')}finally{setLiveLoading(false)}
+  setLiveLoading(true);setLiveError('');setLiveStatus('Searching 5 people on the public web…')
+  try{
+   const r=await apiFetch('/api/live-intelligence',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({target,keywords,max_people:5,offset:liveOffset})});
+   const d=await r.json().catch(()=>({}));
+   if(!r.ok)throw new Error(d.error||'Could not refresh live intelligence.');
+   setLiveConfigured(true);
+   setLiveSignals(Array.isArray(d.signals)?d.signals:[]);
+   setLiveOffset(Number(d.nextOffset||0));
+   const checked=Number(d.checked||0), found=Number(d.createdSignals||0);
+   if(!d.hasPeople){setLiveStatus(d.message||'No LinkedIn connections with companies found.');return}
+   if(d.errors?.length){setLiveStatus(`Checked ${checked} contact${checked===1?'':'s'} · ${found} signals · ${d.errors.length} search issue${d.errors.length===1?'':'s'}`);setLiveError(d.errors.join(' · '));return}
+   setLiveStatus(`Checked ${checked} contact${checked===1?'':'s'} · found ${found} web signal${found===1?'':'s'}`);
+  }catch(e){const msg=e instanceof Error?e.message:'Could not refresh live intelligence.';setLiveError(msg);setLiveStatus('Refresh failed');flash(msg)}finally{setLiveLoading(false)}
  }
  useEffect(()=>{if(tab==='Live Intelligence'&&signedIn&&userId)loadLiveIntelligence()},[tab,signedIn,userId])
  const importProfileFiles=async(fileList:FileList|File[])=>{
@@ -358,7 +369,7 @@ function LiveIntelligenceView({target,keywords,goal,ranked,signals,configured,lo
    <div className="liveIntelSummary"><strong>{newCount || signals.length}</strong><span>{newCount ? 'new reasons to reach out' : signals.length ? 'reasons to reach out' : 'signals found so far'}</span><small>{signals[0]?.last_checked_at?`Updated ${timeAgo(signals[0].last_checked_at)}`:'Not checked yet'}</small></div>
    <button className="primary liveRefreshButton" onClick={onRefresh} disabled={loading}>{loading?<RefreshCw size={15} className="spin"/>:<RefreshCw size={15}/>} {loading?'Refreshing web…':'Refresh intelligence'}</button>
   </section>
-
+  {liveStatus&&<div className={`liveRunStatus ${liveError?'hasError':''}`}>{liveError?<span>⚠ {liveStatus}: {liveError}</span>:<span>✓ {liveStatus}</span>}</div>}
   {!configured&&<section className="liveSetupNote"><div className="setupNoteIcon"><Globe2 size={17}/></div><div><b>Connect public-web search</b><p>Add <code>TAVILY_API_KEY</code> to your Vercel environment variables. The rest of Live Intelligence is already wired into ReachOut.</p></div></section>}
 
   {signals.length>0&&<>
@@ -376,7 +387,7 @@ function LiveIntelligenceView({target,keywords,goal,ranked,signals,configured,lo
    {!filtered.length&&<Empty title="No signals in this filter" text="Try another signal type or refresh the web."/>}
   </>}
 
-  {!signals.length&&configured&&<div className="liveEmptyState"><div className="emptyIcon"><Globe2 size={20}/></div><h3>Nothing new yet</h3><p>Refresh Live Intelligence to search public web sources around people and companies in your network.</p><button className="primary" onClick={onRefresh} disabled={loading}>{loading?'Searching…':'Find my signals'}</button></div>}
+  {!signals.length&&configured&&<div className="liveEmptyState"><div className="emptyIcon"><Globe2 size={20}/></div><h3>Nothing new yet</h3><p>{liveStatus||'Refresh Live Intelligence to search public web sources around people and companies in your network.'}</p><button className="primary" onClick={onRefresh} disabled={loading}>{loading?'Searching…':'Find my signals'}</button></div>}
 
   {signals.length>0&&<div className="liveSignalNote"><Globe2 size={14}/><span>Signals come from public web sources. ReachOut shows the source links so you can verify the context before reaching out.</span></div>}
  </div>

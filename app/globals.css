@@ -4722,3 +4722,62 @@ html, body, .app, .content, .sidebar {
 .signalCardTop{display:flex;align-items:center;gap:8px;min-height:22px}.signalType{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:5px 8px;font-size:9px;font-weight:750;letter-spacing:.06em}.signalType-hiring{background:#fff0ed;color:#d85c52}.signalType-funding{background:#edf5ff;color:#3779d8}.signalType-career{background:#f0ebff;color:#6448cf}.signalType-company{background:#eaf9f2;color:#2b916c}.signalType-news{background:#f4f5f8;color:#687287}.newPill{font-size:8px;font-weight:800;color:#5645bc;background:#eeeaff;padding:4px 7px;border-radius:999px}.signalTime{margin-left:auto;font-size:9px;color:#9b96a4}
 .liveSignalCard h3{font-size:16px;line-height:1.25;letter-spacing:-.025em;margin:12px 0 10px;color:#282532}.signalPerson{display:flex;align-items:center;gap:9px}.signalPerson .avatar{width:31px;height:31px;font-size:9px}.signalPerson b,.signalPerson span{display:block}.signalPerson b{font-size:11px}.signalPerson span{font-size:9px;color:#87818f;margin-top:2px}.signalWhy{font-size:11px;color:#6d6877;line-height:1.55;margin:13px 0 14px;max-width:720px}.signalCardFooter{display:flex;align-items:center;gap:10px;border-top:1px solid #efedf3;padding-top:11px}.signalCardFooter>span{font-size:9px;color:#9a95a3}.signalEvidence{border:0;background:transparent;color:#706a7a;font-size:9px;display:flex;align-items:center;gap:3px;padding:5px;cursor:pointer;margin-left:auto}.signalReach{font-size:9px!important;padding:7px 10px!important}.signalEvidencePanel{margin-top:11px;border-top:1px solid #efedf3;padding-top:9px;display:grid;gap:5px}.signalEvidencePanel a{display:flex;justify-content:space-between;gap:12px;align-items:center;color:#5f5970;text-decoration:none;background:#faf9fc;border:1px solid #ece9f1;border-radius:8px;padding:8px 9px;font-size:9px}.signalEvidencePanel a:hover{background:#f4f1fb}.liveEmptyState{padding:45px 20px;text-align:center;background:#fff;border:1px dashed #ddd9e7;border-radius:18px}.liveEmptyState .emptyIcon{margin:0 auto 10px}.liveEmptyState h3{font-size:16px;margin:0 0 5px}.liveEmptyState p{font-size:11px;color:#85808d;max-width:420px;margin:0 auto 16px;line-height:1.5}.liveSignalNote{display:flex;align-items:center;justify-content:center;gap:7px;color:#8b8693;font-size:9px;padding:16px 8px 4px;text-align:center}.liveSignalNote svg{flex:none}
 @media(max-width:760px){.liveIntelToolbar{align-items:flex-start;flex-direction:column;padding:15px}.liveRefreshButton{width:100%;justify-content:center}.liveSignalCard{padding:15px}.liveSignalCard h3{font-size:15px}.signalCardFooter{flex-wrap:wrap}.signalEvidence{margin-left:0}.signalReach{margin-left:auto}.liveSignalNote{padding-bottom:20px}.liveSetupNote{padding:13px}}
+
+
+/* FINAL LOGIN POLISH — logo + stay-signed-in alignment */
+.authBrand{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin:0 0 22px;
+  height:42px;
+}
+.authBrand .authLogo{
+  width:42px!important;
+  height:42px!important;
+  object-fit:contain!important;
+  display:block!important;
+  margin:0!important;
+  padding:0!important;
+  background:transparent!important;
+  border-radius:0!important;
+  filter:none!important;
+}
+.authBrand span{
+  font-size:24px;
+  line-height:1;
+  font-weight:800;
+  letter-spacing:-.045em;
+  color:#111;
+}
+.authCard .staySignedIn{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  gap:7px!important;
+  width:max-content!important;
+  margin:-2px 0 2px!important;
+  padding:0!important;
+  font-size:10px!important;
+  line-height:1.2!important;
+  font-weight:500!important;
+  color:#706c78!important;
+}
+.authCard .staySignedIn input{
+  width:14px!important;
+  height:14px!important;
+  min-width:14px!important;
+  margin:0!important;
+  padding:0!important;
+  accent-color:#5d4ac7!important;
+}
+.authCard .staySignedIn span{line-height:1.2!important}
+@media(max-width:760px){
+  .authBrand{margin-bottom:20px}
+  .authBrand span{font-size:22px}
+  .authCard .staySignedIn{font-size:10px!important}
+}
+
+/* Live Intelligence run status */
+.liveRunStatus{margin:-22px 0 22px;padding:10px 14px;border:1px solid #dfe4f0;border-radius:12px;background:#fafbff;color:#667085;font-size:13px;line-height:1.45}
+.liveRunStatus.hasError{border-color:#f0d4d4;background:#fff8f8;color:#a23b3b}

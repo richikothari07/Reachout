@@ -45,23 +45,33 @@ function classifyResult(result: SearchResult, person: any, target: string): Sign
 }
 
 async function tavilySearch(query: string, apiKey: string): Promise<SearchResult[]> {
-  const response = await fetch('https://api.tavily.com/search', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      api_key: apiKey,
-      query,
-      search_depth: 'basic',
-      topic: 'general',
-      max_results: 5,
-      include_answer: false,
-      include_raw_content: false,
-    }),
-    cache: 'no-store',
-  })
-  if (!response.ok) throw new Error(`Web search failed (${response.status}).`)
-  const data = await response.json()
-  return Array.isArray(data?.results) ? data.results : []
+  const controller = new AbortController()
+  const timeout = setTimeout(() => controller.abort(), 8000)
+  try {
+    const response = await fetch('https://api.tavily.com/search', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        api_key: apiKey,
+        query,
+        search_depth: 'basic',
+        topic: 'general',
+        max_results: 5,
+        include_answer: false,
+        include_raw_content: false,
+      }),
+      cache: 'no-store',
+      signal: controller.signal,
+    })
+    if (!response.ok) throw new Error(`Web search failed (${response.status}).`)
+    const data = await response.json()
+    return Array.isArray(data?.results) ? data.results : []
+  } catch (error) {
+    if (error instanceof Error && error.name === 'AbortError') throw new Error('Web search timed out after 8 seconds.')
+    throw error
+  } finally {
+    clearTimeout(timeout)
+  }
 }
 
 export async function GET(req: Request) {
@@ -93,7 +103,8 @@ export async function POST(req: Request) {
     const body = await req.json().catch(() => ({}))
     const target = clean(body.target) || 'Product Manager'
     const keywords = clean(body.keywords)
-    const maxPeople = Math.min(Math.max(Number(body.max_people || 20), 1), 30)
+    const maxPeople = Math.min(Math.max(Number(body.max_people || 5), 1), 5)
+    const offset = Math.max(Number(body.offset || 0), 0)
     const apiKey = process.env.TAVILY_API_KEY
 
     if (!apiKey) {
@@ -110,7 +121,7 @@ export async function POST(req: Request) {
       .eq('user_id', user.id)
       .not('company', 'is', null)
       .order('created_at', { ascending: false })
-      .limit(maxPeople)
+      .range(offset, offset + maxPeople - 1)
     if (peopleError) throw new Error(peopleError.message)
 
     let checked = 0
@@ -182,7 +193,7 @@ export async function POST(req: Request) {
       .limit(50)
     if (readError) throw new Error(readError.message)
 
-    return NextResponse.json({ configured: true, checked, createdSignals, signals: signals || [], errors: errors.slice(0, 5) })
+    return NextResponse.json({ configured: true, checked, createdSignals, signals: signals || [], errors: errors.slice(0, 5), offset, nextOffset: (people || []).length < maxPeople ? 0 : offset + maxPeople, hasPeople: (people || []).length > 0, message: !(people || []).length ? 'No LinkedIn connections with a company were found. Import your Connections.csv first.' : undefined })
   } catch (e) {
     console.error('LIVE_INTELLIGENCE_POST', e)
     return NextResponse.json({ error: e instanceof Error ? e.message : 'Could not refresh live intelligence.' }, { status: 500 })

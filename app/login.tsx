@@ -96,7 +96,10 @@ export default function Login({ onAuthed }: { onAuthed: () => void }) {
   return (
     <main className="authPage">
       <div className="authCard">
-        <img src="/reachout-logo.png" className="authLogo" alt="ReachOut" />
+        <div className="authBrand" aria-label="ReachOut">
+          <img src="/reachout-logo.png" className="authLogo" alt="" aria-hidden="true" />
+          <span>ReachOut</span>
+        </div>
         <h1>
           {mode === 'login'
             ? 'Welcome back.'
