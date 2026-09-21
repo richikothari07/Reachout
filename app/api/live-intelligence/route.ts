@@ -4,220 +4,147 @@ import { authenticatedUser, supabaseAdmin } from '@/lib/supabase-server'
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
 
-type SearchResult = {
-  title?: string
-  url?: string
-  content?: string
-  published_date?: string
-  score?: number
-}
-
-type JobPosting = {
+type SearchResult = { title?: string; url?: string; content?: string; published_date?: string; score?: number }
+type HiringJob = {
+  id: string
+  company: string
   title: string
   url: string
   source: string
+  location: string
+  experience: string
   published_date?: string | null
+  relevance: number
 }
 
 const clean = (s: unknown) => String(s || '').replace(/\s+/g, ' ').trim()
 const lower = (s: unknown) => clean(s).toLowerCase()
 
-const JOB_DOMAINS = [
-  'greenhouse.io', 'lever.co', 'ashbyhq.com', 'workdayjobs.com', 'myworkdayjobs.com',
-  'smartrecruiters.com', 'workable.com', 'jobvite.com', 'bamboohr.com', 'recruitee.com',
-  'pinpointhq.com', 'teamtailor.com', 'icims.com', 'successfactors.com'
-]
+const ATS_DOMAINS = ['greenhouse.io','lever.co','ashbyhq.com','workdayjobs.com','myworkdayjobs.com','smartrecruiters.com','workable.com','jobvite.com','bamboohr.com','recruitee.com','pinpointhq.com','teamtailor.com','icims.com','successfactors.com']
 
 function looksLikeJobUrl(url: string) {
   const u = lower(url)
-  return JOB_DOMAINS.some(d => u.includes(d)) || /\/(jobs?|careers?|positions?|openings?)(\/|[?#]|$)/i.test(u)
+  return ATS_DOMAINS.some(d => u.includes(d)) || /\/(jobs?|careers?|positions?|openings?|vacancies)(\/|[?#]|$)/i.test(u)
 }
-
-function roleMatches(text: string, target: string) {
-  const t = lower(text)
-  const role = lower(target)
-  if (!role) return true
-  const phrases = [role]
-  if (role.includes('product manager')) phrases.push('product management', 'product lead', 'product owner', 'product manager')
-  if (role.includes('software engineer')) phrases.push('software engineer', 'software developer', 'engineering')
-  if (role.includes('growth')) phrases.push('growth manager', 'growth lead', 'growth')
-  if (role.includes('investment analyst')) phrases.push('investment analyst', 'investment associate', 'investments')
-  return phrases.some(x => t.includes(x))
-}
-
 function sourceName(url: string) {
   try {
-    const host = new URL(url).hostname.replace(/^www\./, '')
-    if (host.includes('greenhouse')) return 'Greenhouse'
-    if (host.includes('lever')) return 'Lever'
-    if (host.includes('ashby')) return 'Ashby'
-    if (host.includes('workday')) return 'Workday'
-    return host
+    const host = new URL(url).hostname.replace(/^www\./,'')
+    const names: Record<string,string> = { 'greenhouse.io':'Greenhouse','lever.co':'Lever','ashbyhq.com':'Ashby','workdayjobs.com':'Workday','myworkdayjobs.com':'Workday','smartrecruiters.com':'SmartRecruiters','workable.com':'Workable','jobvite.com':'Jobvite','bamboohr.com':'BambooHR','recruitee.com':'Recruitee','teamtailor.com':'Teamtailor','icims.com':'iCIMS','successfactors.com':'SAP SuccessFactors' }
+    return Object.entries(names).find(([d])=>host.includes(d))?.[1] || host
   } catch { return 'Job posting' }
 }
-
-function extractJobs(results: SearchResult[], company: string, target: string): JobPosting[] {
-  const seen = new Set<string>()
-  const jobs: JobPosting[] = []
-  for (const result of results) {
-    const url = clean(result.url)
-    const title = clean(result.title)
-    const content = clean(result.content)
+function slugToName(slug: string) { return slug.replace(/[-_]+/g,' ').replace(/\b\w/g,m=>m.toUpperCase()).trim() }
+function companyFromResult(result: SearchResult) {
+  const title = clean(result.title)
+  const content = clean(result.content)
+  const url = clean(result.url)
+  // Common ATS URL patterns are more reliable than search-result titles.
+  try {
+    const u = new URL(url); const parts = u.pathname.split('/').filter(Boolean)
+    const host = u.hostname.toLowerCase()
+    if (host.includes('lever.co') && parts[0]) return slugToName(parts[0])
+    if (host.includes('ashbyhq.com') && parts[0]) return slugToName(parts[0])
+    if (host.includes('greenhouse.io') && parts[0] && !['job_board','embed'].includes(parts[0])) return slugToName(parts[0])
+  } catch {}
+  const titleParts = title.split(/\s+[|–—-]\s+/)
+  if (titleParts.length > 1) {
+    const candidate = titleParts[titleParts.length-1].trim()
+    if (candidate && candidate.length < 70 && !/^(jobs?|careers?|apply|job opening)$/i.test(candidate)) return candidate
+  }
+  const at = content.match(/(?:at|with)\s+([A-Z][A-Za-z0-9&.\- ]{2,60})\s+(?:as|is|are|for|and)\b/)
+  if (at?.[1]) return clean(at[1])
+  try {
+    const host = new URL(url).hostname.replace(/^www\./,'').split('.')[0]
+    if (host && !ATS_DOMAINS.some(d=>host.includes(d))) return slugToName(host)
+  } catch {}
+  return 'Company'
+}
+function locationMatches(text: string, location: string) {
+  const loc = lower(location)
+  if (!loc || loc === 'anywhere') return true
+  const t = lower(text)
+  if (loc === 'remote') return /\bremote\b|work from anywhere|distributed/i.test(t)
+  const aliases: Record<string,string[]> = { 'mumbai':['mumbai','bombay'], 'bangalore':['bangalore','bengaluru'], 'bengaluru':['bangalore','bengaluru'], 'delhi':['delhi','new delhi','gurugram','gurgaon','noida'], 'ncr':['delhi','new delhi','gurugram','gurgaon','noida'], 'hyderabad':['hyderabad'], 'pune':['pune'], 'chennai':['chennai'], 'india':['india'], 'london':['london','uk','united kingdom'], 'new york':['new york','nyc'], 'san francisco':['san francisco','bay area'] }
+  const terms = aliases[loc] || [loc]
+  return terms.some(x=>t.includes(x))
+}
+function experienceMatches(text: string, exp: string) {
+  if (!exp || exp === 'Any') return { ok:true, confidence:1 }
+  const t = lower(text)
+  const ranges = exp.split('-').map(Number)
+  const plusRange = exp.endsWith('+')
+  const years = [...t.matchAll(/(?:at least\s+)?(\d+)\s*(?:-|to)?\s*(\d+)?\s*(?:years?|yrs?)/g)].map(m=>({min:Number(m[1]),max:m[2]?Number(m[2]):Number(m[1])}))
+  const plus = t.match(/(\d+)\s*\+\s*(?:years?|yrs?)/); if (plus) years.push({min:Number(plus[1]),max:99})
+  if (!years.length) return { ok:true, confidence:.45 }
+  const [min] = ranges
+  const max = plusRange ? 99 : ranges[1]
+  return { ok: years.some(r=>r.max>=min && r.min<=max), confidence:1 }
+}
+function roleMatches(text: string, target: string) {
+  const role = lower(target); const t = lower(text)
+  if (!role) return true
+  const aliases = role.includes('product manager') ? ['product manager','product management','product lead','product owner'] : role.includes('software engineer') ? ['software engineer','software developer','backend engineer','frontend engineer','full stack engineer'] : [role]
+  return aliases.some(x=>t.includes(x))
+}
+function extractJobs(results: SearchResult[], target: string, location: string, experience: string): HiringJob[] {
+  const seen = new Set<string>(); const jobs: HiringJob[] = []
+  for (const r of results) {
+    const url = clean(r.url), title = clean(r.title), content = clean(r.content)
     if (!url || !title || !looksLikeJobUrl(url)) continue
-    if (!roleMatches(`${title} ${content}`, target)) continue
-    const key = url.toLowerCase().replace(/[?#].*$/, '')
-    if (seen.has(key)) continue
-    seen.add(key)
-    jobs.push({ title, url, source: sourceName(url), published_date: result.published_date || null })
-    if (jobs.length >= 6) break
+    const text = `${title} ${content}`
+    if (!roleMatches(text,target)) continue
+    if (!locationMatches(text,location)) continue
+    const exp = experienceMatches(text,experience); if (!exp.ok) continue
+    const key = url.toLowerCase().replace(/[?#].*$/,'')
+    if (seen.has(key)) continue; seen.add(key)
+    const company = companyFromResult(r)
+    const relevance = Math.round(Math.min(100, 55 + (roleMatches(text,target)?20:0) + (locationMatches(text,location)?15:0) + exp.confidence*10 + (ATS_DOMAINS.some(d=>lower(url).includes(d))?10:0)))
+    jobs.push({ id:key, company, title, url, source:sourceName(url), location: location || 'Any location', experience: experience || 'Any', published_date:r.published_date||null, relevance })
   }
-  return jobs
+  return jobs.sort((a,b)=>b.relevance-a.relevance).slice(0,30)
 }
-
-async function tavilySearch(query: string, apiKey: string): Promise<SearchResult[]> {
-  const controller = new AbortController()
-  const timeout = setTimeout(() => controller.abort(), 9000)
+async function tavilySearch(query:string,apiKey:string):Promise<SearchResult[]> {
+  const controller=new AbortController(); const timeout=setTimeout(()=>controller.abort(),9000)
   try {
-    const response = await fetch('https://api.tavily.com/search', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        api_key: apiKey,
-        query,
-        search_depth: 'advanced',
-        topic: 'general',
-        max_results: 8,
-        include_answer: false,
-        include_raw_content: false,
-      }),
-      cache: 'no-store',
-      signal: controller.signal,
-    })
-    if (!response.ok) throw new Error(`Web search failed (${response.status}).`)
-    const data = await response.json()
-    return Array.isArray(data?.results) ? data.results : []
-  } catch (error) {
-    if (error instanceof Error && error.name === 'AbortError') throw new Error('Web search timed out after 9 seconds.')
-    throw error
-  } finally { clearTimeout(timeout) }
+    const response=await fetch('https://api.tavily.com/search',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({api_key:apiKey,query,search_depth:'advanced',topic:'general',max_results:10,include_answer:false,include_raw_content:false}),cache:'no-store',signal:controller.signal})
+    if(!response.ok)throw new Error(`Web search failed (${response.status}).`)
+    const data=await response.json(); return Array.isArray(data?.results)?data.results:[]
+  } catch(e) { if(e instanceof Error&&e.name==='AbortError')throw new Error('Web search timed out after 9 seconds.'); throw e }
+  finally{clearTimeout(timeout)}
 }
 
-function toCompanies(rows: any[]) {
-  const map = new Map<string, any>()
-  for (const row of rows || []) {
-    const company = clean(row.company)
-    if (!company) continue
-    const key = lower(company)
-    const jobs = Array.isArray(row.signals) ? row.signals.filter((s: any) => s?.type === 'hiring' && s?.url).map((s: any) => ({
-      title: clean(s.title), url: clean(s.url), source: clean(s.source), published_date: s.date || null,
-    })).filter((j: any) => j.url) : []
-    if (!jobs.length) continue
-    if (!map.has(key)) map.set(key, { id: row.id, company, connections: [], jobs: [], last_checked_at: row.last_checked_at })
-    const item = map.get(key)
-    const connection = { id: row.connection_id, first_name: clean(row.first_name), last_name: clean(row.last_name), position: clean(row.position), linkedin_url: clean(row.linkedin_url) }
-    if (!item.connections.some((c: any) => c.id === connection.id)) item.connections.push(connection)
-    for (const job of jobs) if (!item.jobs.some((j: any) => j.url === job.url)) item.jobs.push(job)
-    if (Date.parse(row.last_checked_at || '') > Date.parse(item.last_checked_at || '')) item.last_checked_at = row.last_checked_at
-  }
-  return Array.from(map.values()).map(item => ({ ...item, jobs: item.jobs.slice(0, 8) })).sort((a, b) => b.jobs.length - a.jobs.length)
+export async function GET(req:Request){
+  try{
+    await authenticatedUser(req)
+    return NextResponse.json({configured:Boolean(process.env.TAVILY_API_KEY)})
+  }catch(e){return NextResponse.json({error:e instanceof Error?e.message:'Could not load hiring intelligence.'},{status:500})}
 }
 
-export async function GET(req: Request) {
-  try {
-    const user = await authenticatedUser(req)
-    const supabase = supabaseAdmin()
-    const url = new URL(req.url)
-    const limit = Math.min(Math.max(Number(url.searchParams.get('limit') || 30), 1), 30)
-    const { data, error } = await supabase.from('live_signals').select('*').eq('user_id', user.id).order('score', { ascending: false }).order('last_checked_at', { ascending: false }).limit(limit)
-    if (error) throw new Error(error.message)
-
-    const companies = toCompanies(data || [])
-    return NextResponse.json({ companies, configured: Boolean(process.env.TAVILY_API_KEY) })
-  } catch (e) {
-    console.error('LIVE_INTELLIGENCE_GET', e)
-    return NextResponse.json({ error: e instanceof Error ? e.message : 'Could not load hiring intelligence.' }, { status: 500 })
-  }
-}
-
-export async function POST(req: Request) {
-  try {
-    const user = await authenticatedUser(req)
-    const body = await req.json().catch(() => ({}))
-    const target = clean(body.target) || 'Product Manager'
-    const maxPeople = Math.min(Math.max(Number(body.max_people || 5), 1), 5)
-    const offset = Math.max(Number(body.offset || 0), 0)
-    const apiKey = process.env.TAVILY_API_KEY
-    if (!apiKey) return NextResponse.json({ configured: false, error: 'Add TAVILY_API_KEY to your Vercel environment variables.' }, { status: 503 })
-
-    const supabase = supabaseAdmin()
-    const { data: people, error: peopleError } = await supabase.from('connections')
-      .select('id,linkedin_url,first_name,last_name,company,position,connected_on')
-      .eq('user_id', user.id).not('company', 'is', null).order('created_at', { ascending: false }).range(offset, offset + maxPeople - 1)
-    if (peopleError) throw new Error(peopleError.message)
-
-    let checked = 0
-    let companiesFound = 0
-    const errors: string[] = []
-
-    const results = await Promise.all((people || []).map(async (person: any) => {
-      const name = clean(`${person.first_name} ${person.last_name}`)
-      const company = clean(person.company)
-      if (!company) return { person, jobs: [], error: '' }
-      try {
-        const query = `"${company}" "${target}" jobs careers hiring`
-        let searchResults = await tavilySearch(query, apiKey)
-        let jobs = extractJobs(searchResults, company, target)
-        if (!jobs.length) {
-          searchResults = await tavilySearch(`"${company}" "${target}" careers jobs`, apiKey)
-          jobs = extractJobs(searchResults, company, target)
-        }
-        return { person, jobs, error: '' }
-      } catch (e) {
-        return { person, jobs: [], error: `${name || company}: ${e instanceof Error ? e.message : 'search failed'}` }
-      }
-    }))
-
-    for (const result of results) {
-      const person = result.person
-      if (result.error) { errors.push(result.error); continue }
-      checked++
-      if (!result.jobs.length) continue
-      companiesFound += 1
-      const signals = result.jobs.map(job => ({
-        type: 'hiring',
-        title: job.title,
-        why_now: `${clean(person.company)} is hiring for ${job.title}. This is directly relevant to your ${target} goal.`,
-        date: job.published_date || undefined,
-        url: job.url,
-        source: job.source,
-      }))
-      const sources = result.jobs.map(job => ({ title: job.title, url: job.url, published_date: job.published_date || null }))
-      const score = Math.min(100, 60 + result.jobs.length * 8)
-      const { error: upsertError } = await supabase.from('live_signals').upsert({
-        user_id: user.id,
-        connection_id: person.id,
-        linkedin_url: clean(person.linkedin_url),
-        first_name: clean(person.first_name),
-        last_name: clean(person.last_name),
-        company: clean(person.company),
-        position: clean(person.position),
-        signals,
-        score,
-        summary: `${clean(person.company)} is hiring for ${result.jobs.length} relevant role${result.jobs.length === 1 ? '' : 's'}.`,
-        sources,
-        source_count: sources.length,
-        last_checked_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      }, { onConflict: 'user_id,connection_id' })
-      if (upsertError) errors.push(`${person.first_name} ${person.last_name}: ${upsertError.message}`)
+export async function POST(req:Request){
+  try{
+    const user=await authenticatedUser(req); const body=await req.json().catch(()=>({}))
+    const target=clean(body.target)||'Product Manager'; const location=clean(body.location)||'Anywhere'; const experience=clean(body.experience)||'Any'
+    const apiKey=process.env.TAVILY_API_KEY
+    if(!apiKey)return NextResponse.json({configured:false,error:'Add TAVILY_API_KEY to your Vercel environment variables.'},{status:503})
+    const queries=[
+      `"${target}" ${location==='Anywhere'?'':`"${location}"`} ${experience==='Any'?'':`"${experience}"`} jobs hiring careers`,
+      `site:greenhouse.io "${target}" ${location==='Anywhere'?'':`"${location}"`}`,
+      `site:jobs.ashbyhq.com "${target}" ${location==='Anywhere'?'':`"${location}"`}`,
+      `site:lever.co "${target}" ${location==='Anywhere'?'':`"${location}"`}`,
+      `"${target}" ${location==='Anywhere'?'':`"${location}"`} apply careers jobs`
+    ]
+    const settled=await Promise.allSettled(queries.map(q=>tavilySearch(q,apiKey)))
+    const errors=settled.filter(x=>x.status==='rejected').map(x=>x.reason instanceof Error?x.reason.message:'Search failed')
+    const all=settled.flatMap(x=>x.status==='fulfilled'?x.value:[])
+    const jobs=extractJobs(all,target,location,experience)
+    const grouped = new Map<string,{company:string;jobs:HiringJob[];last_checked_at:string}>()
+    for (const job of jobs) {
+      const key = lower(job.company)
+      const existing = grouped.get(key)
+      if (existing) existing.jobs.push(job)
+      else grouped.set(key, { company: job.company, jobs: [job], last_checked_at: new Date().toISOString() })
     }
-
-    const { data: rows, error: readError } = await supabase.from('live_signals').select('*').eq('user_id', user.id).order('score', { ascending: false }).order('last_checked_at', { ascending: false }).limit(50)
-    if (readError) throw new Error(readError.message)
-    const companies = toCompanies(rows || [])
-    return NextResponse.json({ configured: true, checked, companiesFound, companies, errors: errors.slice(0, 5), offset, nextOffset: (people || []).length < maxPeople ? 0 : offset + maxPeople, hasPeople: (people || []).length > 0 })
-  } catch (e) {
-    console.error('LIVE_INTELLIGENCE_POST', e)
-    return NextResponse.json({ error: e instanceof Error ? e.message : 'Could not refresh hiring intelligence.' }, { status: 500 })
-  }
+    const companies = Array.from(grouped.values()).map(x=>({...x,jobs:x.jobs.slice(0,6)}))
+    return NextResponse.json({configured:true,checked:all.length,jobCount:jobs.length,companies,errors:errors.slice(0,3),filters:{target,location,experience}})
+  }catch(e){console.error('LIVE_INTELLIGENCE_POST',e);return NextResponse.json({error:e instanceof Error?e.message:'Could not search hiring intelligence.'},{status:500})}
 }

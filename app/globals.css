@@ -4813,3 +4813,12 @@ html, body, .app, .content, .sidebar {
 .hiringReach{margin-top:11px;width:100%;justify-content:center;font-size:9px!important;padding:8px 10px!important}
 .hiringEmpty{margin-top:4px}
 @media(max-width:760px){.hiringCompaniesSection{padding:15px}.hiringSectionHeader{align-items:flex-start;flex-direction:column}.hiringCompanyGrid{grid-template-columns:1fr}.jobPosting{align-items:flex-start}.jobLink{margin-top:1px}}
+
+/* LIVE INTELLIGENCE — public market hiring search */
+.hiringFilters{display:grid;grid-template-columns:1.35fr 1fr 1fr auto;gap:10px;padding:14px;background:#faf9fc;border:1px solid #ece9f1;border-radius:14px;margin-bottom:14px;align-items:end}
+.hiringFilters label{display:grid;gap:5px;min-width:0}.hiringFilters label>span{font-size:8px;font-weight:800;letter-spacing:.12em;color:#898391}
+.filterInput{height:40px;display:flex;align-items:center;gap:7px;background:#fff;border:1px solid #dedbe6;border-radius:9px;padding:0 10px;color:#8a8492}.filterInput:focus-within{border-color:#9b8de4;box-shadow:0 0 0 3px rgba(93,74,199,.08)}
+.filterInput input,.filterInput select{width:100%;height:100%;border:0;outline:0;background:transparent;color:#34303c;font:inherit;font-size:10px;min-width:0}.filterInput select{cursor:pointer}.hiringSearchButton{height:40px;white-space:nowrap}
+.hiringResultsHeader{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:4px 0 12px;padding:0 2px}.hiringResultsHeader div{font-size:10px;color:#77717f}.hiringResultsHeader b{font-size:14px;color:#282532;margin-right:3px}.hiringResultsHeader>span{font-size:9px;color:#9a94a2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media(max-width:900px){.hiringFilters{grid-template-columns:1fr 1fr}.hiringSearchButton{width:100%}.hiringResultsHeader{align-items:flex-start;flex-direction:column;gap:4px}}
+@media(max-width:760px){.hiringFilters{grid-template-columns:1fr;padding:12px}.hiringSearchButton{width:100%}.hiringResultsHeader>span{white-space:normal}.jobPosting{flex-direction:column}.jobLink{width:100%;justify-content:center}}
