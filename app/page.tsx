@@ -11,8 +11,8 @@ type Ranked=Connection & {score:number;reasons:string[];action:'Reach out'|'Foll
 type FileItem={id:string;name:string;type:'connections'|'messages'|'education'|null;rows:number;status:'ready'|'error'|'processing';error?:string}
 type ProfileContext={name:string;headline:string;summary:string;industry:string;positions:string[];positionDescriptions:string[];skills:string[]}
 type LiveSignal={id:string;first_name:string;last_name:string;company:string;position:string;linkedin_url:string;signals:Array<{type:'hiring'|'funding'|'career'|'company'|'news';title:string;why_now:string;date?:string}>;score:number;summary:string;sources:Array<{title:string;url:string;published_date?:string|null}>;source_count:number;status?:string;primary_type?:string;why_now?:string;last_checked_at:string}
-type HiringJob={id:string;company:string;title:string;url:string;source:string;location:string;experience:string;published_date?:string|null;relevance:number}
-type HiringCompany={company:string;jobs:HiringJob[];last_checked_at:string}
+type HiringPost={id:string;company:string;role:string;url:string;source:string;snippet:string;published_date?:string|null;relevance:number}
+type HiringCompany={company:string;posts:HiringPost[];last_checked_at:string}
 
 const roleHints=['Product Manager','Product Designer','Software Engineer','Growth Manager','Investment Analyst']
 function norm(s=''){return s.toLowerCase().replace(/[^a-z0-9+ ]/g,' ').replace(/\s+/g,' ').trim()}
@@ -229,9 +229,9 @@ export default function Home(){
    const d=await r.json().catch(()=>({}))
    if(!r.ok)throw new Error(d.error||'Could not search hiring intelligence.')
    setLiveConfigured(true);setHiringCompanies(Array.isArray(d.companies)?d.companies:[])
-   const jobs=Number(d.jobCount||0),results=Number(d.checked||0)
+   const posts=Number(d.postCount||0),results=Number(d.checked||0)
    if(d.errors?.length)setLiveError(d.errors.join(' · '))
-   setLiveStatus(`Searched ${results} web results · found ${jobs} relevant job${jobs===1?'':'s'}`)
+   setLiveStatus(`Checked ${results} web results · found ${posts} relevant hiring post${posts===1?'':'s'}`)
   }catch(e){const msg=e instanceof Error?e.message:'Could not search hiring intelligence.';setLiveError(msg);setLiveStatus('Search failed');flash(msg)}finally{setLiveLoading(false)}
  }
  useEffect(()=>{if(tab==='Live Intelligence'&&signedIn&&userId)loadLiveIntelligence()},[tab,signedIn,userId])
@@ -354,7 +354,7 @@ function LiveIntelligenceView({target,goal,companies,configured,loading,liveStat
    <div className="liveHeroCopy">
     <div className="liveTitleRow"><span className="sectionEyebrow">LIVE INTELLIGENCE</span><span className="liveStatus"><i/> Public job postings</span></div>
     <h2>Find companies <em>hiring now.</em></h2>
-    <p>Search the public web for relevant open roles — not just companies already in your network.</p>
+    <p>Find companies that have publicly posted about hiring for roles that match your target.</p>
    </div>
    <div className="liveGoal"><span>YOUR CURRENT GOAL</span><b>{goal||'Land a Product role'}</b><small>{target}</small></div>
   </div>
@@ -363,24 +363,24 @@ function LiveIntelligenceView({target,goal,companies,configured,loading,liveStat
   {!configured&&<section className="liveSetupNote"><div className="setupNoteIcon"><Globe2 size={17}/></div><div><b>Connect public-web search</b><p>Add <code>TAVILY_API_KEY</code> to your Vercel environment variables.</p></div></section>}
 
   <section className="hiringCompaniesSection">
-   <div className="hiringSectionHeader"><div><span className="sectionEyebrow">COMPANIES HIRING</span><h3>Find relevant open roles</h3><p>Set your filters first. ReachOut searches public job boards and company career pages.</p></div></div>
+   <div className="hiringSectionHeader"><div><span className="sectionEyebrow">COMPANIES HIRING</span><h3>Find relevant open roles</h3><p>Find companies that have publicly posted about hiring for roles that match your target.</p></div></div>
    <div className="hiringFilters">
     <label><span>ROLE</span><div className="filterInput"><Search size={14}/><input value={role} onChange={e=>setRole(e.target.value)} placeholder="Product Manager" /></div></label>
     <label><span>LOCATION</span><div className="filterInput"><MapPin size={14}/><input value={location==='Anywhere'?'':location} onChange={e=>setLocation(e.target.value.trim()||'Anywhere')} placeholder="Mumbai, India · Remote · London" /></div></label>
     <label><span>EXPERIENCE</span><div className="filterInput"><BriefcaseBusiness size={14}/><select value={experience} onChange={e=>setExperience(e.target.value)}><option>Any</option><option>0-2 years</option><option>2-5 years</option><option>5-8 years</option><option>8+ years</option></select></div></label>
-    <button className="primary hiringSearchButton" onClick={onRefresh} disabled={loading}>{loading?<RefreshCw size={15} className="spin"/>:<Search size={15}/>} {loading?'Searching…':'Search jobs'}</button>
+    <button className="primary hiringSearchButton" onClick={onRefresh} disabled={loading}>{loading?<RefreshCw size={15} className="spin"/>:<Search size={15}/>} {loading?'Searching…':'Find hiring posts'}</button>
    </div>
 
-   <div className="hiringResultsHeader"><div><b>{companies.reduce((n,c)=>n+c.jobs.length,0)}</b> relevant roles found</div><span>{location} · {experience} · {role}</span></div>
-   {companies.length?<div className="hiringCompanyGrid">{companies.map((c,i)=><HiringCompanyCard key={`${c.company}-${i}`} company={c}/>)}</div>:<div className="liveEmptyState hiringEmpty"><div className="emptyIcon"><BriefcaseBusiness size={20}/></div><h3>Search the market</h3><p>Choose a role, location and experience level, then search for live job postings from companies hiring right now.</p></div>}
+   <div className="hiringResultsHeader"><div><b>{companies.reduce((n,c)=>n+c.posts.length,0)}</b> relevant hiring posts found</div><span>{location} · {experience} · {role}</span></div>
+   {companies.length?<div className="hiringCompanyGrid">{companies.map((c,i)=><HiringCompanyCard key={`${c.company}-${i}`} company={c}/>)}</div>:<div className="liveEmptyState hiringEmpty"><div className="emptyIcon"><BriefcaseBusiness size={20}/></div><h3>Search the market</h3><p>Choose a role, location and experience level, then find public hiring posts from companies hiring for those roles.</p></div>}
   </section>
  </div>
 }
 
 function HiringCompanyCard({company}:{company:HiringCompany}){
  return <article className="hiringCompanyCard">
-  <div className="hiringCompanyTop"><div><span className="hiringBadge"><Flame size={12}/> Hiring</span><h4>{company.company}</h4></div><span className="signalTime">{company.jobs.length} role{company.jobs.length===1?'':'s'}</span></div>
-  <div className="jobList">{company.jobs.map((job,i)=><div className="jobPosting" key={`${job.id}-${i}`}><div className="jobPostingCopy"><b>{job.title}</b><span>{job.location} · {job.experience} · {job.source}</span></div><a href={job.url} target="_blank" rel="noreferrer" className="jobLink">View job <ArrowUpRight size={13}/></a></div>)}</div>
+  <div className="hiringCompanyTop"><div><span className="hiringBadge"><Flame size={12}/> Hiring</span><h4>{company.company}</h4></div><span className="signalTime">{company.posts.length} post{company.posts.length===1?'':'s'}</span></div>
+  <div className="jobList">{company.posts.map((post,i)=><div className="jobPosting" key={`${post.id}-${i}`}><div className="jobPostingCopy"><b>{post.role}</b><span>{post.source}{post.published_date?` · ${new Date(post.published_date).toLocaleDateString(undefined,{month:'short',day:'numeric'})}`:''}</span><p>{post.snippet}</p></div><a href={post.url} target="_blank" rel="noreferrer" className="jobLink">View post <ArrowUpRight size={13}/></a></div>)}</div>
  </article>
 }
 
