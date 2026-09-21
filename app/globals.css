@@ -4662,3 +4662,52 @@ html, body, .app, .content, .sidebar {
     z-index:100!important;
   }
 }
+
+
+/* HARD OVERRIDE: RIGHT MOBILE NAV — DO NOT MOVE BELOW THIS RULE */
+@media screen and (max-width:760px){
+  /* The navigation is an off-canvas drawer pinned to the RIGHT edge. */
+  aside.sidebar{
+    position:fixed !important;
+    top:0 !important;
+    right:0 !important;
+    bottom:0 !important;
+    left:auto !important;
+    inset:0 0 0 auto !important;
+    width:min(310px,82vw) !important;
+    height:100dvh !important;
+    max-height:100dvh !important;
+    margin:0 !important;
+    padding:78px 14px calc(18px + env(safe-area-inset-bottom)) !important;
+    display:flex !important;
+    flex-direction:column !important;
+    transform:translateX(105vw) !important;
+    -webkit-transform:translateX(105vw) !important;
+    transition:transform .24s cubic-bezier(.22,.61,.36,1) !important;
+    z-index:1200 !important;
+    border-left:1px solid #e7e4f0 !important;
+    border-right:0 !important;
+    border-radius:18px 0 0 18px !important;
+    overflow:hidden !important;
+    visibility:hidden !important;
+    pointer-events:none !important;
+  }
+  aside.sidebar.mobileOpen{
+    left:auto !important;
+    right:0 !important;
+    transform:translateX(0) !important;
+    -webkit-transform:translateX(0) !important;
+    visibility:visible !important;
+    pointer-events:auto !important;
+  }
+  .mobileNavOverlay{
+    position:fixed !important;
+    inset:0 !important;
+    z-index:1100 !important;
+    background:rgba(20,18,28,.10) !important;
+  }
+  .sidebar .brandLogo,
+  .authLogo{
+    filter:brightness(0) !important;
+  }
+}
