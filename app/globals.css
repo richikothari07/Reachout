@@ -4790,3 +4790,26 @@ html, body, .app, .content, .sidebar {
 .liveOverviewTop h3{font-size:25px;letter-spacing:-.045em;margin:5px 0 2px;color:#282532}.liveOverviewTop h3 span{font-size:13px;font-weight:500;letter-spacing:0;color:#706b79}.liveOverviewTop small{font-size:10px;color:#9993a3}.liveMetricRow{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:16px;padding-top:14px;border-top:1px solid #efedf3}.liveMetricRow>div{padding:10px 12px;background:#faf9fc;border-radius:11px}.liveMetricRow b{display:block;font-size:17px;letter-spacing:-.04em}.liveMetricRow span{font-size:9px;color:#85808d}
 .liveSectionStack{display:grid;gap:16px}.liveIntelSection{background:#fff;border:1px solid #e5e2ed;border-radius:18px;padding:18px 20px}.liveSectionHeader{display:flex;justify-content:space-between;align-items:flex-end;gap:15px;margin-bottom:13px}.liveSectionHeader h3{font-size:17px;letter-spacing:-.03em;margin:4px 0 3px}.liveSectionHeader p{font-size:10px;color:#898391;margin:0;line-height:1.45}.liveSectionCount{font-size:9px;color:#8d8796;white-space:nowrap}.liveSectionGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.liveSignalMini{border:1px solid #ebe8f0;border-radius:14px;padding:14px;background:#fff;min-width:0}.liveSignalMini.isNew{border-color:#ddd5fa;background:#fdfcff}.signalMiniTop{display:flex;align-items:center;gap:7px}.signalMiniTop .signalTime{margin-left:auto}.liveSignalMini h4{font-size:13px;line-height:1.35;letter-spacing:-.02em;margin:10px 0 9px}.signalMiniPerson{display:flex;gap:8px;align-items:center}.signalMiniPerson .avatar{width:27px;height:27px;font-size:8px}.signalMiniPerson b,.signalMiniPerson span{display:block}.signalMiniPerson b{font-size:9.5px}.signalMiniPerson span{font-size:8px;color:#8b8593;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.liveSignalMini>p{font-size:9.5px;color:#716b79;line-height:1.5;margin:10px 0 12px;min-height:29px}.signalMiniActions{display:flex;align-items:center;border-top:1px solid #efedf3;padding-top:9px}.signalMiniActions .signalEvidence{margin-left:0}.signalMiniActions .signalReach{margin-left:auto}.liveSectionEmpty{border:1px dashed #e0dce7;border-radius:12px;padding:16px;color:#96909e;font-size:10px;text-align:center;background:#fcfbfd}
 @media(max-width:760px){.liveOverviewTop{align-items:flex-start;flex-direction:column}.liveRefreshButton{width:100%;justify-content:center}.liveMetricRow{grid-template-columns:repeat(2,1fr)}.liveIntelSection{padding:15px}.liveSectionHeader{align-items:flex-start;flex-direction:column}.liveSectionGrid{grid-template-columns:1fr}.liveSignalMini h4{font-size:14px}.liveSignalMini>p{min-height:0}}
+
+/* Live Intelligence — focused hiring view */
+.hiringOverview{margin-bottom:16px}
+.hiringCompaniesSection{background:#fff;border:1px solid #e5e2ed;border-radius:18px;padding:20px;box-shadow:0 3px 14px rgba(15,23,42,.025)}
+.hiringSectionHeader{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin-bottom:16px}
+.hiringSectionHeader h3{font-size:19px;letter-spacing:-.035em;margin:4px 0 4px;color:#282532}
+.hiringSectionHeader p{font-size:10px;color:#898391;margin:0;line-height:1.5}
+.hiringCompanyGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.hiringCompanyCard{border:1px solid #ebe8f0;border-radius:15px;padding:16px;background:#fff;min-width:0}
+.hiringCompanyTop{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.hiringCompanyTop h4{font-size:16px;letter-spacing:-.025em;margin:8px 0 0;color:#282532}
+.hiringBadge{display:inline-flex;align-items:center;gap:4px;color:#c24d3e;background:#fff2ef;border:1px solid #f5d9d3;border-radius:999px;padding:5px 8px;font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+.hiringConnection{display:flex;align-items:center;gap:9px;margin:13px 0;padding-bottom:12px;border-bottom:1px solid #efedf3}
+.hiringConnection .avatar{width:29px;height:29px;font-size:8px}
+.hiringConnection b,.hiringConnection span{display:block}.hiringConnection b{font-size:10px}.hiringConnection span{font-size:8px;color:#898391;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.jobList{display:grid;gap:7px}
+.jobPosting{display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid #ece9f1;border-radius:10px;padding:10px;background:#faf9fc}
+.jobPostingCopy{min-width:0}.jobPostingCopy b{display:block;font-size:10px;line-height:1.35;color:#302d38}.jobPostingCopy span{display:block;font-size:8px;color:#918b99;margin-top:3px}
+.jobLink{display:inline-flex;align-items:center;gap:3px;flex:none;text-decoration:none;background:#eeeaff;color:#5544bf;border-radius:8px;padding:7px 9px;font-size:8px;font-weight:700}
+.jobLink:hover{background:#e6e0ff}
+.hiringReach{margin-top:11px;width:100%;justify-content:center;font-size:9px!important;padding:8px 10px!important}
+.hiringEmpty{margin-top:4px}
+@media(max-width:760px){.hiringCompaniesSection{padding:15px}.hiringSectionHeader{align-items:flex-start;flex-direction:column}.hiringCompanyGrid{grid-template-columns:1fr}.jobPosting{align-items:flex-start}.jobLink{margin-top:1px}}

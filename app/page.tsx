@@ -11,6 +11,7 @@ type Ranked=Connection & {score:number;reasons:string[];action:'Reach out'|'Foll
 type FileItem={id:string;name:string;type:'connections'|'messages'|'education'|null;rows:number;status:'ready'|'error'|'processing';error?:string}
 type ProfileContext={name:string;headline:string;summary:string;industry:string;positions:string[];positionDescriptions:string[];skills:string[]}
 type LiveSignal={id:string;first_name:string;last_name:string;company:string;position:string;linkedin_url:string;signals:Array<{type:'hiring'|'funding'|'career'|'company'|'news';title:string;why_now:string;date?:string}>;score:number;summary:string;sources:Array<{title:string;url:string;published_date?:string|null}>;source_count:number;status?:string;primary_type?:string;why_now?:string;last_checked_at:string}
+type HiringCompany={id:string;company:string;connections:Array<{id:string;first_name:string;last_name:string;position:string;linkedin_url:string}>;jobs:Array<{title:string;url:string;source:string;published_date?:string|null}>;last_checked_at:string}
 
 const roleHints=['Product Manager','Product Designer','Software Engineer','Growth Manager','Investment Analyst']
 function norm(s=''){return s.toLowerCase().replace(/[^a-z0-9+ ]/g,' ').replace(/\s+/g,' ').trim()}
@@ -75,7 +76,7 @@ export default function Home(){
  const accountMenuRef=useRef<HTMLDivElement>(null)
  const [voiceOpen,setVoiceOpen]=useState(false),[voiceListening,setVoiceListening]=useState(false),[voiceTranscript,setVoiceTranscript]=useState(''),[voiceReply,setVoiceReply]=useState(''),[voiceGenerate,setVoiceGenerate]=useState(false)
  const [agentOpen,setAgentOpen]=useState(false),[agentCommand,setAgentCommand]=useState(''),[agentBusy,setAgentBusy]=useState(false),[agentReply,setAgentReply]=useState(''),[agentActions,setAgentActions]=useState<any[]>([]),[agentError,setAgentError]=useState('')
- const [liveSignals,setLiveSignals]=useState<LiveSignal[]>([]),[liveConfigured,setLiveConfigured]=useState(true),[liveLoading,setLiveLoading]=useState(false),[liveOffset,setLiveOffset]=useState(0),[liveStatus,setLiveStatus]=useState(''),[liveError,setLiveError]=useState('')
+ const [hiringCompanies,setHiringCompanies]=useState<HiringCompany[]>([]),[liveConfigured,setLiveConfigured]=useState(true),[liveLoading,setLiveLoading]=useState(false),[liveOffset,setLiveOffset]=useState(0),[liveStatus,setLiveStatus]=useState(''),[liveError,setLiveError]=useState('')
  const recognitionRef=useRef<any>(null)
  const voiceBusyRef=useRef(false)
  useEffect(()=>{
@@ -212,23 +213,25 @@ export default function Home(){
 
  const loadLiveIntelligence=async()=>{
   if(!userId||!signedIn)return
-  try{const r=await apiFetch('/api/live-intelligence?limit=50',{cache:'no-store'});const d=await r.json();if(!r.ok)throw new Error(d.error||'Could not load live intelligence.');setLiveSignals(Array.isArray(d.signals)?d.signals:[]);setLiveConfigured(d.configured!==false);setLiveError('')}catch(e){const msg=e instanceof Error?e.message:'Could not load live intelligence.';setLiveError(msg);setLiveConfigured(false)}
+  try{
+   const r=await apiFetch('/api/live-intelligence?limit=50',{cache:'no-store'});const d=await r.json();
+   if(!r.ok)throw new Error(d.error||'Could not load hiring intelligence.')
+   setHiringCompanies(Array.isArray(d.companies)?d.companies:[]);setLiveConfigured(d.configured!==false);setLiveError('')
+  }catch(e){const msg=e instanceof Error?e.message:'Could not load hiring intelligence.';setLiveError(msg);setLiveConfigured(false)}
  }
  const refreshLiveIntelligence=async()=>{
   if(!userId||liveLoading)return
-  setLiveLoading(true);setLiveError('');setLiveStatus('Searching 5 people on the public web…')
+  setLiveLoading(true);setLiveError('');setLiveStatus('Searching for relevant job openings…')
   try{
-   const r=await apiFetch('/api/live-intelligence',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({target,keywords,max_people:5,offset:liveOffset})});
-   const d=await r.json().catch(()=>({}));
-   if(!r.ok)throw new Error(d.error||'Could not refresh live intelligence.');
-   setLiveConfigured(true);
-   setLiveSignals(Array.isArray(d.signals)?d.signals:[]);
-   setLiveOffset(Number(d.nextOffset||0));
-   const checked=Number(d.checked||0), found=Number(d.createdSignals||0);
-   if(!d.hasPeople){setLiveStatus(d.message||'No LinkedIn connections with companies found.');return}
-   if(d.errors?.length){setLiveStatus(`Checked ${checked} contact${checked===1?'':'s'} · ${found} signals · ${d.errors.length} search issue${d.errors.length===1?'':'s'}`);setLiveError(d.errors.join(' · '));return}
-   setLiveStatus(`Checked ${checked} contact${checked===1?'':'s'} · found ${found} web signal${found===1?'':'s'}`);
-  }catch(e){const msg=e instanceof Error?e.message:'Could not refresh live intelligence.';setLiveError(msg);setLiveStatus('Refresh failed');flash(msg)}finally{setLiveLoading(false)}
+   const r=await apiFetch('/api/live-intelligence',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({target,max_people:5,offset:liveOffset})})
+   const d=await r.json().catch(()=>({}))
+   if(!r.ok)throw new Error(d.error||'Could not refresh hiring intelligence.')
+   setLiveConfigured(true);setHiringCompanies(Array.isArray(d.companies)?d.companies:[]);setLiveOffset(Number(d.nextOffset||0))
+   const checked=Number(d.checked||0),found=Number(d.companiesFound||0)
+   if(!d.hasPeople){setLiveStatus('Import your LinkedIn connections first.');return}
+   if(d.errors?.length){setLiveStatus(`Checked ${checked} people · found ${found} hiring companies`);setLiveError(d.errors.join(' · '));return}
+   setLiveStatus(`Checked ${checked} people · found ${found} hiring compan${found===1?'y':'ies'}`)
+  }catch(e){const msg=e instanceof Error?e.message:'Could not refresh hiring intelligence.';setLiveError(msg);setLiveStatus('Refresh failed');flash(msg)}finally{setLiveLoading(false)}
  }
  useEffect(()=>{if(tab==='Live Intelligence'&&signedIn&&userId)loadLiveIntelligence()},[tab,signedIn,userId])
  const importProfileFiles=async(fileList:FileList|File[])=>{
@@ -326,7 +329,7 @@ export default function Home(){
    {tab==='Home'&&<HomeView dashboardReady={dashboardReady} hasData={hasData} target={target} connectionCount={connectionCount} messageCount={messageCount} highPriority={highPriority} hiringSignals={hiringSignals} followups={followups} recommended={recommended} goal={goal} goalTarget={goalTarget} conversations={conversations} goalPct={goalPct} setTab={setTab} navigateTab={navigateTab} setSelected={setSelected} openImport={()=>setSetupOpen(true)} loading={loading} markContacted={markContacted} toggleFollowedUp={toggleFollowedUp} agentOpen={agentOpen} setAgentOpen={setAgentOpen} agentCommand={agentCommand} setAgentCommand={setAgentCommand} agentBusy={agentBusy} agentReply={agentReply} agentActions={agentActions} agentError={agentError} runAgent={(c?:string)=>runAgent(c)} findPerson={findPerson} setVoiceGenerate={setVoiceGenerate}/>} 
    {tab==='Opportunities'&&<><PageTitle eyebrow="PEOPLE TO WATCH" title="Who looks interesting right now?" sub="People with a reason to be on your radar, such as a new role, hiring activity, a relevant company, or a strong connection."/><div className="search"><Search size={16}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search people, companies, or roles…"/><button onClick={()=>setShowFilters(!showFilters)}><Settings2 size={14}/> Filters{[companyFilter,roleFilter,connectedFilter!=='Anytime'?connectedFilter:'',emailFilter!=='All'?emailFilter:''].filter(Boolean).length>0&&<span className="filterActiveCount">{[companyFilter,roleFilter,connectedFilter!=='Anytime'?connectedFilter:'',emailFilter!=='All'?emailFilter:''].filter(Boolean).length}</span>}</button></div>{showFilters&&<div className="opportunityFilterPanel"><div className="filterField"><label>COMPANY</label><input value={companyFilter} onChange={e=>setCompanyFilter(e.target.value)} placeholder="Search companies…"/></div><div className="filterField"><label>ROLE</label><input value={roleFilter} onChange={e=>setRoleFilter(e.target.value)} placeholder="Search roles…"/></div><div className="filterField"><label>CONNECTED</label><select value={connectedFilter} onChange={e=>setConnectedFilter(e.target.value as typeof connectedFilter)}><option value="Anytime">Any time</option><option value="30">Last 30 days</option><option value="90">Last 90 days</option><option value="180">Last 6 months</option><option value="365">Last year</option><option value="older">More than 1 year ago</option></select></div><div className="filterField"><label>EMAIL</label><select value={emailFilter} onChange={e=>setEmailFilter(e.target.value as typeof emailFilter)}><option>All</option><option>Has email</option><option>No email</option></select></div><div className="filterPanelFooter"><button className="clearFilters" onClick={()=>{setCompanyFilter('');setRoleFilter('');setConnectedFilter('Anytime');setEmailFilter('All');setFilter('All')}}>Clear all</button><span>{people.length} matching</span></div></div>}<div className="opportunityControls"><button className="secondary" onClick={()=>setShowCompletedOpportunities(v=>!v)}>{showCompletedOpportunities?'Hide completed':'Show completed'}{completedPeople.length>0&&<span className="controlCount">{completedPeople.length}</span>}</button></div>{showCompletedOpportunities&&<div className="completedFollowups opportunityCompleted"><div className="sectionHead compact"><div><span className="sectionEyebrow">COMPLETED</span><h2>Already reached</h2></div><span className="muted">{completedPeople.length} completed</span></div>{completedPeople.filter(p=>`${p.first_name} ${p.last_name} ${p.company} ${p.position}`.toLowerCase().includes(query.toLowerCase())).slice(0,250).map(p=>{const key=p.linkedin_url||`${p.first_name}-${p.last_name}`;const statuses=[contacted.includes(key)?'Contacted':'',followedUp.includes(key)?'Followed up':''].filter(Boolean).join(' · ');return <div className="followRow completedRow" key={`opp-done-${key}`}><button className="followMain" onClick={()=>setSelected(p)}><div className="avatar">{initials(p)}</div><div className="followInfo"><b>{p.first_name} {p.last_name}</b><span>{p.position||'Role not listed'}{p.company?` · ${p.company}`:''}</span></div><span className="completedLabel"><Check size={13}/> {statuses}</span></button><button className="followDone" onClick={()=>{if(contacted.includes(key))markContacted(p);else toggleFollowedUp(p)}} title="Unmark completed"><Check size={15}/></button></div>})}{!completedPeople.length&&<Empty title="No completed people yet" text="People you mark contacted or followed up will appear here."/>}</div>}<div className="table"><div className="tr th"><span>PERSON</span><span>COMPANY</span><span>OPPORTUNITY SIGNAL</span><span>NEXT ACTION</span><span></span></div>{people.slice(0,250).map(p=><div className="tr row" key={`${p.linkedin_url}-${p.first_name}`} onClick={()=>setSelected(p)} role="button" tabIndex={0} onKeyDown={e=>{if(e.key==='Enter'||e.key===' ')setSelected(p)}}><span className="personCell"><div className="avatar">{initials(p)}</div><span><b>{p.first_name} {p.last_name}</b><small>{p.position||'Role not listed'}</small></span></span><span>{p.company||'Company not listed'}</span><span className="whyCell">{p.reasons[0]||'A good match for your goal'}</span><span><i className="action reach">Explore</i></span><QuickAction p={p} onComplete={()=>markContacted(p)}/></div>)}</div>{!people.length&&<Empty title="Nothing here yet 👀" text="Try another person, company, or role. There may be a better match nearby."/>}</>}
    {tab==='Outreach'&&<OutreachView queue={outreachPeople} allPeople={ranked} contacted={contacted} setSelected={setSelected} markContacted={markContacted} toggleFollowedUp={toggleFollowedUp} goal={goal}/>} 
-   {tab==='Live Intelligence'&&<LiveIntelligenceView target={target} keywords={keywords} goal={goal} ranked={ranked} signals={liveSignals} configured={liveConfigured} loading={liveLoading} liveStatus={liveStatus} liveError={liveError} onRefresh={refreshLiveIntelligence} onSelect={setSelected} />}
+   {tab==='Live Intelligence'&&<LiveIntelligenceView target={target} goal={goal} ranked={ranked} companies={hiringCompanies} configured={liveConfigured} loading={liveLoading} liveStatus={liveStatus} liveError={liveError} onRefresh={refreshLiveIntelligence} onSelect={setSelected} />}
 
    {tab==='Follow-ups'&&<><PageTitle eyebrow="CONVERSATIONS TO NUDGE" title="Who could use a little nudge?" sub="These are conversations that are waiting for a reply."/><div className="followControls"><span>Nudge after</span><select value={days} onChange={e=>setDays(Number(e.target.value))}><option value={5}>5 days</option><option value={7}>7 days</option><option value={10}>10 days</option><option value={14}>14 days</option><option value={21}>21 days</option></select><span className="muted">{followups.length} due</span><button className="secondary" onClick={()=>setShowCompletedFollowups(v=>!v)}>{showCompletedFollowups?'Hide completed':'Show completed'}</button></div>{showCompletedFollowups&&<div className="completedFollowups"><div className="sectionHead compact"><div><span className="sectionEyebrow">COMPLETED</span><h2>Followed up</h2></div><span className="muted">{ranked.filter(p=>followedUp.includes(p.linkedin_url||`${p.first_name}-${p.last_name}`)).length} completed</span></div>{ranked.filter(p=>followedUp.includes(p.linkedin_url||`${p.first_name}-${p.last_name}`)).map(p=><div className="followRow completedRow" key={`done-${p.linkedin_url}-${p.first_name}`}><button className="followMain" onClick={()=>setSelected(p)}><div className="avatar">{initials(p)}</div><div className="followInfo"><b>{p.first_name} {p.last_name}</b><span>{p.position||'Role not listed'}{p.company?` · ${p.company}`:''}</span></div><span className="completedLabel"><Check size={13}/> Nudged</span></button><button className="followDone" onClick={()=>toggleFollowedUp(p)} title="Unmark nudge"><Check size={15}/></button></div>)}{!ranked.some(p=>followedUp.includes(p.linkedin_url||`${p.first_name}-${p.last_name}`))&&<Empty title="No completed nudges yet" text="People you mark as nudged will appear here."/>}</div>}{followups.length?<div className="followList">{followups.map(p=><div className="followRow" key={`${p.linkedin_url}-${p.first_name}`}><button className="followMain" onClick={()=>setSelected(p)}><div className="avatar">{initials(p)}</div><div className="followInfo"><b>{p.first_name} {p.last_name}</b><span>{p.position||'Role not listed'}{p.company?` · ${p.company}`:''}</span><small>Last message {daysAgo(p.lastOutgoing!)} days ago</small></div><div className="followReason"><b>{p.reasons.find(r=>r.includes('days ago'))||'No reply since your last message.'}</b><span>What I’d do next: nudge them</span></div><ChevronRight size={16}/></button><button className="followDone" onClick={()=>toggleFollowedUp(p)} title="Mark as nudged"><Check size={15}/></button></div>)}</div>:<Empty title="You’re all caught up 🫡" text={`No unanswered messages older than ${days} days. You’re all clear for now.`} icon={<CheckCircle2 size={20}/>}/>} </>}
   </section>
@@ -344,65 +347,37 @@ function PageTitle({eyebrow,title,sub}:{eyebrow:string;title:string;sub:string})
 function Empty({title,text,icon=<Sparkles size={20}/>}:{title:string;text:string;icon?:React.ReactNode}){return <div className="emptyPage"><div className="emptyIcon">{icon}</div><h3>{title}</h3><p>{text}</p></div>}
 function Stat({icon,value,label}:{icon:React.ReactNode;value:string|number;label:string}){return <div className="stat"><div className="statIcon">{icon}</div><div><strong>{value}</strong><span>{label}</span></div></div>}
 
-function LiveIntelligenceView({target,keywords,goal,ranked,signals,configured,loading,liveStatus,liveError,onRefresh,onSelect}:{target:string;keywords:string;goal:string;ranked:Ranked[];signals:LiveSignal[];configured:boolean;loading:boolean;liveStatus:string;liveError:string;onRefresh:()=>void;onSelect:(p:Ranked)=>void}){
- const [expanded,setExpanded]=useState<string|null>(null)
- const typeOf=(s:LiveSignal)=>s.primary_type||s.signals?.[0]?.type||'news'
- const label=(type:string)=>({hiring:'Hiring',funding:'Funding',career:'Career',company:'Company',news:'News'} as any)[type]||'News'
- const icon=(type:string)=>type==='hiring'?<Flame size={14}/>:type==='funding'?<BarChart3 size={14}/>:type==='career'?<UserRound size={14}/>:type==='company'?<Zap size={14}/>:<Globe2 size={14}/>
- const findRanked=(s:LiveSignal)=>ranked.find(p=>(s.linkedin_url&&p.linkedin_url===s.linkedin_url)||(`${p.first_name} ${p.last_name}`).trim().toLowerCase()===`${s.first_name} ${s.last_name}`.trim().toLowerCase())
- const timeAgo=(v:string)=>{const d=Date.parse(v||'');if(!Number.isFinite(d))return 'Recently';const mins=Math.max(1,Math.floor((Date.now()-d)/60000));if(mins<60)return `${mins}m ago`;const hrs=Math.floor(mins/60);if(hrs<24)return `${hrs}h ago`;const days=Math.floor(hrs/24);return `${days}d ago`}
- const allSignals=useMemo(()=>signals.flatMap(s=>s.signals.map((x,i)=>({parent:s,signal:x,index:i}))).sort((a,b)=>(b.parent.score||0)-(a.parent.score||0)),[signals])
- const opportunity=allSignals.filter(x=>x.signal.type!=='news').slice(0,4)
- const people=allSignals.filter(x=>x.signal.type==='career').slice(0,4)
- const companies=allSignals.filter(x=>['hiring','funding','company'].includes(x.signal.type)).slice(0,6)
- const news=allSignals.filter(x=>x.signal.type==='news').slice(0,4)
- const counts={hiring:0,funding:0,career:0,company:0,news:0};allSignals.forEach(x=>{counts[x.signal.type]++})
- const newCount=signals.filter(s=>!s.status||s.status==='new').length
- const Section=({eyebrow,title,sub,items,empty}:{eyebrow:string;title:string;sub:string;items:any[];empty:string})=><section className="liveIntelSection">
-   <div className="liveSectionHeader"><div><span className="sectionEyebrow">{eyebrow}</span><h3>{title}</h3><p>{sub}</p></div><span className="liveSectionCount">{items.length} {items.length===1?'signal':'signals'}</span></div>
-   {items.length?<div className="liveSectionGrid">{items.map((item:any)=><SignalMini key={`${item.parent.id}-${item.index}`} item={item} expanded={expanded===`${item.parent.id}-${item.index}`} onExpand={()=>setExpanded(expanded===`${item.parent.id}-${item.index}`?null:`${item.parent.id}-${item.index}`)} onSelect={onSelect} findRanked={findRanked} label={label} icon={icon} timeAgo={timeAgo}/>)}</div>:<div className="liveSectionEmpty">{empty}</div>}
- </section>
+function LiveIntelligenceView({target,goal,ranked,companies,configured,loading,liveStatus,liveError,onRefresh,onSelect}:{target:string;goal:string;ranked:Ranked[];companies:HiringCompany[];configured:boolean;loading:boolean;liveStatus:string;liveError:string;onRefresh:()=>void;onSelect:(p:Ranked)=>void}){
+ const findRanked=(c:HiringCompany)=>c.connections.map(x=>ranked.find(p=>p.linkedin_url===x.linkedin_url)||ranked.find(p=>norm(`${p.first_name} ${p.last_name}`)===norm(`${x.first_name} ${x.last_name}`))).find(Boolean)
+ const timeAgo=(v:string)=>{const d=Date.parse(v||'');if(!Number.isFinite(d))return 'Recently';const mins=Math.max(1,Math.floor((Date.now()-d)/60000));if(mins<60)return `${mins}m ago`;const hrs=Math.floor(mins/60);if(hrs<24)return `${hrs}h ago`;return `${Math.floor(hrs/24)}d ago`}
  return <div className="livePage">
   <div className="liveHero liveIntelligenceHero">
    <div className="liveHeroCopy">
-    <div className="liveTitleRow"><span className="sectionEyebrow">LIVE INTELLIGENCE</span><span className="liveStatus"><i/> Public web signals</span></div>
-    <h2>New reasons to <em>reach out.</em></h2>
-    <p>Not a news feed. ReachOut looks for changes that give you a credible reason to start a conversation with someone in your network.</p>
+    <div className="liveTitleRow"><span className="sectionEyebrow">LIVE INTELLIGENCE</span><span className="liveStatus"><i/> Public job postings</span></div>
+    <h2>Companies hiring <em>right now.</em></h2>
+    <p>ReachOut checks companies in your network for relevant open roles and gives you the direct job posting so you can act.</p>
    </div>
-   <div className="liveGoal"><span>YOUR CURRENT GOAL</span><b>{goal||'Land a Product role'}</b><small>{target}{keywords?` · ${keywords}`:''}</small></div>
+   <div className="liveGoal"><span>YOUR CURRENT GOAL</span><b>{goal||'Land a Product role'}</b><small>{target}</small></div>
   </div>
-
-  <section className="liveIntelOverview">
-   <div className="liveOverviewTop"><div><span className="sectionEyebrow">YOUR SIGNALS</span><h3>{newCount||signals.length} <span>{newCount?'new reasons to reach out':'reasons to reach out'}</span></h3><small>{signals[0]?.last_checked_at?`Updated ${timeAgo(signals[0].last_checked_at)}`:'Refresh to find fresh public-web signals'}</small></div><button className="primary liveRefreshButton" onClick={onRefresh} disabled={loading}>{loading?<RefreshCw size={15} className="spin"/>:<RefreshCw size={15}/>} {loading?'Searching your network…':'Refresh intelligence'}</button></div>
-   <div className="liveMetricRow"><div><b>{counts.hiring+counts.funding+counts.company}</b><span>Opportunity</span></div><div><b>{counts.career}</b><span>People</span></div><div><b>{counts.news}</b><span>Relevant news</span></div><div><b>{signals.length}</b><span>People checked</span></div></div>
-  </section>
 
   {liveStatus&&<div className={`liveRunStatus ${liveError?'hasError':''}`}>{liveError?<span>⚠ {liveStatus}: {liveError}</span>:<span>✓ {liveStatus}</span>}</div>}
-  {!configured&&<section className="liveSetupNote"><div className="setupNoteIcon"><Globe2 size={17}/></div><div><b>Connect public-web search</b><p>Add <code>TAVILY_API_KEY</code> to your Vercel environment variables. The rest of Live Intelligence is already wired into ReachOut.</p></div></section>}
+  {!configured&&<section className="liveSetupNote"><div className="setupNoteIcon"><Globe2 size={17}/></div><div><b>Connect public-web search</b><p>Add <code>TAVILY_API_KEY</code> to your Vercel environment variables.</p></div></section>}
 
-  <div className="liveSectionStack">
-   <Section eyebrow="01 · WHY NOW" title="Reasons worth acting on" sub="Signals where something changed and there is a concrete reason to contact someone." items={opportunity} empty="No strong opportunity signals yet. Refresh to look for hiring, funding and company changes."/>
-   <Section eyebrow="02 · PEOPLE" title="People moves" sub="Career changes that can naturally reopen a conversation." items={people} empty="No recent career moves found in your network yet."/>
-   <Section eyebrow="03 · COMPANIES" title="Companies to watch" sub="Hiring, funding and business changes around people you already know." items={companies} empty="No company signals found yet."/>
-   <Section eyebrow="04 · RELEVANT NEWS" title="Conversation starters" sub="Public news that could give you a useful, timely reason to say hello." items={news} empty="No relevant news signals found yet."/>
-  </div>
-
-  {!signals.length&&configured&&<div className="liveEmptyState"><div className="emptyIcon"><Globe2 size={20}/></div><h3>Ready to find your signals</h3><p>{liveStatus||'Refresh Live Intelligence and ReachOut will check a small batch of people in your network for useful public-web changes.'}</p><button className="primary" onClick={onRefresh} disabled={loading}>{loading?'Searching…':'Find my signals'}</button></div>}
-  {signals.length>0&&<div className="liveSignalNote"><Globe2 size={14}/><span>Signals come from public web sources. Open the evidence on any card to verify the context before reaching out.</span></div>}
+  <section className="hiringCompaniesSection">
+   <div className="hiringSectionHeader"><div><span className="sectionEyebrow">COMPANIES HIRING</span><h3>Open roles in your network</h3><p>Only relevant job postings are shown.</p></div><button className="primary liveRefreshButton" onClick={onRefresh} disabled={loading}>{loading?<RefreshCw size={15} className="spin"/>:<RefreshCw size={15}/>} {loading?'Searching…':'Refresh hiring'}</button></div>
+   {companies.length?<div className="hiringCompanyGrid">{companies.map(c=><HiringCompanyCard key={c.id} company={c} person={findRanked(c)} onSelect={onSelect} timeAgo={timeAgo}/>)}</div>:<div className="liveEmptyState hiringEmpty"><div className="emptyIcon"><BriefcaseIcon/></div><h3>No hiring signals yet</h3><p>{liveError?'Fix the search issue above and refresh again.':'Refresh to find companies in your network that are hiring for relevant roles.'}</p><button className="primary" onClick={onRefresh} disabled={loading}>{loading?'Searching…':'Find hiring companies'}</button></div>}
+  </section>
  </div>
 }
 
-function SignalMini({item,expanded,onExpand,onSelect,findRanked,label,icon,timeAgo}:{item:any;expanded:boolean;onExpand:()=>void;onSelect:(p:Ranked)=>void;findRanked:(s:LiveSignal)=>Ranked|undefined;label:(t:string)=>string;icon:(t:string)=>React.ReactNode;timeAgo:(v:string)=>string}){
- const s=item.parent as LiveSignal
- const signal=item.signal
- const person=findRanked(s)
- return <article className={`liveSignalMini ${(!s.status||s.status==='new')?'isNew':''}`}>
-  <div className="signalMiniTop"><span className={`signalType signalType-${signal.type}`}>{icon(signal.type)} {label(signal.type)}</span><span className="signalTime">{timeAgo(s.last_checked_at)}</span></div>
-  <h4>{signal.title||s.summary}</h4>
-  <div className="signalMiniPerson"><div className="avatar">{initials(s as any)}</div><div><b>{s.first_name} {s.last_name}</b><span>{s.position||'Role not listed'}{s.company?` · ${s.company}`:''}</span></div></div>
-  <p>{signal.why_now||s.why_now||s.summary}</p>
-  <div className="signalMiniActions"><button className="signalEvidence" onClick={onExpand}>{expanded?'Hide evidence':'Evidence'} <ChevronDown size={12}/></button><button className="primary signalReach" onClick={()=>person&&onSelect(person)} disabled={!person}>Reach out <ArrowRight size={12}/></button></div>
-  {expanded&&<div className="signalEvidencePanel">{(s.sources||[]).map((src:any,i:number)=><a key={`${s.id}-${i}`} href={src.url} target="_blank" rel="noreferrer"><span>{src.title||'Source'}</span><ExternalLink size={11}/></a>)}{!(s.sources||[]).length&&<span className="muted">No source links were returned.</span>}</div>}
+function BriefcaseIcon(){return <div style={{fontSize:20,lineHeight:1}}>💼</div>}
+
+function HiringCompanyCard({company,person,onSelect,timeAgo}:{company:HiringCompany;person:Ranked|undefined;onSelect:(p:Ranked)=>void;timeAgo:(v:string)=>string}){
+ return <article className="hiringCompanyCard">
+  <div className="hiringCompanyTop"><div><span className="hiringBadge"><Flame size={12}/> Hiring</span><h4>{company.company}</h4></div><span className="signalTime">{timeAgo(company.last_checked_at)}</span></div>
+  {company.connections.slice(0,2).map(c=><div className="hiringConnection" key={c.id}><div className="avatar">{initials(c as any)}</div><div><b>{c.first_name} {c.last_name}</b><span>{c.position||'Connection'} · {company.company}</span></div></div>)}
+  <div className="jobList">{company.jobs.map((job,i)=><div className="jobPosting" key={`${company.id}-${i}`}><div className="jobPostingCopy"><b>{job.title}</b><span>{job.source}</span></div><a href={job.url} target="_blank" rel="noreferrer" className="jobLink">View job <ArrowUpRight size={13}/></a></div>)}</div>
+  {person&&<button className="secondary hiringReach" onClick={()=>onSelect(person)}>Reach out to {person.first_name} <ArrowRight size={13}/></button>}
  </article>
 }
 
