@@ -379,9 +379,16 @@ function LiveIntelligenceView({target,goal,companies,configured,loading,liveStat
 
 function HiringCompanyCard({company}:{company:HiringCompany}){
  return <article className="hiringCompanyCard">
-  <div className="hiringCompanyTop"><div><span className="hiringBadge"><Flame size={12}/> Hiring</span><h4>{company.company}</h4></div><span className="signalTime">{company.posts.length} post{company.posts.length===1?'':'s'}</span></div>
-  <div className="jobList">{company.posts.map((post,i)=><div className="jobPosting" key={`${post.id}-${i}`}><div className="jobPostingCopy"><b>{post.role}</b><span>{post.source}{post.published_date?` · ${new Date(post.published_date).toLocaleDateString(undefined,{month:'short',day:'numeric'})}`:''}</span><p>{post.snippet}</p></div><a href={post.url} target="_blank" rel="noreferrer" className="jobLink">View post <ArrowUpRight size={13}/></a></div>)}</div>
+  <div className="hiringCompanyTop"><div><span className="hiringBadge"><Flame size={12}/> Hiring</span><h4>{company.company}</h4></div></div>
+  <div className="jobList">{company.posts.map((post,i)=><div className="jobPosting" key={`${post.id}-${i}`}><div className="jobPostingCopy"><b>{post.role}</b><span>{post.published_date?`Posted ${formatHiringDate(post.published_date)}`:'Posted recently'} · {post.source}</span></div><a href={post.url} target="_blank" rel="noreferrer" className="jobLink">View post <ArrowUpRight size={13}/></a></div>)}</div>
  </article>
+}
+function formatHiringDate(value:string){
+ const d=new Date(value); if(Number.isNaN(d.getTime()))return 'recently'
+ const days=Math.max(0,Math.floor((Date.now()-d.getTime())/86400000))
+ if(days===0)return 'today'
+ if(days===1)return '1 day ago'
+ return `${days} days ago`
 }
 
 function HomeView({dashboardReady,hasData,target,connectionCount,messageCount,highPriority,hiringSignals,followups,recommended,goal,goalTarget,conversations,goalPct,setTab,navigateTab,setSelected,openImport,loading,markContacted,toggleFollowedUp,agentOpen,setAgentOpen,agentCommand,setAgentCommand,agentBusy,agentReply,agentActions,agentError,runAgent,findPerson,setVoiceGenerate}:{dashboardReady:boolean;hasData:boolean;target:string;connectionCount:number;messageCount:number;highPriority:number;hiringSignals:number;followups:Ranked[];recommended:Ranked[];goal:string;goalTarget:number;conversations:number;goalPct:number;setTab:any;navigateTab:(next:'Home'|'Opportunities'|'Outreach'|'Follow-ups'|'Live Intelligence')=>void;setSelected:any;openImport:()=>void;loading:boolean;markContacted:(p:Ranked)=>void;toggleFollowedUp:(p:Ranked)=>void;agentOpen:boolean;setAgentOpen:(v:boolean)=>void;agentCommand:string;setAgentCommand:(v:string)=>void;agentBusy:boolean;agentReply:string;agentActions:any[];agentError:string;runAgent:(c?:string)=>void;findPerson:(name:string)=>Ranked|undefined;setVoiceGenerate:(v:boolean)=>void}){

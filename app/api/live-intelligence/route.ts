@@ -47,6 +47,23 @@ function experienceMatches(text:string,exp:string){
   const wmin=Number(wanted[1]), wmax=wanted[2]?Number(wanted[2]):99
   return max>=wmin && min<=wmax
 }
+
+function isFreshPost(published:string|null|undefined, maxDays=7){
+  if(!published)return false
+  const t=Date.parse(published)
+  if(!Number.isFinite(t))return false
+  const age=(Date.now()-t)/86400000
+  return age>=-1 && age<=maxDays
+}
+function briefRole(text:string,target:string){
+  const cleanTarget=clean(target)||'Relevant role'
+  const patterns=[
+    /(?:hiring|looking for|seeking|recruiting|join (?:our|the) team)[^.!?\n]{0,40}?(?:a|an)?\s*([A-Z][A-Za-z0-9+&\/()\- ]{2,70}?)(?=\s+(?:to|in|at|for|on|who|with|and)\b|[.!?,]|$)/i,
+    /(?:role|position|opening)[:\-]?\s*([A-Z][A-Za-z0-9+&\/()\- ]{2,70}?)(?=[.!?,]|$)/i
+  ]
+  for(const re of patterns){const m=text.match(re); if(m?.[1]){const r=clean(m[1]); if(r.length>=3 && r.length<=80)return r}}
+  return cleanTarget
+}
 function companyFromResult(r:SearchResult){
   const title=clean(r.title), content=clean(r.content), url=clean(r.url)
   // LinkedIn search result titles commonly contain "Company | post text" or "Name on LinkedIn: ...".
@@ -69,13 +86,13 @@ function extractPosts(results:SearchResult[],target:string,location:string,exper
   for(const r of results){
     const url=clean(r.url), title=clean(r.title), content=clean(r.content), text=`${title} ${content}`
     if(!url||!title||!isHiringPost(url))continue
+    if(!isFreshPost(r.published_date,7))continue
     if(!/\bhiring\b|\bwe're hiring\b|\bwe are hiring\b|\bjoin our team\b|\blooking for\b|\bopen roles?\b|\bjob opening/i.test(text))continue
     if(!roleMatches(text,target)||!locationMatches(text,location)||!experienceMatches(text,experience))continue
     const key=url.toLowerCase().replace(/[?#].*$/,'')
     if(seen.has(key))continue
     seen.add(key)
-    const roleMatch=text.match(/(?:hiring|looking for|seeking|join us as)\s+(?:a|an)?\s*([^.!\n]{3,100})/i)
-    const role=roleMatch?.[1]?clean(roleMatch[1]).replace(/\b(?:in|at)\s+(?:our|the)\b.*$/i,'').trim():target
+    const role=briefRole(text,target)
     const relevance=Math.min(100,60+(roleMatches(text,target)?20:0)+(locationMatches(text,location)?10:0)+(experienceMatches(text,experience)?10:0)+(sourceName(url)==='LinkedIn'?10:0))
     posts.push({id:key,company:companyFromResult(r),role:role||target,url,source:sourceName(url),snippet:clean(content).slice(0,220),published_date:r.published_date||null,relevance})
   }
@@ -104,13 +121,15 @@ export async function POST(req:Request){
     if(!apiKey)return NextResponse.json({configured:false,error:'Add TAVILY_API_KEY to your Vercel environment variables.'},{status:503})
     const loc=location==='Anywhere'?'':` "${location}"`
     const exp=experience==='Any'?'':` "${experience}"`
-    // We are deliberately searching for PUBLIC HIRING POSTS, not job-board listings.
+    const cutoff=new Date(Date.now()-7*86400000).toISOString().slice(0,10)
+    // Search specifically for fresh public hiring announcements. Results older than 7 days
+    // or without a verifiable publication date are discarded below.
     const queries=[
-      `site:linkedin.com/posts (hiring OR "we're hiring" OR "we are hiring" OR "join our team") "${target}"${loc}${exp}`,
-      `site:linkedin.com/posts "${target}" (hiring OR "open role" OR "join our team")${loc}`,
-      `site:linkedin.com/feed/update "${target}" hiring${loc}`,
-      `site:x.com "${target}" (hiring OR "we're hiring")${loc}`,
-      `"${target}" ("we're hiring" OR "we are hiring" OR "join our team")${loc}${exp}`
+      `site:linkedin.com/posts "${target}" (hiring OR "we're hiring" OR "we are hiring" OR "join our team")${loc}${exp} after:${cutoff}`,
+      `site:linkedin.com/posts "${target}" ("open role" OR "we are looking for" OR "join us")${loc} after:${cutoff}`,
+      `site:linkedin.com/feed/update "${target}" hiring${loc} after:${cutoff}`,
+      `site:x.com "${target}" (hiring OR "we're hiring" OR "join our team")${loc} after:${cutoff}`,
+      `"${target}" ("we're hiring" OR "we are hiring" OR "join our team")${loc}${exp} after:${cutoff}`
     ]
     const settled=await Promise.allSettled(queries.map(q=>search(q,apiKey)))
     const errors=settled.filter(x=>x.status==='rejected').map(x=>x.reason instanceof Error?x.reason.message:'Search failed')

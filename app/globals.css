@@ -4807,7 +4807,7 @@ html, body, .app, .content, .sidebar {
 .hiringConnection b,.hiringConnection span{display:block}.hiringConnection b{font-size:10px}.hiringConnection span{font-size:8px;color:#898391;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .jobList{display:grid;gap:7px}
 .jobPosting{display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid #ece9f1;border-radius:10px;padding:10px;background:#faf9fc}
-.jobPostingCopy{min-width:0}.jobPostingCopy b{display:block;font-size:10px;line-height:1.35;color:#302d38}.jobPostingCopy span{display:block;font-size:8px;color:#918b99;margin-top:3px}
+.jobPostingCopy{min-width:0}.jobPostingCopy b{display:block;font-size:10px;line-height:1.35;color:#302d38}.jobPostingCopy span{display:block;font-size:8px;color:#918b99;margin-top:4px}
 .jobLink{display:inline-flex;align-items:center;gap:3px;flex:none;text-decoration:none;background:#eeeaff;color:#5544bf;border-radius:8px;padding:7px 9px;font-size:8px;font-weight:700}
 .jobLink:hover{background:#e6e0ff}
 .hiringReach{margin-top:11px;width:100%;justify-content:center;font-size:9px!important;padding:8px 10px!important}
