@@ -10,7 +10,7 @@ type Message={from:string;sender:string;to:string;recipient:string;date:string;c
 type Ranked=Connection & {score:number;reasons:string[];action:'Reach out'|'Follow up'|'Keep warm';lastOutgoing?:string|null;lastIncoming?:string|null;outgoingCount:number;incomingCount:number;roleMatch:boolean;keywordMatches:string[];profileFit:boolean;iitMatch?:boolean;reputedStartupMatch?:boolean}
 type FileItem={id:string;name:string;type:'connections'|'messages'|'education'|null;rows:number;status:'ready'|'error'|'processing';error?:string}
 type ProfileContext={name:string;headline:string;summary:string;industry:string;positions:string[];positionDescriptions:string[];skills:string[]}
-type LiveSignal={id:string;first_name:string;last_name:string;company:string;position:string;linkedin_url:string;signals:Array<{type:'hiring'|'funding'|'career'|'company'|'news';title:string;why_now:string;date?:string}>;score:number;summary:string;sources:Array<{title:string;url:string;published_date?:string|null}>;source_count:number;status:string;primary_type:string;why_now:string;last_checked_at:string}
+type LiveSignal={id:string;first_name:string;last_name:string;company:string;position:string;linkedin_url:string;signals:Array<{type:'hiring'|'funding'|'career'|'company'|'news';title:string;why_now:string;date?:string}>;score:number;summary:string;sources:Array<{title:string;url:string;published_date?:string|null}>;source_count:number;status?:string;primary_type?:string;why_now?:string;last_checked_at:string}
 
 const roleHints=['Product Manager','Product Designer','Software Engineer','Growth Manager','Investment Analyst']
 function norm(s=''){return s.toLowerCase().replace(/[^a-z0-9+ ]/g,' ').replace(/\s+/g,' ').trim()}
@@ -351,7 +351,7 @@ function LiveIntelligenceView({target,keywords,goal,ranked,signals,configured,lo
  const icon=(type:string)=>type==='hiring'?<Flame size={15}/>:type==='funding'?<BarChart3 size={15}/>:type==='career'?<UserRound size={15}/>:type==='company'?<Zap size={15}/>:<Globe2 size={15}/>
  const colorClass=(type:string)=>`signalType signalType-${type}`
  const filtered=signals.filter(s=>filter==='All'||label(s.primary_type||s.signals?.[0]?.type)==filter)
- const newCount=signals.filter(s=>s.status==='new').length
+ const newCount=signals.filter(s=>!s.status||s.status==='new').length
  const counts={hiring:0,funding:0,career:0,company:0,news:0};signals.forEach(s=>{const t=s.primary_type||s.signals?.[0]?.type||'news';if(t in counts)(counts as any)[t]++})
  const findRanked=(s:LiveSignal)=>ranked.find(p=>(s.linkedin_url&&p.linkedin_url===s.linkedin_url)||(`${p.first_name} ${p.last_name}`).trim().toLowerCase()===`${s.first_name} ${s.last_name}`.trim().toLowerCase())
  const timeAgo=(v:string)=>{const d=Date.parse(v||'');if(!Number.isFinite(d))return 'Recently';const mins=Math.max(1,Math.floor((Date.now()-d)/60000));if(mins<60)return `${mins}m ago`;const hrs=Math.floor(mins/60);if(hrs<24)return `${hrs}h ago`;const days=Math.floor(hrs/24);return `${days}d ago`}
@@ -375,8 +375,8 @@ function LiveIntelligenceView({target,keywords,goal,ranked,signals,configured,lo
   {signals.length>0&&<>
    <div className="liveSignalFilters">{(['All','Hiring','Funding','Career','Company','News'] as const).map(x=><button key={x} className={filter===x?'active':''} onClick={()=>setFilter(x)}>{x}{x!=='All'&&<span>{(counts as any)[x.toLowerCase()]||0}</span>}</button>)}</div>
    <div className="liveSignalFeed">
-    {filtered.map(s=>{const primary=s.signals?.find(x=>x.type===s.primary_type)||s.signals?.[0];const person=findRanked(s);const open=expanded===s.id;return <article className={`liveSignalCard ${s.status==='new'?'isNew':''}`} key={s.id}>
-      <div className="signalCardTop"><span className={colorClass(primary?.type||s.primary_type)}>{icon(primary?.type||s.primary_type)} {label(primary?.type||s.primary_type)}</span>{s.status==='new'&&<span className="newPill">NEW</span>}<span className="signalTime">{timeAgo(s.last_checked_at)}</span></div>
+    {filtered.map(s=>{const primary=s.signals?.find(x=>x.type===s.primary_type)||s.signals?.[0];const person=findRanked(s);const open=expanded===s.id;return <article className={`liveSignalCard ${(!s.status||s.status==='new')?'isNew':''}`} key={s.id}>
+      <div className="signalCardTop"><span className={colorClass(primary?.type||s.primary_type)}>{icon(primary?.type||s.primary_type)} {label(primary?.type||s.primary_type)}</span>{(!s.status||s.status==='new')&&<span className="newPill">NEW</span>}<span className="signalTime">{timeAgo(s.last_checked_at)}</span></div>
       <h3>{primary?.title||s.summary||'New public signal'}</h3>
       <div className="signalPerson"><div className="avatar">{initials(s as any)}</div><div><b>{s.first_name} {s.last_name}</b><span>{s.position||'Role not listed'}{s.company?` · ${s.company}`:''}</span></div></div>
       <p className="signalWhy">{primary?.why_now||s.why_now||s.summary}</p>

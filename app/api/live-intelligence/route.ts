@@ -173,9 +173,6 @@ export async function POST(req: Request) {
           summary,
           sources,
           source_count: sources.length,
-          status: signals.length ? 'new' : 'checked',
-          primary_type: signals[0]?.type || 'news',
-          why_now: summary,
           last_checked_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
         }, { onConflict: 'user_id,connection_id' })
