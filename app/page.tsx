@@ -288,7 +288,7 @@ export default function Home(){
 
  return <main className="app" onDragOver={e=>{e.preventDefault();setDrag(true)}} onDragLeave={()=>setDrag(false)} onDrop={e=>{e.preventDefault();setDrag(false);importFiles(e.dataTransfer.files)}}>
   <div className={`mobileNavOverlay ${mobileNavOpen ? "open" : ""}`} onClick={()=>setMobileNavOpen(false)} aria-hidden="true"/>
-  <aside className={`sidebar ${mobileNavOpen ? "mobileOpen" : ""}`}>
+  <aside className={`sidebar ${mobileNavOpen ? "mobileOpen" : ""}`} aria-hidden={!mobileNavOpen}>
    <button className="mobileNavClose" onClick={()=>setMobileNavOpen(false)} aria-label="Close navigation"><X size={20}/></button>
    <div className="brand"><img className="brandLogo" src="/reachout-logo.png" alt="ReachOut"/><div><b>ReachOut</b><span>OUTREACH INTELLIGENCE</span></div></div>
    <div className="sideGoal"><span>YOUR GOAL</span><b>{goal}</b><div className="goalMini"><i style={{width:`${goalPct}%`}}/></div><small>{conversations} / {goalTarget} conversations</small></div>

@@ -12,6 +12,7 @@ export default function Login({ onAuthed }: { onAuthed: () => void }) {
   const [busy, setBusy] = useState(false)
   const [googleBusy, setGoogleBusy] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
+  const [staySignedIn, setStaySignedIn] = useState(true)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
 
@@ -47,6 +48,16 @@ export default function Login({ onAuthed }: { onAuthed: () => void }) {
         return
       }
 
+      if (mode === 'login') {
+        window.localStorage.setItem('reachout_stay_signed_in', staySignedIn ? 'true' : 'false')
+        // Supabase's auth storage adapter reads this preference dynamically, so
+        // the current session is kept in localStorage when checked and
+        // sessionStorage when unchecked.
+        if (!staySignedIn && result.data.session) {
+          await supabaseBrowser.auth.setSession(result.data.session)
+        }
+      }
+
       onAuthed()
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Could not complete that request.')
@@ -67,6 +78,7 @@ export default function Login({ onAuthed }: { onAuthed: () => void }) {
     setSuccess('')
 
     try {
+      window.localStorage.setItem('reachout_stay_signed_in', staySignedIn ? 'true' : 'false')
       const { error: googleError } = await supabaseBrowser.auth.signInWithOAuth({
         provider: 'google',
         options: {
@@ -143,6 +155,17 @@ export default function Login({ onAuthed }: { onAuthed: () => void }) {
                   )}
                 </button>
               </span>
+            </label>
+          )}
+
+          {mode === 'login' && (
+            <label className="staySignedIn">
+              <input
+                type="checkbox"
+                checked={staySignedIn}
+                onChange={(e) => setStaySignedIn(e.target.checked)}
+              />
+              <span>Stay signed in</span>
             </label>
           )}
 
